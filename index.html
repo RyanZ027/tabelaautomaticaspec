@@ -19,11 +19,11 @@
         .booyah-bg { background-color: #4CAF50; } /* Verde para 1º Lugar */
         .mvp-bg { 
             background-color: #FFC107; /* Amarelo Dourado para Top 3 MVP */
-            /* CORREÇÃO FINAL: Texto Azul Ciano para MELHOR contraste no Amarelo */
-            color: #00bcd4 !important; 
+            /* CORREÇÃO FINAL: Texto PRETO/AZUL ESCURO para MELHOR contraste no Amarelo */
+            color: #1a2c5b !important; 
             font-weight: 700; 
         } 
-        /* NOVO: Destaque Top 2 e Top 3 na Tabela Geral (Amarelo Dourado) */
+        /* Destaque Top 2 e Top 3 na Tabela Geral (Amarelo Dourado) */
         .top-3-general {
             background-color: #FFC107 !important; 
             color: #1a2c5b !important;
@@ -102,19 +102,20 @@
             text-align: left; /* Mantém o nome do Jogador alinhado à esquerda */
         }
 
-        /* Larguras das colunas para MVP Individual (AGORA 5 COLUNAS) */
-        /* POS, JOGADOR, KILLS, MÉDIA KILLS, TIME */
-        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 10%; } /* POSIÇÃO */
-        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 35%; } /* Jogador */
-        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 15%; } /* Kills */
-        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 20%; } /* Média Kills */
-        .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { width: 20%; } /* Time */
+        /* Larguras das colunas para MVP Individual (AGORA 6 COLUNAS) */
+        /* POS, JOGADOR, QUEDAS, KILLS, MÉDIA KILLS, TIME */
+        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 8%; } /* POSIÇÃO */
+        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 30%; } /* Jogador */
+        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 12%; } /* Quedas (NOVA) */
+        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 15%; } /* Kills */
+        .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { width: 18%; } /* Média Kills */
+        .mvp-table-cols td:nth-child(6), .mvp-table-cols th:nth-child(6) { width: 17%; } /* Time */
 
 
         /* Oculta as colunas de time e pts queda em telas muito pequenas para o MVP */
         @media (max-width: 639px) { /* Mobile */
             /* Esconde Coluna Média Kills em mobile para salvar espaço */
-            .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { display: none; }
+            .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { display: none; }
             .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 45%; } /* Jogador expande */
         }
         
@@ -754,33 +755,34 @@
             }
             
             // 2. CALCULO DE PONTUAÇÃO DOS JOGADORES (MVP)
+            
+            // Agrupar e somar Kills e contar partidas
+            const processedPlayerMatches = {};
+            
+            // Vamos somar os kills de novo e contar as ocorrências
             for (const playerLog of individualKillsData) {
                 const playerName = playerLog.name;
-                const kills = playerLog.kills;
-
-                if (!playerScores[playerName]) {
-                    playerScores[playerName] = {
+                
+                if (!processedPlayerMatches[playerName]) {
+                    processedPlayerMatches[playerName] = {
                         name: playerName,
                         team: playerLog.team,
-                        kills: 0
+                        kills: 0,
+                        matchesPlayed: 0
                     };
                 }
-                playerScores[playerName].kills += kills;
+                processedPlayerMatches[playerName].kills += playerLog.kills;
+                processedPlayerMatches[playerName].matchesPlayed += 1; 
             }
-
-            // 3. ORDENAÇÃO E CÁLCULO DE MÉDIA
-            const finalResults = Object.values(teamScores).sort((a, b) => {
-                if (b.total !== a.total) { return b.total - a.total; }
-                return b.kills - a.kills; 
-            });
-
-            const finalMVP = Object.values(playerScores).map(player => {
-                // Calcula a Média Kills (Total Kills / Quedas Processadas)
-                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
-                return { ...player, avgKills: avgKills };
-            }).sort((a, b) => b.kills - a.kills);
             
-            return { finalResults, finalMVP };
+            const finalMVP = Object.values(processedPlayerMatches).map(player => {
+                // Calcula a Média Kills (Total Kills / Quedas Jogadas)
+                const avgKills = player.matchesPlayed > 0 ? (player.kills / player.matchesPlayed).toFixed(2) : '0.00';
+                return { ...player, avgKills: avgKills };
+            }).sort((a, b) => b.kills - a.kills); // Ordena por Kills
+            
+            // CORREÇÃO DO ERRO: Retorna o objeto com as variáveis que o chamador espera
+            return { finalResults: Object.values(teamScores), finalMVP }; 
         }
 
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
@@ -885,12 +887,13 @@
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // CABEÇALHO MVP (5 COLUNAS, NOVA COLUNA MÉDIA KILLS)
+            // CABEÇALHO MVP (6 COLUNAS, INCLUINDO QUEDAS)
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
                         <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
                         <th class="p-3 text-sm font-semibold uppercase">Jogador</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th> <!-- NOVA COLUNA -->
                         <th class="p-3 text-sm font-semibold uppercase">Kills</th>
                         <th class="p-3 text-sm font-semibold uppercase hidden-mobile">MÉDIA KILLS</th>
                         <th class="p-3 text-sm font-semibold uppercase">Time</th>
@@ -908,12 +911,13 @@
                 const row = document.createElement('tr');
                 row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
 
-                // CORREÇÃO FINAL: Usando a cor definida na classe mvp-bg (Ciano) para o Top 3
+                // APLICA O DESTAQUE MVP NO TEXTO (AZUL CIANO)
                 row.innerHTML = `
                     <td class="p-3 font-bold text-base ${isTop ? 'text-accent' : 'text-white'}">${rank}º</td>
                     <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-accent' : 'text-white'}">${player.name}</td>
+                    <td class="p-3 font-semibold ${isTop ? 'text-accent' : 'text-white'}">${player.matchesPlayed}</td> <!-- Quedas Jogadas -->
                     <td class="p-3 font-extrabold text-lg ${isTop ? 'text-accent' : 'text-white'}">${player.kills}</td>
-                    <!-- NOVA COLUNA: Média Kills -->
+                    <!-- MÉDIA KILLS -->
                     <td class="p-3 hidden-mobile ${isTop ? 'text-accent' : 'text-white'}">${player.avgKills}</td>
                     <td class="p-3 ${isTop ? 'text-accent' : 'text-white'}">${player.team}</td>
                 `;
