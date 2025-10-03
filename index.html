@@ -252,6 +252,18 @@
                     <input type="number" id="killPoints" value="2" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" />
                 </div>
             </div>
+            
+            <!-- NOVO CAMPO: CRITÉRIO DE DESEMPATE -->
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <div>
+                    <label for="tiebreaker" class="block text-sm font-medium text-gray-400">Critério de Desempate (2º nível):</label>
+                    <select id="tiebreaker" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
+                        <option value="kills" selected>Kills (Abates)</option>
+                        <option value="booyahs">Booyah (1ª Posição)</option>
+                    </select>
+                </div>
+            </div>
+            <!-- FIM DO NOVO CAMPO -->
 
             <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3">
                 <!-- Colocação (1º ao 12º) -->
@@ -473,6 +485,7 @@
         const statusDiv = document.getElementById('statusMessage');
         const killPointsInput = document.getElementById('killPoints');
         const presetSelector = document.getElementById('pointPreset');
+        const tiebreakerSelector = document.getElementById('tiebreaker');
         
         // --- FUNÇÕES DE CONTROLE E CÁLCULO ---
 
@@ -486,7 +499,9 @@
             }
             
             const killPoints = parseInt(killPointsInput.value) || 0;
-            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData);
+            const tiebreaker = tiebreakerSelector.value; // Pega o critério de desempate
+            
+            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
             window.finalResults = finalResults;
             window.finalMVP = finalMVP;
@@ -716,7 +731,7 @@
             return { teamResults: teamResults, playerResults: [] };
         }
 
-        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData) {
+        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker) {
             const teamScores = {};
             const playerScores = {};
             
@@ -736,10 +751,10 @@
                     teamScores[teamName] = {
                         total: 0,
                         placement: 0, 
-                        ptsKill: 0, // NOVO: Pontos por Kill
+                        ptsKill: 0, 
                         kills: 0, 
-                        booyahs: 0, // NOVO: Contagem de Booyahs
-                        quedasList: 0, // NOVO: Contagem de Quedas
+                        booyahs: 0, 
+                        quedasList: 0, 
                         lastPlace: place, 
                         name: teamName
                     };
@@ -759,7 +774,6 @@
             // Agrupar e somar Kills e contar partidas
             const processedPlayerMatches = {};
             
-            // Vamos somar os kills de novo e contar as ocorrências
             for (const playerLog of individualKillsData) {
                 const playerName = playerLog.name;
                 
@@ -776,13 +790,29 @@
             }
             
             const finalMVP = Object.values(processedPlayerMatches).map(player => {
-                // Calcula a Média Kills (Total Kills / Quedas Jogadas)
                 const avgKills = player.matchesPlayed > 0 ? (player.kills / player.matchesPlayed).toFixed(2) : '0.00';
                 return { ...player, avgKills: avgKills };
-            }).sort((a, b) => b.kills - a.kills); // Ordena por Kills
+            }).sort((a, b) => b.kills - a.kills); 
             
-            // CORREÇÃO DO ERRO: Retorna o objeto com as variáveis que o chamador espera
-            return { finalResults: Object.values(teamScores), finalMVP }; 
+            // 3. ORDENAÇÃO FINAL DA TABELA GERAL (USANDO CRITÉRIO DE DESEMPATE)
+            const finalResults = Object.values(teamScores).sort((a, b) => {
+                // 1. Ordena por Total (Pontos) descendente
+                if (b.total !== a.total) { 
+                    return b.total - a.total; 
+                }
+                
+                // 2. Desempate (Critério Selecionado)
+                if (tiebreaker === 'booyahs') {
+                    // Desempate por Booyahs descendente
+                    return b.booyahs - a.booyahs;
+                } else {
+                    // Desempate por Kills descendente (padrão se for 'kills' ou outro)
+                    return b.kills - a.kills;
+                }
+            });
+
+
+            return { finalResults: finalResults, finalMVP: finalMVP }; 
         }
 
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
