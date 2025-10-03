@@ -270,7 +270,7 @@
                          alt="Logo Instagram" class="insta-footer-img ml-2">
                 </a>
             </div>
-            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA</p>
+            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA!</p>
         </footer>
         
     </div>
@@ -405,8 +405,22 @@
                  th.style.backgroundColor = '#2c4a92';
                  th.style.color = 'white';
             });
+            
+            // CORREÇÃO CRUCIAL: Adicionar cores de fundo para Booyah e MVP nas linhas
             clone.querySelectorAll('tr').forEach(tr => {
                  tr.style.border = '1px solid #4a5568';
+                 
+                 // Verifica se a linha é Booyah (verde)
+                 if (tr.classList.contains('booyah-bg')) {
+                    tr.style.backgroundColor = '#4CAF50';
+                    tr.style.color = 'white'; 
+                 }
+                 
+                 // Verifica se a linha é MVP (amarelo)
+                 if (tr.classList.contains('mvp-bg')) {
+                    tr.style.backgroundColor = '#FFC107'; 
+                    tr.style.color = '#1a2c5b'; // Texto escuro
+                 }
             });
             
             // Ocultar elementos de UI específicos do Canvas que não devem ir para o PDF
@@ -414,14 +428,15 @@
                 margin: 10,
                 filename: filename + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true, backgroundColor: '#ffffff' },
+                // Aumentei a escala para melhor qualidade de impressão
+                html2canvas: { scale: 4, logging: true, dpi: 192, letterRendering: true, backgroundColor: '#ffffff' }, 
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
             html2pdf().set(options).from(clone).save();
         }
 
-        // --- MODAL / SPLASH SCREEN LOGIC ---
+        // --- MODAL / SPLASH SCREEN LOGIC (Mesma Lógica) ---
         function checkFirstVisit() {
             // Verifica se o modal já foi mostrado na sessão
             if (!sessionStorage.getItem('welcomeModalShown')) {
@@ -438,7 +453,7 @@
             showPage('config');
         }
 
-        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO ---
+        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO (Mesma Lógica) ---
         function showPage(pageId) {
             document.getElementById('config-page').style.display = 'none';
             document.getElementById('results-page').style.display = 'none';
@@ -454,7 +469,7 @@
             }
         }
 
-        // --- PRESETS DE PONTUAÇÃO ---
+        // --- PRESETS E VARIÁVEIS (Mesma Lógica) ---
         const POINTS_PRESETS = {
             // Pontuação Emulador (20, 15, 10, etc. com 2 Pts/Kill)
             emulador_20_2: {
@@ -473,23 +488,19 @@
             }
         };
 
-        // Variáveis de Armazenamento (Locais)
         let placementPoints = { ...POINTS_PRESETS.emulador_20_2.placements }; 
         let currentFileData = null; 
-        let individualKillsData = []; // Armazena kills de jogadores para o MVP
-        let matchCount = 0; // Armazena o total de quedas
+        let individualKillsData = []; 
+        let matchCount = 0; 
         
-        // Elementos de mensagem (referências rápidas)
         const errorDiv = document.getElementById('errorMessage');
         const statusDiv = document.getElementById('statusMessage');
         const killPointsInput = document.getElementById('killPoints');
         const presetSelector = document.getElementById('pointPreset');
-        // matchCountDisplay é usado na página de resultados
         
         // --- FUNÇÕES DE CONTROLE E CÁLCULO (Mesma Lógica) ---
 
         function savePlacementPointsAndCalculate() {
-            // 1. Salva a pontuação atual dos inputs
             savePlacementPoints(); 
             
             if (!currentFileData || currentFileData.length === 0) {
@@ -498,16 +509,13 @@
                  return;
             }
             
-            // 2. Inicia o cálculo
             const killPoints = parseInt(killPointsInput.value) || 0;
             const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData);
 
-            // 3. Salva os resultados nos arrays globais para display
             window.finalResults = finalResults;
             window.finalMVP = finalMVP;
-            window.matchCount = matchCount; // Salva a contagem de quedas
+            window.matchCount = matchCount; 
 
-            // 4. Navega para a página de resultados
             showPage('results');
         }
 
