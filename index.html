@@ -43,11 +43,16 @@
         }
         
         /* Larguras das colunas para Tabela Final (Time) */
-        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 10%; } /* Rank */
-        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 45%; } /* Time */
-        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 15%; } /* Kills */
-        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 15%; } /* Pts Queda */
-        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 15%; } /* Total */
+        /* Total de 8 colunas: #, Time, Pts Queda, Pts Kill, Total, Booyah, Quedas, Kills Total */
+        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 5%; } /* # */
+        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 25%; } /* Time */
+        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 15%; } /* Pts Queda */
+        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 15%; } /* Pts Kill */
+        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 10%; } /* Booyah */
+        .final-table-cols td:nth-child(6), .final-table-cols th:nth-child(6) { width: 10%; } /* Quedas */
+        .final-table-cols td:nth-child(7), .final-table-cols th:nth-child(7) { width: 10%; } /* Kills Total */
+        .final-table-cols td:nth-child(8), .final-table-cols th:nth-child(8) { width: 15%; } /* Total Geral */
+
 
         /* Larguras das colunas para MVP Individual */
         .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 10%; } /* Posição */
@@ -583,7 +588,10 @@
                     teamScores[teamName] = {
                         total: 0,
                         placement: 0, 
+                        ptsKill: 0, // NOVO: Pontos por Kill
                         kills: 0, 
+                        booyahs: 0, // NOVO: Contagem de Booyahs
+                        quedasList: 0, // NOVO: Contagem de Quedas
                         lastPlace: place, 
                         name: teamName
                     };
@@ -591,7 +599,10 @@
                 
                 teamScores[teamName].total += totalScore;
                 teamScores[teamName].placement += placementScore;
+                teamScores[teamName].ptsKill += killScore; // SOMA Pts Kill
                 teamScores[teamName].kills += kills;
+                teamScores[teamName].quedasList += 1; // Soma 1 Queda
+                if (place === 1) { teamScores[teamName].booyahs += 1; } // Soma Booyah
                 teamScores[teamName].lastPlace = place;
             }
             
@@ -623,7 +634,7 @@
 
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
 
-        function renderFinalTable(results, containerId, matchCount) {
+        function renderFinalTable(results, containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
 
@@ -635,13 +646,17 @@
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
+            // NOVO CABEÇALHO COM TODAS AS 8 COLUNAS
             table.innerHTML = `
                 <thead>
                     <tr class="table-header final-table-cols">
                         <th class="p-3 text-left text-sm font-semibold uppercase">#</th>
                         <th class="p-3 text-left text-sm font-semibold uppercase">Time</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills</th>
                         <th class="p-3 text-center text-sm font-semibold uppercase">Pts Queda</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Pts Kill</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Booyah</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Quedas</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills Total</th>
                         <th class="p-3 text-center text-sm font-semibold uppercase">Total</th>
                     </tr>
                 </thead>
@@ -661,11 +676,15 @@
                 const row = document.createElement('tr');
                 row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
 
+                // NOVO RENDER com as 8 colunas
                 row.innerHTML = `
                     <td class="p-3 text-left font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}</td>
                     <td class="p-3 text-left font-medium whitespace-nowrap overflow-hidden text-ellipsis">${team.name}</td>
-                    <td class="p-3 text-center font-semibold">${team.kills}</td>
                     <td class="p-3 text-center font-semibold">${team.placement}</td>
+                    <td class="p-3 text-center font-semibold">${team.ptsKill}</td>
+                    <td class="p-3 text-center font-semibold">${team.booyahs}</td>
+                    <td class="p-3 text-center font-semibold">${team.quedasList}</td>
+                    <td class="p-3 text-center font-extrabold text-lg">${team.kills}</td>
                     <td class="p-3 text-center font-extrabold text-lg">${team.total}</td>
                 `;
                 tbody.appendChild(row);
@@ -727,7 +746,7 @@
             // Verifica se há resultados globais salvos
             if (window.finalResults && window.finalResults.length > 0) {
                 // Renderiza as tabelas usando os arrays globais
-                renderFinalTable(window.finalResults, 'finalTableContainer', window.matchCount);
+                renderFinalTable(window.finalResults, 'finalTableContainer');
                 renderMVPTable(window.finalMVP, 'mvpTableContainer');
             } else {
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
