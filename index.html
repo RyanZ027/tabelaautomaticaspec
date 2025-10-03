@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pontos (Multi-Páginas)</title>
+    <!-- Carrega o Tailwind CSS para design moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos base */
+        body { font-family: 'Inter', sans-serif; background-color: #1a2c5b; color: #f3f4f6; }
+        .bg-primary { background-color: #1a2c5b; }
+        .text-accent { color: #00bcd4; }
+        .bg-card { background-color: #1f2937; }
+        .table-header { background-color: #2c4a92; color: #ffffff; }
+        .booyah-bg { background-color: #4CAF50; }
+        
+        /* ESTILO MVP CORRIGIDO: Amarelo Dourado com texto escuro para alto contraste */
+        .mvp-bg { 
+            background-color: #FFC107; /* Amarelo Dourado */
+            color: #1a2c5b; /* Cor do texto preto/escuro */
+            font-weight: 700; 
+        } 
+
+        /* Estilo para o campo de arquivo */
+        #jsonFileInput {
+            cursor: pointer;
+        }
+        
+        /* --- AJUSTES DE TABELA PARA EXIBIÇÃO COMPLETA (RESPONSIVIDADE) --- */
+        .full-width-table table {
+            table-layout: fixed; 
+            width: 100%;
+        }
+        
+        .full-width-table th, .full-width-table td {
+            font-size: 0.85rem; 
+            padding: 0.4rem 0.2rem; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Larguras das colunas para Tabela Final (Time) */
+        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 10%; } /* Rank */
+        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 45%; } /* Time */
+        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 15%; } /* Kills */
+        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 15%; } /* Pts Queda */
+        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 15%; } /* Total */
+
+        /* Larguras das colunas para MVP Individual */
+        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 10%; } /* Posição */
+        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 50%; } /* Jogador */
+        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 20%; } /* Kills */
+        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 20%; } /* Time */
+
+
+        /* Oculta as colunas de time e pts queda em telas muito pequenas para o MVP */
+        @media (max-width: 639px) { /* Mobile */
+            .mvp-table-cols .hidden-mobile { display: none !important; }
+        }
+        
+        /* Layout principal */
+        .container-main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body onload="showPage('config')">
+
+    <!-- Tela de Configuração (Página 1) -->
+    <div id="config-page" class="container-main space-y-8">
+        <header class="text-center py-6 bg-gray-900 shadow-lg">
+            <h1 class="text-4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
+            <p class="text-gray-400 mt-1">Calculadora de Pontos Multi-Log</p>
+        </header>
+
+        <!-- 1. Configuração de Pontuação -->
+        <div class="bg-card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">1. Configurar Pontuação</h2>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                <!-- Seleção do Padrão de Pontuação -->
+                <div class="col-span-2">
+                    <label for="pointPreset" class="block text-sm font-medium text-gray-400">Padrão de Pontuação:</label>
+                    <select id="pointPreset" onchange="loadPreset()" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
+                        <option value="custom">Personalizado (Definir abaixo)</option>
+                        <option value="emulador_20_2" selected>Emulador (20/15/10 - 2 Pts/Kill)</option>
+                        <option value="wb_12_1">WB (12/9/8 - 1 Pts/Kill)</option>
+                    </select>
+                </div>
+
+                <!-- Pontos por Kill -->
+                <div class="col-span-2">
+                    <label for="killPoints" class="block text-sm font-medium text-gray-400">Pontos por Kill:</label>
+                    <input type="number" id="killPoints" value="2" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" />
+                </div>
+            </div>
+
+            <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                <!-- Colocação (1º ao 12º) -->
+            </div>
+            <button onclick="addPlacementInput()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                + Adicionar Colocação
+            </button>
+        </div>
+
+        <!-- 2. Entrada de Logs (Upload de Arquivo) -->
+        <div class="bg-card p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">2. Carregar Arquivos de Resultados</h2>
+            <p class="text-sm text-gray-400 mb-3">
+                Selecione múltiplos arquivos de log. O formato deve ser o log detalhado ("TeamName:...") ou JSON.
+            </p>
+            
+            <input type="file" id="jsonFileInput" accept="*/*" multiple
+                   class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
+                   onchange="handleFileUpload(event)"/>
+
+            <div id="errorMessage" class="text-red-500 mt-3 hidden"></div>
+            <div id="statusMessage" class="text-green-500 mt-3 hidden"></div>
+
+            <p id="fileCountDisplay" class="text-sm text-gray-400 mt-3 font-semibold">
+                0 arquivo(s) selecionado(s).
+            </p>
+            
+            <!-- BOTÃO CALCULAR E NAVEGAR -->
+            <button id="calculateButton" onclick="savePlacementPointsAndCalculate()" class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200">
+                CALCULAR E VER TABELAS
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Tela de Resultados (Página 2) -->
+    <div id="results-page" class="container-main space-y-8" style="display: none;">
+        <header class="text-center py-6 bg-gray-900 shadow-lg">
+            <h1 class="text-4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
+            <p class="text-gray-400 mt-1">Visão Geral e MVP</p>
+        </header>
+
+        <!-- Botão de Navegação -->
+        <button onclick="showPage('config')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+            ← Voltar para Configuração
+        </button>
+
+        <div class="space-y-10">
+            <!-- 3. Tabela de Pontuação Final -->
+            <div class="bg-card p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">3. Tabela Final (Geral)</h2>
+                <div id="finalTableContainer" class="full-width-table">
+                    <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
+                </div>
+                <p id="matchCountDisplay" class="text-sm text-gray-400 mt-4 text-left font-semibold">
+                    Total de Quedas Processadas: 0
+                </p>
+            </div>
+
+            <!-- 4. Top 5 MVP Individual -->
+            <div class="bg-card p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">🏅 MVP Individual (Total)</h2>
+                <div id="mvpTableContainer" class="full-width-table">
+                    <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO ---
+        function showPage(pageId) {
+            document.getElementById('config-page').style.display = 'none';
+            document.getElementById('results-page').style.display = 'none';
+            
+            if (pageId === 'config') {
+                document.getElementById('config-page').style.display = 'block';
+                // Recarrega as configurações para garantir que presets estejam corretos
+                loadPreset(); 
+            } else if (pageId === 'results') {
+                document.getElementById('results-page').style.display = 'block';
+                // Renderiza as tabelas ao entrar na página de resultados
+                displayResults();
+            }
+        }
+
+        // --- PRESETS DE PONTUAÇÃO ---
+        const POINTS_PRESETS = {
+            // Pontuação Emulador (20, 15, 10, etc. com 2 Pts/Kill)
+            emulador_20_2: {
+                killPoints: 2,
+                placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
+            },
+            // Pontuação WB (12, 9, 8, etc. com 1 Pt/Kill)
+            wb_12_1: {
+                killPoints: 1,
+                placements: { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 }
+            },
+            // Padrão do Usuário (fallback)
+            custom: {
+                killPoints: 2,
+                placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
+            }
+        };
+
+        // Variáveis de Armazenamento (Locais)
+        let placementPoints = { ...POINTS_PRESETS.emulador_20_2.placements }; 
+        let currentFileData = null; 
+        let individualKillsData = []; // Armazena kills de jogadores para o MVP
+        let matchCount = 0; // Armazena o total de quedas
+        
+        // Elementos de mensagem (referências rápidas)
+        const errorDiv = document.getElementById('errorMessage');
+        const statusDiv = document.getElementById('statusMessage');
+        const killPointsInput = document.getElementById('killPoints');
+        const presetSelector = document.getElementById('pointPreset');
+        // matchCountDisplay é usado na página de resultados
+        
+        // --- FUNÇÕES DE CONTROLE E CÁLCULO ---
+
+        function savePlacementPointsAndCalculate() {
+            // 1. Salva a pontuação atual dos inputs
+            savePlacementPoints(); 
+            
+            if (!currentFileData || currentFileData.length === 0) {
+                 errorDiv.textContent = "Por favor, carregue os arquivos de resultados primeiro.";
+                 errorDiv.classList.remove('hidden');
+                 return;
+            }
+            
+            // 2. Inicia o cálculo
+            const killPoints = parseInt(killPointsInput.value) || 0;
+            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData);
+
+            // 3. Salva os resultados nos arrays globais para display
+            window.finalResults = finalResults;
+            window.finalMVP = finalMVP;
+            window.matchCount = matchCount; // Salva a contagem de quedas
+
+            // 4. Navega para a página de resultados
+            showPage('results');
+        }
+
+        function loadPreset() {
+            const selectedPreset = presetSelector.value;
+            const preset = POINTS_PRESETS[selectedPreset] || POINTS_PRESETS.custom;
+            
+            killPointsInput.value = preset.killPoints;
+            placementPoints = { ...preset.placements };
+            initializePlacementInputs(Object.keys(placementPoints).length); 
+            
+            const isDisabled = selectedPreset !== 'custom';
+            document.getElementById('placementInputs').querySelectorAll('input').forEach(input => {
+                input.disabled = isDisabled;
+            });
+            killPointsInput.disabled = isDisabled;
+            document.querySelector('.bg-blue-600').disabled = isDisabled; 
+        }
+
+        function initializePlacementInputs(count = 12) {
+            const container = document.getElementById('placementInputs');
+            container.innerHTML = ''; 
+            
+            for (let i = 1; i <= count; i++) {
+                const points = placementPoints[i] !== undefined ? placementPoints[i] : 0;
+                
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label for="place-${i}" class="block text-sm font-medium text-gray-400">#${i} Place:</label>
+                    <input type="number" id="place-${i}" value="${points}" 
+                           class="mt-1 w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:ring-accent focus:border-accent" />
+                `;
+                container.appendChild(div);
+            }
+        }
+        
+        function addPlacementInput() {
+            if (presetSelector.value !== 'custom') return; 
+
+            const container = document.getElementById('placementInputs');
+            const newPlace = container.children.length + 1;
+            
+            if (newPlace > 20) {
+                errorDiv.textContent = "Máximo de 20 colocações atingido.";
+                errorDiv.classList.remove('hidden');
+                statusDiv.classList.add('hidden');
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <label for="place-${newPlace}" class="block text-sm font-medium text-gray-400">#${newPlace} Place:</label>
+                <input type="number" id="place-${newPlace}" value="0" 
+                       class="mt-1 w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:ring-accent focus:border-accent" />
+            `;
+            container.appendChild(div);
+        }
+        
+        function savePlacementPoints() {
+            if (presetSelector.value !== 'custom') {
+                 placementPoints = { ...POINTS_PRESETS[presetSelector.value].placements };
+            } else {
+                const container = document.getElementById('placementInputs');
+                const inputs = container.querySelectorAll('input[id^="place-"]');
+                placementPoints = {};
+                
+                inputs.forEach((input, index) => {
+                    const place = index + 1;
+                    const points = parseInt(input.value) || 0;
+                    placementPoints[place] = points;
+                });
+            }
+        }
+
+        function handleFileUpload(event) {
+            errorDiv.classList.add('hidden');
+            statusDiv.classList.add('hidden');
+            const files = event.target.files;
+
+            if (files.length === 0) {
+                matchCount = 0;
+                document.getElementById('fileCountDisplay').textContent = `0 arquivo(s) selecionado(s).`;
+                return;
+            }
+            
+            currentFileData = [];
+            individualKillsData = [];
+            matchCount = 0;
+            
+            const totalFiles = files.length;
+
+            const processNextFile = (index) => {
+                if (index >= totalFiles) {
+                    if (matchCount > 0) {
+                        statusDiv.textContent = `✅ ${matchCount} queda(s) válida(s) carregada(s). Clique em CALCULAR!`;
+                        statusDiv.classList.remove('hidden');
+                    } else {
+                        errorDiv.textContent = `Nenhum resultado válido encontrado em ${totalFiles} arquivo(s).`;
+                        errorDiv.classList.remove('hidden');
+                    }
+                    document.getElementById('fileCountDisplay').textContent = `${totalFiles} arquivo(s) selecionado(s).`;
+                    return;
+                }
+
+                const file = files[index];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const fileContent = e.target.result.replace(/^\uFEFF/, '').trim();
+                    let data = null;
+                    let fileIndividualKills = [];
+
+                    try {
+                        data = JSON.parse(fileContent);
+                        if (!Array.isArray(data) || data.length === 0 || !data[0].team_name) {
+                             data = null; 
+                        }
+                    } catch (e) { }
+
+                    if (!data) {
+                        const logData = processTextLog(fileContent);
+                        data = logData.teamResults;
+                        fileIndividualKills = logData.playerResults;
+                    } 
+                    
+                    if (data.length > 0) {
+                        currentFileData.push(...data);
+                        individualKillsData.push(...fileIndividualKills);
+                        matchCount++; 
+                    }
+                    
+                    processNextFile(index + 1);
+                };
+                
+                reader.onerror = () => {
+                    errorDiv.textContent = `Erro ao ler o arquivo: ${file.name}.`;
+                    errorDiv.classList.remove('hidden');
+                    processNextFile(index + 1);
+                };
+
+                reader.readAsText(file);
+            };
+
+            processNextFile(0);
+        }
+        
+        function extractIndividualKills(logText) {
+            const playerResults = [];
+            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)/i; 
+            const playerLineRegex = /NAME:\s*([^:]+?)\s*ID:\s*[^ ]+?\s*KILL:\s*(\d+)/i;
+            
+            let currentTeam = '';
+
+            for (const line of logText.split('\n')) {
+                let teamMatch = line.match(teamHeaderRegex);
+                let playerMatch = line.match(playerLineRegex);
+
+                if (teamMatch) {
+                    currentTeam = teamMatch[1].trim().replace(/\s+$/, ''); 
+                } else if (playerMatch && currentTeam) {
+                    const playerName = playerMatch[1].trim().replace(/\s+$/, '');
+                    const kills = parseInt(playerMatch[2]);
+                    
+                    if (playerName && !isNaN(kills)) {
+                        playerResults.push({
+                            name: playerName,
+                            team: currentTeam,
+                            kills: kills
+                        });
+                    }
+                }
+            }
+            return playerResults;
+        }
+
+        function processTextLog(logText) {
+            const lines = logText.split('\n').filter(line => line.trim() !== '');
+            const teamResults = [];
+            const processedNames = new Set();
+            
+            // --- 1. Tenta o Formato Detalhado (MatchResult) ---
+            const detailedLogRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)\s*.*KillScore:\s*(\d+)/i;
+            const playerResults = extractIndividualKills(logText);
+            
+            for (const line of lines) {
+                const match = line.match(detailedLogRegex);
+                
+                if (match) {
+                    const teamName = match[1].trim().replace(/\s+$/, '');
+                    const rank = parseInt(match[2]);
+                    const kills = parseInt(match[3]);
+
+                    if (teamName && !isNaN(rank) && rank >= 1 && !isNaN(kills)) {
+                        if (!processedNames.has(teamName)) {
+                            teamResults.push({ team_name: teamName, placement: rank, kills: kills });
+                            processedNames.add(teamName);
+                        }
+                    }
+                }
+            }
+
+            if (teamResults.length > 0) {
+                return { teamResults: teamResults, playerResults: playerResults }; 
+            }
+            
+            // --- 2. Tenta o Formato Simples (Fallback) ---
+            for (const line of lines) {
+                const parts = line.trim().split(/\s+/);
+                
+                if (parts.length >= 3) {
+                    const kills = parseInt(parts.pop());
+                    const place = parseInt(parts.pop());
+                    const teamName = parts.join(' ');
+                    
+                    if (teamName && !isNaN(place) && place >= 1 && !isNaN(kills) && kills >= 0) {
+                        teamResults.push({ team_name: teamName, placement: place, kills: kills });
+                    }
+                }
+            }
+            
+            return { teamResults: teamResults, playerResults: [] };
+        }
+
+        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData) {
+            const teamScores = {};
+            const playerScores = {};
+            
+            // 1. CALCULO DE PONTUAÇÃO DOS TIMES
+            for (const teamLog of logData) {
+                const teamName = teamLog.team_name;
+                const place = parseInt(teamLog.placement);
+                const kills = parseInt(teamLog.kills);
+
+                if (!teamName || isNaN(place) || isNaN(kills)) continue;
+
+                const placementScore = placementPoints[place] !== undefined ? placementPoints[place] : 0;
+                const killScore = kills * killPoints;
+                const totalScore = placementScore + killScore;
+
+                if (!teamScores[teamName]) {
+                    teamScores[teamName] = {
+                        total: 0,
+                        placement: 0, 
+                        kills: 0, 
+                        lastPlace: place, 
+                        name: teamName
+                    };
+                }
+                
+                teamScores[teamName].total += totalScore;
+                teamScores[teamName].placement += placementScore;
+                teamScores[teamName].kills += kills;
+                teamScores[teamName].lastPlace = place;
+            }
+            
+            // 2. CALCULO DE PONTUAÇÃO DOS JOGADORES (MVP)
+            for (const playerLog of individualKillsData) {
+                const playerName = playerLog.name;
+                const kills = playerLog.kills;
+
+                if (!playerScores[playerName]) {
+                    playerScores[playerName] = {
+                        name: playerName,
+                        team: playerLog.team,
+                        kills: 0
+                    };
+                }
+                playerScores[playerName].kills += kills;
+            }
+
+            // 3. ORDENAÇÃO
+            const finalResults = Object.values(teamScores).sort((a, b) => {
+                if (b.total !== a.total) { return b.total - a.total; }
+                return b.kills - a.kills; 
+            });
+
+            const finalMVP = Object.values(playerScores).sort((a, b) => b.kills - a.kills);
+            
+            return { finalResults, finalMVP };
+        }
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+
+        function renderFinalTable(results, containerId, matchCount) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (results.length === 0) {
+                container.innerHTML = `<p class="text-gray-500">Nenhum resultado de time para exibir.</p>`;
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
+            
+            table.innerHTML = `
+                <thead>
+                    <tr class="table-header final-table-cols">
+                        <th class="p-3 text-left text-sm font-semibold uppercase">#</th>
+                        <th class="p-3 text-left text-sm font-semibold uppercase">Time</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Pts Queda</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
+            `;
+            
+            const tbody = table.querySelector('tbody');
+            
+            results.forEach((team, index) => {
+                const rank = index + 1;
+                let rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700';
+                
+                if (rank === 1) {
+                    rowClass = 'booyah-bg font-bold text-lg text-white'; 
+                }
+                
+                const row = document.createElement('tr');
+                row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
+
+                row.innerHTML = `
+                    <td class="p-3 text-left font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}</td>
+                    <td class="p-3 text-left font-medium whitespace-nowrap overflow-hidden text-ellipsis">${team.name}</td>
+                    <td class="p-3 text-center font-semibold">${team.kills}</td>
+                    <td class="p-3 text-center font-semibold">${team.placement}</td>
+                    <td class="p-3 text-center font-extrabold text-lg">${team.total}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(table);
+            
+            if (matchCount !== undefined) {
+                document.getElementById('matchCountDisplay').textContent = `Total de Quedas Processadas: ${matchCount}`;
+            }
+        }
+
+        function renderMVPTable(playerResults, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (playerResults.length === 0) {
+                 container.innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
+                 return;
+            }
+
+            const mvpResults = playerResults.slice(0, 5);
+            
+            const table = document.createElement('table');
+            table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
+            
+            table.innerHTML = `
+                <thead>
+                    <tr class="table-header mvp-table-cols">
+                        <th class="p-3 text-left text-sm font-semibold uppercase">Posição</th>
+                        <th class="p-3 text-left text-sm font-semibold uppercase">Jogador</th>
+                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills</th>
+                        <th class="p-3 text-left text-sm font-semibold uppercase hidden-mobile">Time</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
+            `;
+            
+            const tbody = table.querySelector('tbody');
+            
+            mvpResults.forEach((player, index) => {
+                const rank = index + 1;
+                const isTop = rank <= 3;
+                
+                const row = document.createElement('tr');
+                row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
+
+                row.innerHTML = `
+                    <td class="p-3 text-left font-bold text-base ${isTop ? 'text-black' : ''}">${rank}º</td>
+                    <td class="p-3 text-left font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-black' : ''}">${player.name}</td>
+                    <td class="p-3 text-center font-extrabold text-lg ${isTop ? 'text-black' : ''}">${player.kills}</td>
+                    <td class="p-3 text-left hidden-mobile ${isTop ? 'text-black' : ''}">${player.team}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function displayResults() {
+            // Verifica se há resultados globais salvos
+            if (window.finalResults && window.finalResults.length > 0) {
+                // Renderiza as tabelas usando os arrays globais
+                renderFinalTable(window.finalResults, 'finalTableContainer', window.matchCount);
+                renderMVPTable(window.finalMVP, 'mvpTableContainer');
+            } else {
+                document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
+                document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
+                document.getElementById('matchCountDisplay').textContent = `Total de Quedas Processadas: 0`;
+            }
+        }
+
+        // Inicializa na primeira carga da página
+        window.onload = function() {
+            loadPreset();
+        };
+    </script>
+</body>
+</html>
