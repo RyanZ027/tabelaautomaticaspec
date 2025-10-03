@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Pontos (Multi-Páginas)</title>
+    <!-- TÍTULO ATUALIZADO -->
+    <title>Calculadora Automatica de Tabela Via SPEC</title>
     <!-- Carrega o Tailwind CSS para design moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -66,6 +67,23 @@
             margin: 40px auto;
             padding: 20px;
         }
+
+        /* Footer Style */
+        .app-footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #9ca3af; /* Gray 400 */
+        }
+        .app-footer a {
+            color: #fff;
+            margin-left: 8px;
+            transition: color 0.3s;
+        }
+        .app-footer a:hover {
+            color: #00bcd4; /* Accent color */
+        }
     </style>
 </head>
 <body onload="showPage('config')">
@@ -73,8 +91,9 @@
     <!-- Tela de Configuração (Página 1) -->
     <div id="config-page" class="container-main space-y-8">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
+            <!-- TÍTULO DA PÁGINA -->
             <h1 class="text-4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
-            <p class="text-gray-400 mt-1">Calculadora de Pontos Multi-Log</p>
+            <p class="text-gray-400 mt-1">Calculadora Automatica de Tabela Via SPEC</p>
         </header>
 
         <!-- 1. Configuração de Pontuação -->
@@ -131,6 +150,17 @@
             </button>
         </div>
         
+        <!-- FOOTER (Rodapé da página de Configuração) -->
+        <footer class="app-footer">
+            Desenvolvido Por RyanZ © 2025
+            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
+                <!-- Ícone do Instagram em SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
+                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
+                </svg>
+            </a>
+        </footer>
+        
     </div>
 
     <!-- Tela de Resultados (Página 2) -->
@@ -152,9 +182,6 @@
                 <div id="finalTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
                 </div>
-                <p id="matchCountDisplay" class="text-sm text-gray-400 mt-4 text-left font-semibold">
-                    Total de Quedas Processadas: 0
-                </p>
             </div>
 
             <!-- 4. Top 5 MVP Individual -->
@@ -165,6 +192,17 @@
                 </div>
             </div>
         </div>
+        
+        <!-- FOOTER (Rodapé da página de Resultados) -->
+        <footer class="app-footer">
+            Desenvolvido Por RyanZ © 2025
+            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
+                <!-- Ícone do Instagram em SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
+                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
+                </svg>
+            </a>
+        </footer>
     </div>
 
 
@@ -572,10 +610,6 @@
             
             container.innerHTML = '';
             container.appendChild(table);
-            
-            if (matchCount !== undefined) {
-                document.getElementById('matchCountDisplay').textContent = `Total de Quedas Processadas: ${matchCount}`;
-            }
         }
 
         function renderMVPTable(playerResults, containerId) {
@@ -635,7 +669,6 @@
             } else {
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
                 document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
-                document.getElementById('matchCountDisplay').textContent = `Total de Quedas Processadas: 0`;
             }
         }
 
