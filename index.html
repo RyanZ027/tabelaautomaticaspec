@@ -14,14 +14,21 @@
         .text-accent { color: #00bcd4; }
         .bg-card { background-color: #1f2937; }
         .table-header { background-color: #2c4a92; color: #ffffff; }
-        .booyah-bg { background-color: #4CAF50; }
         
-        /* ESTILO MVP CORRIGIDO: Amarelo Dourado com texto escuro para alto contraste */
+        /* DESTAQUES DE CORES */
+        .booyah-bg { background-color: #4CAF50; } /* Verde para 1º Lugar */
         .mvp-bg { 
-            background-color: #FFC107; /* Amarelo Dourado */
-            color: #1a2c5b; /* Cor do texto preto/escuro */
+            background-color: #FFC107; /* Amarelo Dourado para Top 3 MVP */
+            /* CORREÇÃO FINAL: Texto Azul Ciano para MELHOR contraste no Amarelo */
+            color: #00bcd4 !important; 
             font-weight: 700; 
         } 
+        /* NOVO: Destaque Top 2 e Top 3 na Tabela Geral (Amarelo Dourado) */
+        .top-3-general {
+            background-color: #FFC107 !important; 
+            color: #1a2c5b !important;
+            font-weight: 600;
+        }
 
         /* Estilo para o campo de arquivo */
         #jsonFileInput {
@@ -45,29 +52,47 @@
             border: 1px solid #4a5568; /* Linhas internas da tabela */
         }
         
-        /* Larguras das colunas para Tabela Final (Time) */
-        /* Total de 8 colunas */
-        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 8%; } /* POSIÇÃO */
-        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 25%; } /* Time */
-        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 12%; } /* Pts Queda */
-        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 12%; } /* Pts Kill */
-        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 10%; } /* Booyah */
-        .final-table-cols td:nth-child(6), .final-table-cols th:nth-child(6) { width: 10%; } /* Quedas */
-        .final-table-cols td:nth-child(7), .final-table-cols th:nth-child(7) { width: 10%; } /* QNT KILL */
-        .final-table-cols td:nth-child(8), .final-table-cols th:nth-child(8) { width: 13%; } /* Total Geral */
+        /* Larguras das colunas para Tabela Final Simplificada (6 Colunas) */
+        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 10%; } /* POSIÇÃO */
+        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 35%; } /* Time */
+        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 10%; } /* Booyah */
+        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 10%; } /* Quedas */
+        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 15%; } /* Kills */
+        .final-table-cols td:nth-child(6), .final-table-cols th:nth-child(6) { width: 20%; } /* Total Geral (Pontos) */
+
+        /* Larguras das colunas para Tabela Final Detalhada (8 Colunas) */
+        /* POS, TIME, BOOYAH, QUEDAS, KILLS, Pts Queda, Pts Kill, PONTOS */
+        .detailed-table-cols td:nth-child(1), .detailed-table-cols th:nth-child(1) { width: 8%; }  /* POSIÇÃO */
+        .detailed-table-cols td:nth-child(2), .detailed-table-cols th:nth-child(2) { width: 26%; } /* Time */
+        .detailed-table-cols td:nth-child(3), .detailed-table-cols th:nth-child(3) { width: 8%; }  /* Booyah */
+        .detailed-table-cols td:nth-child(4), .detailed-table-cols th:nth-child(4) { width: 10%; } /* Quedas */
+        .detailed-table-cols td:nth-child(5), .detailed-table-cols th:nth-child(5) { width: 10%; } /* Kills */
+        .detailed-table-cols td:nth-child(6), .detailed-table-cols th:nth-child(6) { width: 12%; } /* Pts Queda */
+        .detailed-table-cols td:nth-child(7), .detailed-table-cols th:nth-child(7) { width: 12%; } /* Pts Kill */
+        .detailed-table-cols td:nth-child(8), .detailed-table-cols th:nth-child(8) { width: 14%; } /* Total Geral (Pontos) */
+
 
         /* Centraliza os cabeçalhos de TODAS as tabelas */
         .full-width-table th {
             text-align: center !important;
         }
 
-        /* Centraliza o texto das células da tabela geral, exceto a coluna Time (coluna 2) */
+        /* Centraliza o texto das células da tabela geral (SIMPLIFICADA), exceto a coluna Time (coluna 2) */
         .final-table-cols td {
             text-align: center;
         }
         .final-table-cols td:nth-child(2) {
             text-align: left; /* Mantém o nome do Time alinhado à esquerda */
         }
+        
+        /* Centraliza o texto das células da tabela geral (DETALHADA), exceto a coluna Time (coluna 2) */
+        .detailed-table-cols td {
+            text-align: center;
+        }
+        .detailed-table-cols td:nth-child(2) {
+            text-align: left; /* Mantém o nome do Time alinhado à esquerda */
+        }
+
 
         /* Centraliza o texto das células da tabela MVP, exceto a coluna Jogador (coluna 2) */
         .mvp-table-cols td {
@@ -77,16 +102,20 @@
             text-align: left; /* Mantém o nome do Jogador alinhado à esquerda */
         }
 
-        /* Larguras das colunas para MVP Individual */
-        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 15%; } /* POSIÇÃO (Ajustado) */
-        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 40%; } /* Jogador */
-        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 25%; } /* Kills */
-        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 20%; } /* Time */
+        /* Larguras das colunas para MVP Individual (AGORA 5 COLUNAS) */
+        /* POS, JOGADOR, KILLS, MÉDIA KILLS, TIME */
+        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 10%; } /* POSIÇÃO */
+        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 35%; } /* Jogador */
+        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 15%; } /* Kills */
+        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 20%; } /* Média Kills */
+        .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { width: 20%; } /* Time */
 
 
         /* Oculta as colunas de time e pts queda em telas muito pequenas para o MVP */
         @media (max-width: 639px) { /* Mobile */
-            .mvp-table-cols .hidden-mobile { display: none !important; }
+            /* Esconde Coluna Média Kills em mobile para salvar espaço */
+            .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { display: none; }
+            .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 45%; } /* Jogador expande */
         }
         
         /* Layout principal */
@@ -171,9 +200,6 @@
     </style>
 </head>
 <body onload="checkFirstVisit()"> 
-
-    <!-- Carrega a biblioteca html2pdf.js para exportação de PDF (Mantida, mas não utilizada no JS) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Modal de Boas-Vindas (Splash Screen) -->
     <div id="welcome-modal" class="modal-overlay hidden">
@@ -290,9 +316,17 @@
         <div class="space-y-10">
             <!-- 3. Tabela de Pontuação Final -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-                    <h2 class="text-2xl font-semibold text-white">3. Tabela Final (Geral)</h2>
-                    <!-- REMOVIDOS BOTÕES DE EXPORTAÇÃO PARA PDF/EXCEL -->
+                <!-- SELEÇÃO DE VISUALIZAÇÃO GERAL -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
+                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">3. Tabela Final (Geral)</h2>
+                    <div class="flex space-x-2 p-1 bg-gray-700 rounded-lg">
+                        <button id="btn-simplified" onclick="switchTableMode('simplified')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
+                            Simplificada (6 Col.)
+                        </button>
+                        <button id="btn-detailed" onclick="switchTableMode('detailed')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
+                            Detalhada (8 Col.)
+                        </button>
+                    </div>
                 </div>
                 <div id="finalTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
@@ -301,10 +335,18 @@
 
             <!-- 4. Top 5 MVP Individual -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-                    <h2 class="text-2xl font-semibold text-white">🏅 MVP Individual (Total)</h2>
-                    <!-- REMOVIDOS BOTÕES DE EXPORTAÇÃO PARA PDF/EXCEL -->
+                 <!-- SELEÇÃO DE VISUALIZAÇÃO MVP -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
+                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 MVP Individual</h2>
+                    <select id="mvpLimitSelector" onchange="switchMvpLimit(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm">
+                        <option value="5">Top 5</option>
+                        <option value="10">Top 10</option>
+                        <option value="25">Top 25</option>
+                        <option value="100">Top 100</option>
+                        <option value="999">Todos</option>
+                    </select>
                 </div>
+
                 <div id="mvpTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
                 </div>
@@ -325,15 +367,15 @@
 
 
     <script>
-        // Lógica de exportação removida (funções exportTableToExcel e exportTableToPDF)
+        // Variável global para armazenar o modo atual da tabela
+        let currentTableMode = 'simplified'; // Tabela Geral: Inicia no modo simplificado
+        let currentMvpLimit = 5; // MVP: Inicia no Top 5
 
-        // --- MODAL / SPLASH SCREEN LOGIC (Mesma Lógica) ---
+        // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
-            // Verifica se o modal já foi mostrado na sessão
             if (!sessionStorage.getItem('welcomeModalShown')) {
                 document.getElementById('welcome-modal').classList.remove('hidden');
             } else {
-                // Se já foi mostrado, apenas exibe a página de configuração
                 showPage('config');
             }
         }
@@ -344,35 +386,77 @@
             showPage('config');
         }
 
-        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO (Mesma Lógica) ---
+        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO ---
         function showPage(pageId) {
             document.getElementById('config-page').style.display = 'none';
             document.getElementById('results-page').style.display = 'none';
             
             if (pageId === 'config') {
                 document.getElementById('config-page').style.display = 'block';
-                // Recarrega as configurações para garantir que presets estejam corretos
                 loadPreset(); 
             } else if (pageId === 'results') {
                 document.getElementById('results-page').style.display = 'block';
                 // Renderiza as tabelas ao entrar na página de resultados
                 displayResults();
+                // Garante que os botões reflitam o modo atual na reabertura da página
+                updateButtonStyles(currentTableMode); 
             }
         }
 
-        // --- PRESETS E VARIÁVEIS (Mesma Lógica) ---
+        // --- LÓGICA DE ALTERNÂNCIA DE VISUALIZAÇÃO ---
+        
+        function updateButtonStyles(mode) {
+             const btnSimplified = document.getElementById('btn-simplified');
+             const btnDetailed = document.getElementById('btn-detailed');
+
+             if (!btnSimplified || !btnDetailed) return;
+
+             // Estilos para o botão selecionado
+             const activeClasses = ['bg-accent', 'text-black'];
+             // Estilos para o botão inativo
+             const inactiveClasses = ['text-white', 'hover:bg-gray-600'];
+
+             if (mode === 'simplified') {
+                btnSimplified.classList.add(...activeClasses);
+                btnSimplified.classList.remove(...inactiveClasses);
+                btnDetailed.classList.remove(...activeClasses);
+                btnDetailed.classList.add(...inactiveClasses);
+             } else {
+                btnDetailed.classList.add(...activeClasses);
+                btnDetailed.classList.remove(...inactiveClasses);
+                btnSimplified.classList.remove(...activeClasses);
+                btnSimplified.classList.add(...inactiveClasses);
+             }
+        }
+
+        function switchTableMode(mode) {
+            currentTableMode = mode;
+            updateButtonStyles(mode);
+            // Re-renderiza a tabela no novo modo
+            if (window.finalResults && window.finalResults.length > 0) {
+                 renderFinalTable(window.finalResults, 'finalTableContainer', mode);
+            }
+        }
+        
+        function switchMvpLimit(limit) {
+            currentMvpLimit = parseInt(limit);
+            // Re-renderiza a tabela MVP no novo limite
+            if (window.finalMVP && window.finalMVP.length > 0) {
+                renderMVPTable(window.finalMVP, 'mvpTableContainer');
+            }
+        }
+
+
+        // --- PRESETS E VARIÁVEIS ---
         const POINTS_PRESETS = {
-            // Pontuação Emulador (20, 15, 10, etc. com 2 Pts/Kill)
             emulador_20_2: {
                 killPoints: 2,
                 placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
             },
-            // Pontuação WB (12, 9, 8, etc. com 1 Pt/Kill)
             wb_12_1: {
                 killPoints: 1,
                 placements: { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 }
             },
-            // Padrão do Usuário (fallback)
             custom: {
                 killPoints: 2,
                 placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
@@ -389,7 +473,7 @@
         const killPointsInput = document.getElementById('killPoints');
         const presetSelector = document.getElementById('pointPreset');
         
-        // --- FUNÇÕES DE CONTROLE E CÁLCULO (Mesma Lógica) ---
+        // --- FUNÇÕES DE CONTROLE E CÁLCULO ---
 
         function savePlacementPointsAndCalculate() {
             savePlacementPoints(); 
@@ -423,7 +507,8 @@
                 input.disabled = isDisabled;
             });
             killPointsInput.disabled = isDisabled;
-            document.querySelector('.bg-blue-600').disabled = isDisabled; 
+            const addBtn = document.querySelector('#config-page .bg-blue-600');
+            if (addBtn) addBtn.disabled = isDisabled; 
         }
 
         function initializePlacementInputs(count = 12) {
@@ -660,11 +745,11 @@
                 }
                 
                 teamScores[teamName].total += totalScore;
-                teamScores[teamName].placement += placementScore;
-                teamScores[teamName].ptsKill += killScore; // SOMA Pts Kill
+                teamScores[teamName].placement += placementScore; // Pts Queda
+                teamScores[teamName].ptsKill += killScore; // Pts Kill
                 teamScores[teamName].kills += kills;
-                teamScores[teamName].quedasList += 1; // Soma 1 Queda
-                if (place === 1) { teamScores[teamName].booyahs += 1; } // Soma Booyah
+                teamScores[teamName].quedasList += 1; 
+                if (place === 1) { teamScores[teamName].booyahs += 1; } // Contagem Booyah
                 teamScores[teamName].lastPlace = place;
             }
             
@@ -683,20 +768,24 @@
                 playerScores[playerName].kills += kills;
             }
 
-            // 3. ORDENAÇÃO
+            // 3. ORDENAÇÃO E CÁLCULO DE MÉDIA
             const finalResults = Object.values(teamScores).sort((a, b) => {
                 if (b.total !== a.total) { return b.total - a.total; }
                 return b.kills - a.kills; 
             });
 
-            const finalMVP = Object.values(playerScores).sort((a, b) => b.kills - a.kills);
+            const finalMVP = Object.values(playerScores).map(player => {
+                // Calcula a Média Kills (Total Kills / Quedas Processadas)
+                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
+                return { ...player, avgKills: avgKills };
+            }).sort((a, b) => b.kills - a.kills);
             
             return { finalResults, finalMVP };
         }
 
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
 
-        function renderFinalTable(results, containerId) {
+        function renderFinalTable(results, containerId, mode = 'simplified') {
             const container = document.getElementById(containerId);
             if (!container) return;
 
@@ -705,21 +794,34 @@
                 return;
             }
             
+            const isDetailed = mode === 'detailed';
+            const colsClass = isDetailed ? 'detailed-table-cols' : 'final-table-cols';
+
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // CABEÇALHO ATUALIZADO: Usando POSIÇÃO e QNT KILL
+            // CABEÇALHO CONDICIONAL
+            let headerHTML = `
+                <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                <th class="p-3 text-sm font-semibold uppercase">Time</th>
+                <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
+                <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
+                <th class="p-3 text-sm font-semibold uppercase">Kills</th>
+            `;
+            
+            if (isDetailed) {
+                headerHTML += `
+                    <th class="p-3 text-sm font-semibold uppercase">Pts Queda</th>
+                    <th class="p-3 text-sm font-semibold uppercase">Pts Kill</th>
+                `;
+            }
+
+            headerHTML += `<th class="p-3 text-sm font-semibold uppercase">Pontos</th>`;
+
             table.innerHTML = `
                 <thead>
-                    <tr class="table-header final-table-cols">
-                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Time</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Pts Queda</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Pts Kill</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
-                        <th class="p-3 text-sm font-semibold uppercase">QNT KILL</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Total</th>
+                    <tr class="table-header ${colsClass}">
+                        ${headerHTML}
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
@@ -731,24 +833,35 @@
                 const rank = index + 1;
                 let rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700';
                 
+                // DESTAQUE: Top 3
                 if (rank === 1) {
-                    rowClass = 'booyah-bg font-bold text-lg text-white'; 
+                    rowClass = 'booyah-bg font-bold text-lg text-black'; // Top 1 (Verde/Booyah)
+                } else if (rank <= 3) {
+                    rowClass = 'top-3-general font-bold text-lg text-black'; // Top 2 e 3 (Amarelo Dourado)
                 }
                 
                 const row = document.createElement('tr');
-                row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
+                row.className = rowClass + ' hover:bg-gray-600 transition duration-150 ' + colsClass;
 
-                // RENDER com as 8 colunas e novo nome
-                row.innerHTML = `
-                    <td class="p-3 font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${team.name}</td>
-                    <td class="p-3 font-semibold">${team.placement}</td>
-                    <td class="p-3 font-semibold">${team.ptsKill}</td>
-                    <td class="p-3 font-semibold">${team.booyahs}</td>
-                    <td class="p-3 font-semibold">${team.quedasList}</td>
-                    <td class="p-3 font-extrabold text-lg">${team.kills}</td>
-                    <td class="p-3 font-extrabold text-lg">${team.total}</td>
+                // CÉLULAS CONDICIONAIS
+                let cellHTML = `
+                    <td class="p-3 font-bold text-base ${rank <= 3 ? 'text-black' : ''}">${rank}</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${rank <= 3 ? 'text-black' : ''}">${team.name}</td>
+                    <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.booyahs}</td>
+                    <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.quedasList}</td>
+                    <td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.kills}</td>
                 `;
+
+                if (isDetailed) {
+                    cellHTML += `
+                        <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.placement}</td>
+                        <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.ptsKill}</td>
+                    `;
+                }
+
+                cellHTML += `<td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.total}</td>`;
+                
+                row.innerHTML = cellHTML;
                 tbody.appendChild(row);
             });
             
@@ -765,19 +878,22 @@
                  return;
             }
 
-            const mvpResults = playerResults.slice(0, 5);
+            // Aplica o limite de visualização
+            const limit = currentMvpLimit;
+            const mvpResults = limit === 999 ? playerResults : playerResults.slice(0, limit);
             
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // CABEÇALHO MVP ATUALIZADO: Usando POSIÇÃO
+            // CABEÇALHO MVP (5 COLUNAS, NOVA COLUNA MÉDIA KILLS)
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
                         <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
                         <th class="p-3 text-sm font-semibold uppercase">Jogador</th>
                         <th class="p-3 text-sm font-semibold uppercase">Kills</th>
-                        <th class="p-3 text-sm font-semibold uppercase hidden-mobile">Time</th>
+                        <th class="p-3 text-sm font-semibold uppercase hidden-mobile">MÉDIA KILLS</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Time</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
@@ -792,11 +908,14 @@
                 const row = document.createElement('tr');
                 row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
 
+                // CORREÇÃO FINAL: Usando a cor definida na classe mvp-bg (Ciano) para o Top 3
                 row.innerHTML = `
-                    <td class="p-3 font-bold text-base ${isTop ? 'text-black' : ''}">${rank}º</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-black' : ''}">${player.name}</td>
-                    <td class="p-3 font-extrabold text-lg ${isTop ? 'text-black' : ''}">${player.kills}</td>
-                    <td class="p-3 hidden-mobile ${isTop ? 'text-black' : ''}">${player.team}</td>
+                    <td class="p-3 font-bold text-base ${isTop ? 'text-accent' : 'text-white'}">${rank}º</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-accent' : 'text-white'}">${player.name}</td>
+                    <td class="p-3 font-extrabold text-lg ${isTop ? 'text-accent' : 'text-white'}">${player.kills}</td>
+                    <!-- NOVA COLUNA: Média Kills -->
+                    <td class="p-3 hidden-mobile ${isTop ? 'text-accent' : 'text-white'}">${player.avgKills}</td>
+                    <td class="p-3 ${isTop ? 'text-accent' : 'text-white'}">${player.team}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -808,8 +927,9 @@
         function displayResults() {
             // Verifica se há resultados globais salvos
             if (window.finalResults && window.finalResults.length > 0) {
-                // Renderiza as tabelas usando os arrays globais
-                renderFinalTable(window.finalResults, 'finalTableContainer');
+                // Renderiza a tabela geral no modo atual (default: simplified)
+                renderFinalTable(window.finalResults, 'finalTableContainer', currentTableMode);
+                // Renderiza a tabela MVP no limite atual
                 renderMVPTable(window.finalMVP, 'mvpTableContainer');
             } else {
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
@@ -820,6 +940,8 @@
         // Inicializa na primeira carga da página
         window.onload = function() {
             checkFirstVisit();
+            // Garante que os botões de visualização estejam corretos no início
+            updateButtonStyles(currentTableMode);
         };
     </script>
 </body>
