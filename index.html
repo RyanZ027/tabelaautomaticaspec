@@ -19,7 +19,7 @@
         .booyah-bg { background-color: #4CAF50; } /* Verde para 1º Lugar */
         .mvp-bg { 
             background-color: #FFC107; /* Amarelo Dourado para Top 3 MVP */
-            /* CORREÇÃO FINAL: Texto PRETO/AZUL ESCURO para MELHOR contraste no Amarelo */
+            /* Texto PRETO/AZUL ESCURO para MELHOR contraste no Amarelo */
             color: #1a2c5b !important; 
             font-weight: 700; 
         } 
@@ -63,13 +63,13 @@
         /* Larguras das colunas para Tabela Final Detalhada (8 Colunas) */
         /* POS, TIME, BOOYAH, QUEDAS, KILLS, Pts Queda, Pts Kill, PONTOS */
         .detailed-table-cols td:nth-child(1), .detailed-table-cols th:nth-child(1) { width: 8%; }  /* POSIÇÃO */
-        .detailed-table-cols td:nth-child(2), .detailed-table-cols th:nth-child(2) { width: 26%; } /* Time */
+        .detailed-table-cols td:nth-child(2), .detailed-table-cols th:nth-child(2) { width: 28%; } /* Time */
         .detailed-table-cols td:nth-child(3), .detailed-table-cols th:nth-child(3) { width: 8%; }  /* Booyah */
         .detailed-table-cols td:nth-child(4), .detailed-table-cols th:nth-child(4) { width: 10%; } /* Quedas */
         .detailed-table-cols td:nth-child(5), .detailed-table-cols th:nth-child(5) { width: 10%; } /* Kills */
         .detailed-table-cols td:nth-child(6), .detailed-table-cols th:nth-child(6) { width: 12%; } /* Pts Queda */
         .detailed-table-cols td:nth-child(7), .detailed-table-cols th:nth-child(7) { width: 12%; } /* Pts Kill */
-        .detailed-table-cols td:nth-child(8), .detailed-table-cols th:nth-child(8) { width: 14%; } /* Total Geral (Pontos) */
+        .detailed-table-cols td:nth-child(8), .detailed-table-cols th:nth-child(8) { width: 12%; } /* Total Geral (Pontos) */
 
 
         /* Centraliza os cabeçalhos de TODAS as tabelas */
@@ -253,7 +253,7 @@
                 </div>
             </div>
             
-            <!-- NOVO CAMPO: CRITÉRIO DE DESEMPATE -->
+            <!-- CAMPO DE DESEMPATE -->
             <div class="grid grid-cols-1 gap-4 mb-4">
                 <div>
                     <label for="tiebreaker" class="block text-sm font-medium text-gray-400">Critério de Desempate (2º nível):</label>
@@ -263,9 +263,10 @@
                     </select>
                 </div>
             </div>
-            <!-- FIM DO NOVO CAMPO -->
+            
+            <!-- ACrÉSCIMO E PUNIÇÃO (REMOVIDO AGORA) -->
 
-            <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
                 <!-- Colocação (1º ao 12º) -->
             </div>
             <button onclick="addPlacementInput()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
@@ -345,8 +346,42 @@
                     <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
                 </div>
             </div>
+            
+            <!-- NOVO PAINEL: ADICIONAR MAIS ARQUIVOS NA PÁGINA DE RESULTADOS -->
+            <div class="bg-card p-6 rounded-xl shadow-2xl">
+                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">4. Adicionar Mais Quedas</h2>
+                 <p class="text-sm text-gray-400 mb-3">
+                    Carregue arquivos adicionais para somar os pontos ao placar atual.
+                 </p>
+                 <input type="file" id="additionalFileInput" accept="*/*" multiple
+                        class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
+                        onchange="handleAdditionalFileUpload(event)"/>
+                 <div id="additionalStatusMessage" class="text-green-500 mt-3 hidden"></div>
+                 <button onclick="processAdditionalFiles()" id="processAdditionalButton" 
+                         class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50" disabled>
+                     ADICIONAR E ATUALIZAR PLACAR
+                 </button>
+            </div>
+            <!-- FIM DO NOVO PAINEL -->
 
-            <!-- 4. Top 5 MVP Individual -->
+
+            <!-- 5. Placar por Queda (Substitui o Acumulado) -->
+            <div class="bg-card p-6 rounded-xl shadow-2xl">
+                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Pontuação por Queda</h2>
+                 <div class="flex items-center space-x-4 mb-4">
+                     <label for="matchSelector" class="text-sm text-gray-400">Visualizar Queda:</label>
+                     <select id="matchSelector" onchange="renderMatchHistoryTable(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm w-24">
+                         <!-- Opções preenchidas via JS -->
+                         <option value="0">Carregando...</option>
+                     </select>
+                 </div>
+                 <div id="historyTableContainer" class="full-width-table">
+                     <p class="text-gray-500 text-sm">Selecione uma queda para visualizar o placar individual daquela partida.</p>
+                 </div>
+            </div>
+
+
+            <!-- 6. Top 5 MVP Individual -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                  <!-- SELEÇÃO DE VISUALIZAÇÃO MVP -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
@@ -383,6 +418,13 @@
         // Variável global para armazenar o modo atual da tabela
         let currentTableMode = 'simplified'; // Tabela Geral: Inicia no modo simplificado
         let currentMvpLimit = 5; // MVP: Inicia no Top 5
+
+        // Variáveis globais para armazenamento de dados
+        let currentFileData = []; // Lista plana de todos os logs de times de todas as quedas
+        let individualKillsData = []; // Lista plana de todos os logs de jogadores de todas as quedas
+        let matchCount = 0; 
+        // Array que armazena os logs de cada partida separadamente (para o histórico)
+        let matchLogsHistory = []; 
 
         // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
@@ -459,6 +501,13 @@
             }
         }
 
+        // --- LÓGICA DE ACRÉSCIMOS / PUNIÇÕES (REMOVIDA) ---
+        
+        // Função dummy para evitar erros no cálculo, retorna 0 (ajustes removidos)
+        function getManualAdjustments() {
+             return {};
+        }
+
 
         // --- PRESETS E VARIÁVEIS ---
         const POINTS_PRESETS = {
@@ -477,9 +526,6 @@
         };
 
         let placementPoints = { ...POINTS_PRESETS.emulador_20_2.placements }; 
-        let currentFileData = null; 
-        let individualKillsData = []; 
-        let matchCount = 0; 
         
         const errorDiv = document.getElementById('errorMessage');
         const statusDiv = document.getElementById('statusMessage');
@@ -499,14 +545,18 @@
             }
             
             const killPoints = parseInt(killPointsInput.value) || 0;
-            const tiebreaker = tiebreakerSelector.value; // Pega o critério de desempate
-            
+            const tiebreaker = tiebreakerSelector.value; 
+            const manualAdjustments = getManualAdjustments(); // Agora retorna {}
+
+            // Recalcula o placar final com todos os logs acumulados
             const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
+            // Armazena os resultados globalmente para a página de resultados
             window.finalResults = finalResults;
             window.finalMVP = finalMVP;
             window.matchCount = matchCount; 
-
+            window.matchLogsHistory = matchLogsHistory; 
+            
             showPage('results');
         }
 
@@ -582,6 +632,11 @@
             }
         }
 
+        // --- LÓGICA DE UPLOAD E ACÚMULO (SEPARADA PARA REUSO) ---
+        
+        /**
+         * Lida com o upload inicial (Config Page). Zera os dados.
+         */
         function handleFileUpload(event) {
             errorDiv.classList.add('hidden');
             statusDiv.classList.add('hidden');
@@ -593,22 +648,99 @@
                 return;
             }
             
+            // ZERA DADOS GLOBAIS
             currentFileData = [];
             individualKillsData = [];
+            matchLogsHistory = []; // ZERA HISTÓRICO DE LOGS
             matchCount = 0;
             
             const totalFiles = files.length;
+            
+            // Inicia o processamento
+            processFilesSequentially(files, statusDiv, errorDiv, () => {
+                 // CALLBACK: Finaliza o upload inicial
+                 document.getElementById('fileCountDisplay').textContent = `${files.length} arquivo(s) selecionado(s).`;
+            });
+        }
+        
+        /**
+         * Lida com o upload adicional (Results Page). Acumula nos dados existentes.
+         */
+        let additionalFilesQueue = [];
+        
+        function handleAdditionalFileUpload(event) {
+            const files = event.target.files;
+            const statusDiv = document.getElementById('additionalStatusMessage');
+            const button = document.getElementById('processAdditionalButton');
 
-            const processNextFile = (index) => {
+            if (files.length === 0) {
+                 additionalFilesQueue = [];
+                 button.disabled = true;
+                 statusDiv.classList.add('hidden');
+                 return;
+            }
+            
+            // Zera a queue e adiciona os novos arquivos
+            additionalFilesQueue = Array.from(files); 
+            statusDiv.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
+            statusDiv.classList.remove('hidden');
+            button.disabled = false;
+        }
+        
+        /**
+         * Processa os arquivos adicionais e recalcula o placar.
+         */
+        function processAdditionalFiles() {
+            const button = document.getElementById('processAdditionalButton');
+            const statusDiv = document.getElementById('additionalStatusMessage');
+            const errorDiv = document.getElementById('errorMessage');
+
+            if (additionalFilesQueue.length === 0) {
+                statusDiv.textContent = "Nenhum arquivo novo para processar.";
+                statusDiv.classList.remove('hidden');
+                return;
+            }
+
+            button.disabled = true;
+            statusDiv.textContent = 'Processando arquivos...';
+            errorDiv.classList.add('hidden');
+            
+            const initialMatchCount = matchCount; 
+            
+            // Faz o processamento sequencialmente, ACUMULANDO nos arrays globais
+            processFilesSequentially(additionalFilesQueue, statusDiv, errorDiv, () => {
+                 // CALLBACK: Recalcula e re-renderiza após processar tudo
+                 const newQuedas = matchCount - initialMatchCount;
+                 statusDiv.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
+                 
+                 // Recalcula o placar final com todos os dados acumulados
+                 const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
+                 const tiebreaker = document.getElementById('tiebreaker').value;
+                 
+                 const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+
+                 window.finalResults = finalResults;
+                 window.finalMVP = finalMVP;
+                 
+                 displayResults(); // Re-renderiza as tabelas na página de resultados
+                 
+                 // Limpa o input de arquivo adicional e a fila
+                 document.getElementById('additionalFileInput').value = '';
+                 additionalFilesQueue = [];
+            });
+        }
+
+
+        /**
+         * Processa arquivos em sequência e acumula logs.
+         */
+        function processFilesSequentially(files, statusDiv, errorDiv, callback) {
+            const totalFiles = files.length;
+            let index = 0;
+
+            const processNextFile = () => {
                 if (index >= totalFiles) {
-                    if (matchCount > 0) {
-                        statusDiv.textContent = `✅ ${matchCount} queda(s) válida(s) carregada(s). Clique em CALCULAR!`;
-                        statusDiv.classList.remove('hidden');
-                    } else {
-                        errorDiv.textContent = `Nenhum resultado válido encontrado em ${totalFiles} arquivo(s).`;
-                        errorDiv.classList.remove('hidden');
-                    }
-                    document.getElementById('fileCountDisplay').textContent = `${totalFiles} arquivo(s) selecionado(s).`;
+                    if (callback) callback();
                     return;
                 }
 
@@ -634,24 +766,31 @@
                     } 
                     
                     if (data.length > 0) {
+                        // ACUMULA LOGS GLOBAIS
                         currentFileData.push(...data);
                         individualKillsData.push(...fileIndividualKills);
+                        
+                        // NOVO: SALVA O HISTÓRICO DE LOGS DESTA QUEDA
+                        matchLogsHistory.push(data); 
+                        
                         matchCount++; 
                     }
                     
-                    processNextFile(index + 1);
+                    index++;
+                    processNextFile();
                 };
                 
                 reader.onerror = () => {
                     errorDiv.textContent = `Erro ao ler o arquivo: ${file.name}.`;
                     errorDiv.classList.remove('hidden');
-                    processNextFile(index + 1);
+                    index++;
+                    processNextFile();
                 };
 
                 reader.readAsText(file);
             };
 
-            processNextFile(0);
+            processNextFile();
         }
         
         function extractIndividualKills(logText) {
@@ -733,7 +872,6 @@
 
         function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker) {
             const teamScores = {};
-            const playerScores = {};
             
             // 1. CALCULO DE PONTUAÇÃO DOS TIMES
             for (const teamLog of logData) {
@@ -743,6 +881,8 @@
 
                 if (!teamName || isNaN(place) || isNaN(kills)) continue;
 
+                // CORREÇÃO: Verifica se o placementPoints[place] existe antes de tentar ler
+                // e garante que a variável global placementPoints (que foi populada em savePlacementPoints) seja usada.
                 const placementScore = placementPoints[place] !== undefined ? placementPoints[place] : 0;
                 const killScore = kills * killPoints;
                 const totalScore = placementScore + killScore;
@@ -756,7 +896,8 @@
                         booyahs: 0, 
                         quedasList: 0, 
                         lastPlace: place, 
-                        name: teamName
+                        name: teamName,
+                        manualAdjustment: 0 
                     };
                 }
                 
@@ -792,9 +933,9 @@
             const finalMVP = Object.values(processedPlayerMatches).map(player => {
                 const avgKills = player.matchesPlayed > 0 ? (player.kills / player.matchesPlayed).toFixed(2) : '0.00';
                 return { ...player, avgKills: avgKills };
-            }).sort((a, b) => b.kills - a.kills); 
+            }).sort((a, b) => b.kills - a.kills); // Ordena por Kills
             
-            // 3. ORDENAÇÃO FINAL DA TABELA GERAL (USANDO CRITÉRIO DE DESEMPATE)
+            // 3. ORDENAÇÃO FINAL DA TABELA GERAL (CORREÇÃO DA ORDEM PRINCIPAL E DESEMPATE)
             const finalResults = Object.values(teamScores).sort((a, b) => {
                 // 1. Ordena por Total (Pontos) descendente
                 if (b.total !== a.total) { 
@@ -803,10 +944,8 @@
                 
                 // 2. Desempate (Critério Selecionado)
                 if (tiebreaker === 'booyahs') {
-                    // Desempate por Booyahs descendente
                     return b.booyahs - a.booyahs;
                 } else {
-                    // Desempate por Kills descendente (padrão se for 'kills' ou outro)
                     return b.kills - a.kills;
                 }
             });
@@ -891,6 +1030,7 @@
                     `;
                 }
 
+                // Remove o ícone de classificação (rankIcon) já que o ajuste manual foi removido
                 cellHTML += `<td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.total}</td>`;
                 
                 row.innerHTML = cellHTML;
@@ -958,23 +1098,116 @@
             container.appendChild(table);
         }
 
+        function renderMatchHistoryTable(selectedMatchIndex) {
+            const container = document.getElementById('historyTableContainer');
+            const matchIndex = parseInt(selectedMatchIndex) - 1; // 0-based index
+
+            if (matchIndex < 0 || matchIndex >= matchLogsHistory.length) {
+                container.innerHTML = `<p class="text-gray-500">Selecione uma queda válida para visualizar.</p>`;
+                return;
+            }
+
+            // Pegamos apenas o log da queda selecionada (não acumulado)
+            const specificMatchLog = matchLogsHistory[matchIndex];
+            
+            // Reusamos a lógica de cálculo, mas apenas para o log da queda selecionada
+            const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
+            const tiebreaker = document.getElementById('tiebreaker').value; 
+            
+            // Garante que as configs de pontuação estejam atualizadas
+            savePlacementPoints(); 
+            const placementPoints = window.placementPoints; 
+            
+            // Cálculo com log de apenas UMA partida (o array individualKillsData é vazio para este cálculo, pois é por time)
+            const { finalResults: matchResults } = calcularPontuacoes(
+                specificMatchLog, 
+                killPoints, 
+                placementPoints, 
+                [], // individualKillsData vazio
+                tiebreaker
+            );
+            
+            // A tabela de histórico será Simplificada (6 Colunas)
+            // NOVO: Criaremos uma tabela focada no placar daquela QUEDA ESPECÍFICA (não acumulado)
+
+            const table = document.createElement('table');
+            table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
+            
+            // CABEÇALHO SIMPLIFICADO
+            table.innerHTML = `
+                <thead>
+                    <tr class="table-header final-table-cols">
+                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Time</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Kills</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Pontos</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
+            `;
+            
+            const tbody = table.querySelector('tbody');
+            
+            // Ordenamos a queda pelo PLACE (posição de queda)
+            matchResults.sort((a, b) => a.lastPlace - b.lastPlace);
+
+            matchResults.forEach((team, index) => {
+                const rank = team.lastPlace; // Usa a colocação real da queda, não o index
+                let rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700';
+                
+                // DESTAQUE SUTIL APENAS NO 1º LUGAR DE CADA QUEDA
+                if (rank === 1) {
+                    rowClass = 'booyah-bg font-bold text-lg text-black';
+                }
+                
+                const row = document.createElement('tr');
+                row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
+
+                // Renderização para PLACAR POR QUEDA
+                row.innerHTML = `
+                    <td class="p-3 font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}º</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${rank === 1 ? 'text-black' : ''}">${team.name}</td>
+                    <td class="p-3 font-semibold ${rank === 1 ? 'text-black' : ''}">${team.booyahs}</td>
+                    <td class="p-3 font-extrabold text-lg ${rank === 1 ? 'text-black' : ''}">${team.kills}</td>
+                    <td class="p-3 font-extrabold text-lg ${rank === 1 ? 'text-black' : ''}">${team.total}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
         function displayResults() {
-            // Verifica se há resultados globais salvos
+            const matchSelector = document.getElementById('matchSelector');
+
+            // 1. Renderiza as tabelas finais
             if (window.finalResults && window.finalResults.length > 0) {
-                // Renderiza a tabela geral no modo atual (default: simplified)
                 renderFinalTable(window.finalResults, 'finalTableContainer', currentTableMode);
-                // Renderiza a tabela MVP no limite atual
                 renderMVPTable(window.finalMVP, 'mvpTableContainer');
             } else {
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
                 document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
+            }
+            
+            // 2. Preenche o seletor de histórico
+            matchSelector.innerHTML = '';
+            if (matchLogsHistory.length === 0) {
+                 matchSelector.innerHTML = `<option value="0">Nenhuma queda</option>`;
+            } else {
+                for (let i = 1; i <= matchLogsHistory.length; i++) {
+                     matchSelector.innerHTML += `<option value="${i}">Queda ${i}</option>`;
+                }
+                // Renderiza o histórico para a última queda por padrão
+                renderMatchHistoryTable(matchLogsHistory.length);
+                matchSelector.value = matchLogsHistory.length;
             }
         }
 
         // Inicializa na primeira carga da página
         window.onload = function() {
             checkFirstVisit();
-            // Garante que os botões de visualização estejam corretos no início
             updateButtonStyles(currentTableMode);
         };
     </script>
