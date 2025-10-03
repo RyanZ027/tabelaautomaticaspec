@@ -172,7 +172,7 @@
 </head>
 <body onload="checkFirstVisit()"> 
 
-    <!-- Carrega a biblioteca html2pdf.js para exportação de PDF -->
+    <!-- Carrega a biblioteca html2pdf.js para exportação de PDF (Mantida, mas não utilizada no JS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Modal de Boas-Vindas (Splash Screen) -->
@@ -292,16 +292,7 @@
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                 <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
                     <h2 class="text-2xl font-semibold text-white">3. Tabela Final (Geral)</h2>
-                    <div class="space-x-2">
-                        <button onclick="exportTableToExcel('finalTableContainer', 'Tabela_Geral')" 
-                                class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
-                            Exportar Excel
-                        </button>
-                        <button onclick="exportTableToPDF('finalTableContainer', 'Tabela_Geral')" 
-                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
-                            Exportar PDF
-                        </button>
-                    </div>
+                    <!-- REMOVIDOS BOTÕES DE EXPORTAÇÃO PARA PDF/EXCEL -->
                 </div>
                 <div id="finalTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
@@ -312,16 +303,7 @@
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                 <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
                     <h2 class="text-2xl font-semibold text-white">🏅 MVP Individual (Total)</h2>
-                    <div class="space-x-2">
-                        <button onclick="exportTableToExcel('mvpTableContainer', 'MVP_Individual')" 
-                                class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
-                            Exportar Excel
-                        </button>
-                        <button onclick="exportTableToPDF('mvpTableContainer', 'MVP_Individual')" 
-                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
-                            Exportar PDF
-                        </button>
-                    </div>
+                    <!-- REMOVIDOS BOTÕES DE EXPORTAÇÃO PARA PDF/EXCEL -->
                 </div>
                 <div id="mvpTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
@@ -337,104 +319,13 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
                      alt="Logo Instagram" class="insta-footer-img ml-2">
             </a>
+            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA!</p>
         </footer>
     </div>
 
 
     <script>
-        // --- FUNÇÕES DE EXPORTAÇÃO (MESMA LÓGICA) ---
-        
-        /**
-         * Exporta a tabela para um arquivo Excel (CSV com encoding para XLSX)
-         * @param {string} containerId - ID do container que possui a tabela.
-         * @param {string} filename - Nome do arquivo de saída.
-         */
-        function exportTableToExcel(containerId, filename) {
-            const container = document.getElementById(containerId);
-            const table = container.querySelector('table');
-            if (!table) {
-                alert('Tabela não encontrada para exportação.');
-                return;
-            }
-
-            let csv = [];
-            const rows = table.querySelectorAll("tr");
-
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                
-                for (let j = 0; j < cols.length; j++) {
-                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '""');
-                    row.push('"' + data + '"');
-                }
-                csv.push(row.join(";"));
-            }
-
-            // Cria o link de download
-            let csvString = csv.join('\n');
-            let a = document.createElement('a');
-            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
-            a.target = '_blank';
-            a.download = filename + '.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        /**
-         * Exporta a tabela para um arquivo PDF usando html2pdf.js
-         * @param {string} containerId - ID do container que possui a tabela.
-         * @param {string} filename - Nome do arquivo de saída.
-         */
-        function exportTableToPDF(containerId, filename) {
-            const element = document.getElementById(containerId).querySelector('table');
-            if (!element) {
-                alert('Tabela não encontrada para exportação.');
-                return;
-            }
-
-            // Clonar a tabela para garantir que o PDF mantenha o estilo
-            const clone = element.cloneNode(true);
-            
-            // Forçar o fundo escuro do corpo para ser branco no PDF
-            clone.style.backgroundColor = 'white';
-            clone.style.color = 'black'; 
-            
-            // Forçar estilos de célula e cabeçalho para garantir que as linhas e cores apareçam no PDF
-            clone.querySelectorAll('th').forEach(th => {
-                 th.style.backgroundColor = '#2c4a92';
-                 th.style.color = 'white';
-            });
-            
-            // CORREÇÃO CRUCIAL: Adicionar cores de fundo para Booyah e MVP nas linhas
-            clone.querySelectorAll('tr').forEach(tr => {
-                 tr.style.border = '1px solid #4a5568';
-                 
-                 // Verifica se a linha é Booyah (verde)
-                 if (tr.classList.contains('booyah-bg')) {
-                    tr.style.backgroundColor = '#4CAF50';
-                    tr.style.color = 'white'; 
-                 }
-                 
-                 // Verifica se a linha é MVP (amarelo)
-                 if (tr.classList.contains('mvp-bg')) {
-                    tr.style.backgroundColor = '#FFC107'; 
-                    tr.style.color = '#1a2c5b'; // Texto escuro
-                 }
-            });
-            
-            // Ocultar elementos de UI específicos do Canvas que não devem ir para o PDF
-            const options = {
-                margin: 10,
-                filename: filename + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                // Aumentei a escala para melhor qualidade de impressão
-                html2canvas: { scale: 4, logging: true, dpi: 192, letterRendering: true, backgroundColor: '#ffffff' }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
-
-            html2pdf().set(options).from(clone).save();
-        }
+        // Lógica de exportação removida (funções exportTableToExcel e exportTableToPDF)
 
         // --- MODAL / SPLASH SCREEN LOGIC (Mesma Lógica) ---
         function checkFirstVisit() {
