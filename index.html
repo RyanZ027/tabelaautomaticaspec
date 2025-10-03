@@ -32,6 +32,8 @@
         .full-width-table table {
             table-layout: fixed; 
             width: 100%;
+            border-collapse: collapse; /* Adiciona bordas visíveis */
+            border: 1px solid #4a5568; /* Borda externa */
         }
         
         .full-width-table th, .full-width-table td {
@@ -40,24 +42,45 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            border: 1px solid #4a5568; /* Linhas internas da tabela */
         }
         
         /* Larguras das colunas para Tabela Final (Time) */
-        /* Total de 8 colunas: #, Time, Pts Queda, Pts Kill, Total, Booyah, Quedas, Kills Total */
-        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 5%; } /* # */
+        /* Total de 8 colunas */
+        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 8%; } /* POSIÇÃO */
         .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 25%; } /* Time */
-        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 15%; } /* Pts Queda */
-        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 15%; } /* Pts Kill */
+        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 12%; } /* Pts Queda */
+        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 12%; } /* Pts Kill */
         .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 10%; } /* Booyah */
         .final-table-cols td:nth-child(6), .final-table-cols th:nth-child(6) { width: 10%; } /* Quedas */
-        .final-table-cols td:nth-child(7), .final-table-cols th:nth-child(7) { width: 10%; } /* Kills Total */
-        .final-table-cols td:nth-child(8), .final-table-cols th:nth-child(8) { width: 15%; } /* Total Geral */
+        .final-table-cols td:nth-child(7), .final-table-cols th:nth-child(7) { width: 10%; } /* QNT KILL */
+        .final-table-cols td:nth-child(8), .final-table-cols th:nth-child(8) { width: 13%; } /* Total Geral */
 
+        /* Centraliza os cabeçalhos de TODAS as tabelas */
+        .full-width-table th {
+            text-align: center !important;
+        }
+
+        /* Centraliza o texto das células da tabela geral, exceto a coluna Time (coluna 2) */
+        .final-table-cols td {
+            text-align: center;
+        }
+        .final-table-cols td:nth-child(2) {
+            text-align: left; /* Mantém o nome do Time alinhado à esquerda */
+        }
+
+        /* Centraliza o texto das células da tabela MVP, exceto a coluna Jogador (coluna 2) */
+        .mvp-table-cols td {
+            text-align: center;
+        }
+        .mvp-table-cols td:nth-child(2) {
+            text-align: left; /* Mantém o nome do Jogador alinhado à esquerda */
+        }
 
         /* Larguras das colunas para MVP Individual */
-        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 10%; } /* Posição */
-        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 50%; } /* Jogador */
-        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 20%; } /* Kills */
+        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 15%; } /* POSIÇÃO (Ajustado) */
+        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 40%; } /* Jogador */
+        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 25%; } /* Kills */
         .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 20%; } /* Time */
 
 
@@ -73,21 +96,39 @@
             padding: 20px;
         }
 
-        /* Footer Style */
+        /* Footer Style CORRIGIDO */
         .app-footer {
-            text-align: center;
+            display: flex;
+            flex-direction: column; /* Coloca os itens em coluna para melhor organização */
+            justify-content: center; 
+            align-items: center; 
             padding: 15px;
             margin-top: 30px;
             font-size: 0.8rem;
             color: #9ca3af; /* Gray 400 */
         }
+        .app-footer-links {
+            display: flex;
+            align-items: center;
+            margin-top: 5px; /* Espaço entre o texto e os links */
+        }
         .app-footer a {
             color: #fff;
-            margin-left: 8px;
+            margin-left: 10px;
             transition: color 0.3s;
+            display: flex;
+            align-items: center;
         }
         .app-footer a:hover {
             color: #00bcd4; /* Accent color */
+        }
+
+        /* Aviso Legal */
+        .aviso-legal {
+            margin-top: 15px;
+            font-size: 0.75rem;
+            color: #f44336; /* Vermelho para destaque */
+            font-weight: 600;
         }
 
         /* --- Estilos do Modal de Boas-Vindas --- */
@@ -97,7 +138,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             z-index: 50;
             display: flex;
             justify-content: center;
@@ -113,23 +154,39 @@
             text-align: center;
             color: #1a2c5b; /* Texto escuro */
         }
-        .instagram-logo {
-            color: #c13584; /* Cor representativa do Instagram */
+        
+        /* NOVOS ESTILOS PARA IMAGENS REAIS DO INSTAGRAM */
+        .insta-footer-img {
+            width: 24px; /* Tamanho para o footer */
+            height: 24px;
+            border-radius: 6px;
         }
+        .insta-modal-img {
+            width: 50px; /* Tamanho para o modal */
+            height: 50px;
+            border-radius: 12px;
+            margin: 0 auto;
+        }
+
     </style>
 </head>
-<body onload="checkFirstVisit()"> <!-- ALTERADO: Chama checkFirstVisit() -->
+<body onload="checkFirstVisit()"> 
+
+    <!-- Carrega a biblioteca html2pdf.js para exportação de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Modal de Boas-Vindas (Splash Screen) -->
     <div id="welcome-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2 class="text-3xl font-bold mb-4">Bem-vindo(a), RyanZ!</h2>
-            <p class="text-gray-600 mb-6">Curtiu a Calculadora? Siga nas redes!</p>
+            <!-- TÍTULO E TEXTO ATUALIZADOS NO MODAL -->
+            <h2 class="text-3xl font-bold mb-4">BEM VINDO (A)</h2>
+            <p class="text-gray-600 mb-6">Desenvolvido por RyanZ © 2025.<br>Curtiu o projeto? Siga nas redes!</p>
 
-            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" class="inline-block p-4 mx-2 rounded-full instagram-logo hover:opacity-80 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-10 h-10">
-                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
-                </svg>
+            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" 
+               class="inline-block p-2 mx-2 rounded-xl bg-transparent hover:opacity-80 transition">
+                <!-- IMAGEM REAL DO INSTAGRAM (PNG de alta qualidade) -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
+                     alt="Logo Instagram" class="insta-modal-img">
             </a>
 
             <button onclick="closeModal()" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200">
@@ -143,7 +200,7 @@
     <div id="config-page" class="container-main space-y-8">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
             <!-- TÍTULO DA PÁGINA -->
-            <h1 class="text-4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
+            <h1 class="4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
             <p class="text-gray-400 mt-1">Calculadora Automatica de Tabela Via SPEC</p>
         </header>
 
@@ -203,13 +260,17 @@
         
         <!-- FOOTER (Rodapé da página de Configuração) -->
         <footer class="app-footer">
-            Desenvolvido Por RyanZ © 2025
-            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <!-- CORREÇÃO DA LOGO: SVG correto para cor do Instagram (usando classe instagram-logo) -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
-                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
-                </svg>
-            </a>
+            <div class="flex items-center space-x-2">
+                <span class="text-white">Desenvolvido por RyanZ © 2025.</span>
+                <span class="text-gray-400">Curtiu o projeto?</span>
+                <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
+                    Siga nas redes!
+                    <!-- IMAGEM REAL DO INSTAGRAM NO FOOTER -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
+                         alt="Logo Instagram" class="insta-footer-img ml-2">
+                </a>
+            </div>
+            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA</p>
         </footer>
         
     </div>
@@ -217,7 +278,7 @@
     <!-- Tela de Resultados (Página 2) -->
     <div id="results-page" class="container-main space-y-8" style="display: none;">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
-            <h1 class="text-4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
+            <h1 class="4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
             <p class="text-gray-400 mt-1">Visão Geral e MVP</p>
         </header>
 
@@ -229,7 +290,19 @@
         <div class="space-y-10">
             <!-- 3. Tabela de Pontuação Final -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">3. Tabela Final (Geral)</h2>
+                <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                    <h2 class="text-2xl font-semibold text-white">3. Tabela Final (Geral)</h2>
+                    <div class="space-x-2">
+                        <button onclick="exportTableToExcel('finalTableContainer', 'Tabela_Geral')" 
+                                class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
+                            Exportar Excel
+                        </button>
+                        <button onclick="exportTableToPDF('finalTableContainer', 'Tabela_Geral')" 
+                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
+                            Exportar PDF
+                        </button>
+                    </div>
+                </div>
                 <div id="finalTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
                 </div>
@@ -237,7 +310,19 @@
 
             <!-- 4. Top 5 MVP Individual -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">🏅 MVP Individual (Total)</h2>
+                <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                    <h2 class="text-2xl font-semibold text-white">🏅 MVP Individual (Total)</h2>
+                    <div class="space-x-2">
+                        <button onclick="exportTableToExcel('mvpTableContainer', 'MVP_Individual')" 
+                                class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
+                            Exportar Excel
+                        </button>
+                        <button onclick="exportTableToPDF('mvpTableContainer', 'MVP_Individual')" 
+                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-1 px-3 rounded transition duration-200">
+                            Exportar PDF
+                        </button>
+                    </div>
+                </div>
                 <div id="mvpTableContainer" class="full-width-table">
                     <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
                 </div>
@@ -246,18 +331,96 @@
         
         <!-- FOOTER (Rodapé da página de Resultados) -->
         <footer class="app-footer">
-            Desenvolvido Por RyanZ © 2025
+            Desenvolvido por RyanZ © 2025.
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <!-- CORREÇÃO DA LOGO: SVG correto para cor do Instagram (usando classe instagram-logo) -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
-                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
-                </svg>
+                <!-- IMAGEM REAL DO INSTAGRAM NO FOOTER -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
+                     alt="Logo Instagram" class="insta-footer-img ml-2">
             </a>
         </footer>
     </div>
 
 
     <script>
+        // --- FUNÇÕES DE EXPORTAÇÃO (MESMA LÓGICA) ---
+        
+        /**
+         * Exporta a tabela para um arquivo Excel (CSV com encoding para XLSX)
+         * @param {string} containerId - ID do container que possui a tabela.
+         * @param {string} filename - Nome do arquivo de saída.
+         */
+        function exportTableToExcel(containerId, filename) {
+            const container = document.getElementById(containerId);
+            const table = container.querySelector('table');
+            if (!table) {
+                alert('Tabela não encontrada para exportação.');
+                return;
+            }
+
+            let csv = [];
+            const rows = table.querySelectorAll("tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                
+                for (let j = 0; j < cols.length; j++) {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, '""');
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(";"));
+            }
+
+            // Cria o link de download
+            let csvString = csv.join('\n');
+            let a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
+            a.target = '_blank';
+            a.download = filename + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        /**
+         * Exporta a tabela para um arquivo PDF usando html2pdf.js
+         * @param {string} containerId - ID do container que possui a tabela.
+         * @param {string} filename - Nome do arquivo de saída.
+         */
+        function exportTableToPDF(containerId, filename) {
+            const element = document.getElementById(containerId).querySelector('table');
+            if (!element) {
+                alert('Tabela não encontrada para exportação.');
+                return;
+            }
+
+            // Clonar a tabela para garantir que o PDF mantenha o estilo
+            const clone = element.cloneNode(true);
+            
+            // Forçar o fundo escuro do corpo para ser branco no PDF
+            clone.style.backgroundColor = 'white';
+            clone.style.color = 'black'; 
+            
+            // Forçar estilos de célula e cabeçalho para garantir que as linhas e cores apareçam no PDF
+            clone.querySelectorAll('th').forEach(th => {
+                 th.style.backgroundColor = '#2c4a92';
+                 th.style.color = 'white';
+            });
+            clone.querySelectorAll('tr').forEach(tr => {
+                 tr.style.border = '1px solid #4a5568';
+            });
+            
+            // Ocultar elementos de UI específicos do Canvas que não devem ir para o PDF
+            const options = {
+                margin: 10,
+                filename: filename + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().set(options).from(clone).save();
+        }
+
         // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
             // Verifica se o modal já foi mostrado na sessão
@@ -323,7 +486,7 @@
         const presetSelector = document.getElementById('pointPreset');
         // matchCountDisplay é usado na página de resultados
         
-        // --- FUNÇÕES DE CONTROLE E CÁLCULO ---
+        // --- FUNÇÕES DE CONTROLE E CÁLCULO (Mesma Lógica) ---
 
         function savePlacementPointsAndCalculate() {
             // 1. Salva a pontuação atual dos inputs
@@ -646,18 +809,18 @@
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // NOVO CABEÇALHO COM TODAS AS 8 COLUNAS
+            // CABEÇALHO ATUALIZADO: Usando POSIÇÃO e QNT KILL
             table.innerHTML = `
                 <thead>
                     <tr class="table-header final-table-cols">
-                        <th class="p-3 text-left text-sm font-semibold uppercase">#</th>
-                        <th class="p-3 text-left text-sm font-semibold uppercase">Time</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Pts Queda</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Pts Kill</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Booyah</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Quedas</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills Total</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Total</th>
+                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Time</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Pts Queda</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Pts Kill</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
+                        <th class="p-3 text-sm font-semibold uppercase">QNT KILL</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Total</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
@@ -676,16 +839,16 @@
                 const row = document.createElement('tr');
                 row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
 
-                // NOVO RENDER com as 8 colunas
+                // RENDER com as 8 colunas e novo nome
                 row.innerHTML = `
-                    <td class="p-3 text-left font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}</td>
-                    <td class="p-3 text-left font-medium whitespace-nowrap overflow-hidden text-ellipsis">${team.name}</td>
-                    <td class="p-3 text-center font-semibold">${team.placement}</td>
-                    <td class="p-3 text-center font-semibold">${team.ptsKill}</td>
-                    <td class="p-3 text-center font-semibold">${team.booyahs}</td>
-                    <td class="p-3 text-center font-semibold">${team.quedasList}</td>
-                    <td class="p-3 text-center font-extrabold text-lg">${team.kills}</td>
-                    <td class="p-3 text-center font-extrabold text-lg">${team.total}</td>
+                    <td class="p-3 font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${team.name}</td>
+                    <td class="p-3 font-semibold">${team.placement}</td>
+                    <td class="p-3 font-semibold">${team.ptsKill}</td>
+                    <td class="p-3 font-semibold">${team.booyahs}</td>
+                    <td class="p-3 font-semibold">${team.quedasList}</td>
+                    <td class="p-3 font-extrabold text-lg">${team.kills}</td>
+                    <td class="p-3 font-extrabold text-lg">${team.total}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -708,13 +871,14 @@
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
+            // CABEÇALHO MVP ATUALIZADO: Usando POSIÇÃO
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
-                        <th class="p-3 text-left text-sm font-semibold uppercase">Posição</th>
-                        <th class="p-3 text-left text-sm font-semibold uppercase">Jogador</th>
-                        <th class="p-3 text-center text-sm font-semibold uppercase">Kills</th>
-                        <th class="p-3 text-left text-sm font-semibold uppercase hidden-mobile">Time</th>
+                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Jogador</th>
+                        <th class="p-3 text-sm font-semibold uppercase">Kills</th>
+                        <th class="p-3 text-sm font-semibold uppercase hidden-mobile">Time</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
@@ -730,10 +894,10 @@
                 row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
 
                 row.innerHTML = `
-                    <td class="p-3 text-left font-bold text-base ${isTop ? 'text-black' : ''}">${rank}º</td>
-                    <td class="p-3 text-left font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-black' : ''}">${player.name}</td>
-                    <td class="p-3 text-center font-extrabold text-lg ${isTop ? 'text-black' : ''}">${player.kills}</td>
-                    <td class="p-3 text-left hidden-mobile ${isTop ? 'text-black' : ''}">${player.team}</td>
+                    <td class="p-3 font-bold text-base ${isTop ? 'text-black' : ''}">${rank}º</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-black' : ''}">${player.name}</td>
+                    <td class="p-3 font-extrabold text-lg ${isTop ? 'text-black' : ''}">${player.kills}</td>
+                    <td class="p-3 hidden-mobile ${isTop ? 'text-black' : ''}">${player.team}</td>
                 `;
                 tbody.appendChild(row);
             });
