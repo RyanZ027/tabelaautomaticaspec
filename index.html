@@ -365,23 +365,7 @@
             <!-- FIM DO NOVO PAINEL -->
 
 
-            <!-- 5. Placar por Queda (Substitui o Acumulado) -->
-            <div class="bg-card p-6 rounded-xl shadow-2xl">
-                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Pontuação por Queda</h2>
-                 <div class="flex items-center space-x-4 mb-4">
-                     <label for="matchSelector" class="text-sm text-gray-400">Visualizar Queda:</label>
-                     <select id="matchSelector" onchange="renderMatchHistoryTable(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm w-24">
-                         <!-- Opções preenchidas via JS -->
-                         <option value="0">Carregando...</option>
-                     </select>
-                 </div>
-                 <div id="historyTableContainer" class="full-width-table">
-                     <p class="text-gray-500 text-sm">Selecione uma queda para visualizar o placar individual daquela partida.</p>
-                 </div>
-            </div>
-
-
-            <!-- 6. Top 5 MVP Individual -->
+            <!-- 5. Top 5 MVP Individual -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                  <!-- SELEÇÃO DE VISUALIZAÇÃO MVP -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
@@ -931,7 +915,7 @@
             }
             
             const finalMVP = Object.values(processedPlayerMatches).map(player => {
-                const avgKills = player.matchesPlayed > 0 ? (player.kills / player.matchesPlayed).toFixed(2) : '0.00';
+                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
                 return { ...player, avgKills: avgKills };
             }).sort((a, b) => b.kills - a.kills); // Ordena por Kills
             
@@ -1098,90 +1082,7 @@
             container.appendChild(table);
         }
 
-        function renderMatchHistoryTable(selectedMatchIndex) {
-            const container = document.getElementById('historyTableContainer');
-            const matchIndex = parseInt(selectedMatchIndex) - 1; // 0-based index
-
-            if (matchIndex < 0 || matchIndex >= matchLogsHistory.length) {
-                container.innerHTML = `<p class="text-gray-500">Selecione uma queda válida para visualizar.</p>`;
-                return;
-            }
-
-            // Pegamos apenas o log da queda selecionada (não acumulado)
-            const specificMatchLog = matchLogsHistory[matchIndex];
-            
-            // Reusamos a lógica de cálculo, mas apenas para o log da queda selecionada
-            const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
-            const tiebreaker = document.getElementById('tiebreaker').value; 
-            
-            // Garante que as configs de pontuação estejam atualizadas
-            savePlacementPoints(); 
-            const placementPoints = window.placementPoints; 
-            
-            // Cálculo com log de apenas UMA partida (o array individualKillsData é vazio para este cálculo, pois é por time)
-            const { finalResults: matchResults } = calcularPontuacoes(
-                specificMatchLog, 
-                killPoints, 
-                placementPoints, 
-                [], // individualKillsData vazio
-                tiebreaker
-            );
-            
-            // A tabela de histórico será Simplificada (6 Colunas)
-            // NOVO: Criaremos uma tabela focada no placar daquela QUEDA ESPECÍFICA (não acumulado)
-
-            const table = document.createElement('table');
-            table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
-            
-            // CABEÇALHO SIMPLIFICADO
-            table.innerHTML = `
-                <thead>
-                    <tr class="table-header final-table-cols">
-                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Time</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Kills</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Pontos</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
-            `;
-            
-            const tbody = table.querySelector('tbody');
-            
-            // Ordenamos a queda pelo PLACE (posição de queda)
-            matchResults.sort((a, b) => a.lastPlace - b.lastPlace);
-
-            matchResults.forEach((team, index) => {
-                const rank = team.lastPlace; // Usa a colocação real da queda, não o index
-                let rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700';
-                
-                // DESTAQUE SUTIL APENAS NO 1º LUGAR DE CADA QUEDA
-                if (rank === 1) {
-                    rowClass = 'booyah-bg font-bold text-lg text-black';
-                }
-                
-                const row = document.createElement('tr');
-                row.className = rowClass + ' hover:bg-gray-600 transition duration-150 final-table-cols';
-
-                // Renderização para PLACAR POR QUEDA
-                row.innerHTML = `
-                    <td class="p-3 font-bold text-base ${rank === 1 ? 'text-black' : ''}">${rank}º</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${rank === 1 ? 'text-black' : ''}">${team.name}</td>
-                    <td class="p-3 font-semibold ${rank === 1 ? 'text-black' : ''}">${team.booyahs}</td>
-                    <td class="p-3 font-extrabold text-lg ${rank === 1 ? 'text-black' : ''}">${team.kills}</td>
-                    <td class="p-3 font-extrabold text-lg ${rank === 1 ? 'text-black' : ''}">${team.total}</td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            container.innerHTML = '';
-            container.appendChild(table);
-        }
-
         function displayResults() {
-            const matchSelector = document.getElementById('matchSelector');
-
             // 1. Renderiza as tabelas finais
             if (window.finalResults && window.finalResults.length > 0) {
                 renderFinalTable(window.finalResults, 'finalTableContainer', currentTableMode);
@@ -1189,19 +1090,6 @@
             } else {
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
                 document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
-            }
-            
-            // 2. Preenche o seletor de histórico
-            matchSelector.innerHTML = '';
-            if (matchLogsHistory.length === 0) {
-                 matchSelector.innerHTML = `<option value="0">Nenhuma queda</option>`;
-            } else {
-                for (let i = 1; i <= matchLogsHistory.length; i++) {
-                     matchSelector.innerHTML += `<option value="${i}">Queda ${i}</option>`;
-                }
-                // Renderiza o histórico para a última queda por padrão
-                renderMatchHistoryTable(matchLogsHistory.length);
-                matchSelector.value = matchLogsHistory.length;
             }
         }
 
