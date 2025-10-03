@@ -84,9 +84,55 @@
         .app-footer a:hover {
             color: #00bcd4; /* Accent color */
         }
+
+        /* --- Estilos do Modal de Boas-Vindas --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: #1a2c5b; /* Texto escuro */
+        }
+        .instagram-logo {
+            color: #c13584; /* Cor representativa do Instagram */
+        }
     </style>
 </head>
-<body onload="showPage('config')">
+<body onload="checkFirstVisit()"> <!-- ALTERADO: Chama checkFirstVisit() -->
+
+    <!-- Modal de Boas-Vindas (Splash Screen) -->
+    <div id="welcome-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-3xl font-bold mb-4">Bem-vindo(a), RyanZ!</h2>
+            <p class="text-gray-600 mb-6">Curtiu a Calculadora? Siga nas redes!</p>
+
+            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" class="inline-block p-4 mx-2 rounded-full instagram-logo hover:opacity-80 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-10 h-10">
+                    <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
+                </svg>
+            </a>
+
+            <button onclick="closeModal()" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200">
+                Começar
+            </button>
+        </div>
+    </div>
+
 
     <!-- Tela de Configuração (Página 1) -->
     <div id="config-page" class="container-main space-y-8">
@@ -154,7 +200,7 @@
         <footer class="app-footer">
             Desenvolvido Por RyanZ © 2025
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <!-- Ícone do Instagram em SVG -->
+                <!-- CORREÇÃO DA LOGO: SVG correto para cor do Instagram (usando classe instagram-logo) -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
                     <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
                 </svg>
@@ -197,7 +243,7 @@
         <footer class="app-footer">
             Desenvolvido Por RyanZ © 2025
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <!-- Ícone do Instagram em SVG -->
+                <!-- CORREÇÃO DA LOGO: SVG correto para cor do Instagram (usando classe instagram-logo) -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-4 h-4 ml-1">
                     <path fill="currentColor" d="M224.1 140.2c-55.9 0-101.5 45.6-101.5 101.5s45.6 101.5 101.5 101.5c55.9 0 101.5-45.6 101.5-101.5S280 140.2 224.1 140.2zm0 181.7c-44 0-79.8-35.8-79.8-79.8s35.8-79.8 79.8-79.8 79.8 35.8 79.8 79.8-35.8 79.8-79.8 79.8zm118.4-159.2c-7.9 0-14.3-6.4-14.3-14.3s6.4-14.3 14.3-14.3 14.3 6.4 14.3 14.3c0 8-6.4 14.3-14.3 14.3zm204.9-19.8C463.8 28.1 437.2 1.5 404.7 0H43.3C10.8 1.5-15.8 28.1 12.1 63.8c-1.8 11.4 0 35.4 0 36.6v345.5c0 28.7 23.4 52.1 52.1 52.1h345.5c28.7 0 52.1-23.4 52.1-52.1V100.4c0-1.2 1.8-25.2 0-36.6zM424.4 448H23.6V100.4c0-1.2 1.8-25.2 0-36.6z"/>
                 </svg>
@@ -207,6 +253,23 @@
 
 
     <script>
+        // --- MODAL / SPLASH SCREEN LOGIC ---
+        function checkFirstVisit() {
+            // Verifica se o modal já foi mostrado na sessão
+            if (!sessionStorage.getItem('welcomeModalShown')) {
+                document.getElementById('welcome-modal').classList.remove('hidden');
+            } else {
+                // Se já foi mostrado, apenas exibe a página de configuração
+                showPage('config');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('welcome-modal').classList.add('hidden');
+            sessionStorage.setItem('welcomeModalShown', 'true');
+            showPage('config');
+        }
+
         // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO ---
         function showPage(pageId) {
             document.getElementById('config-page').style.display = 'none';
@@ -674,7 +737,7 @@
 
         // Inicializa na primeira carga da página
         window.onload = function() {
-            loadPreset();
+            checkFirstVisit();
         };
     </script>
 </body>
