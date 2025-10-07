@@ -1088,7 +1088,7 @@
 
 
         // ----------------------------------------------------------------------
-        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO) ---
+        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO E NEGIRTO) ---
         // ----------------------------------------------------------------------
 
         /**
@@ -1156,45 +1156,55 @@
 
         /**
          * Função que desenha a tabela de texto EM CIMA DA IMAGEM DE FUNDO.
-         * ESTE É O BLOCO QUE VOCÊ PRECISA AJUSTAR PARA ALINHAR O TEXTO COM SUA ARTE.
+         * AJUSTADA para Tabela Geral e MVP na mesma arte, com fontes em negrito.
          */
         function drawTableOnCanvas(ctx, data, type, width, height) {
             
             // ----------------------------------------------------------------------
-            // --- AJUSTES FINAIS BASEADOS NA SUA ARTE (WEED REVELA DEUSES...) ---
+            // --- AJUSTES DE ALINHAMENTO BASEADOS NA ARTE FORNECIDA (1080px de largura) ---
             // ----------------------------------------------------------------------
             
-            // Posição Y onde a primeira linha de dados começa (AJUSTADO: subiu um pouco)
+            // Posição Y onde a primeira linha de dados começa (AJUSTADO para sua arte)
             const startY = 345; 
-            // Espaço vertical entre as linhas de dados (AJUSTADO)
+            // Espaço vertical entre as linhas de dados (AJUSTADO para sua arte)
             const lineHeight = 74; 
             // Máximo de linhas que cabem (12 posições)
             const maxRows = 12; 
             
-            // Colunas: Posição X e Tamanho da Fonte (Ajustado para 1080px de largura)
+            // Definição das colunas e seus X's (Fixos para a sua arte)
             const columns = [
-                 // Coluna 1: POSIÇÃO (Apenas para centralizar o texto se necessário, mas não é usado para desenhar o rank na arte)
+                 // Coluna 1: POSIÇÃO (Não desenhamos, mas mantemos para alinhamento)
                  { key: 'rank', x: 70, align: 'center', fontSize: 35 }, 
-                 // Coluna 2: EQUIPE (Mais larga)
+                 // Coluna 2: EQUIPE / JOGADOR
                  { key: 'name', x: 300, align: 'left', fontSize: 38 }, 
-                 // Coluna 3: ABATE (Kills)
-                 { key: 'value2', x: 675, align: 'center', fontSize: 38 }, // 'value2' = Kills
-                 // Coluna 4: BOOYAH
-                 { key: 'value1', x: 800, align: 'center', fontSize: 38 }, // 'value1' = Booyah
-                 // Coluna 5: PONTOS (Total)
+                 // Coluna 3: KILLS / ABATE
+                 { key: 'value2', x: 675, align: 'center', fontSize: 38 }, 
+                 // Coluna 4: BOOYAH / QUEDAS
+                 { key: 'value1', x: 800, align: 'center', fontSize: 38 }, 
+                 // Coluna 5: PONTOS / TOTAL
                  { key: 'total', x: 970, align: 'center', fontSize: 38 }, 
             ];
 
             // Mapeamento de dados (limitado a maxRows)
             const mappedData = data.slice(0, maxRows).map((item, index) => {
                 const rank = index + 1;
+                let name, value1, value2, total;
+
                 if (type === 'final') {
-                    // Limpa nomes muito longos (se não for o caso, pode aumentar o 15)
-                    return { rank: rank, name: item.name.substring(0, 15), value1: item.booyahs, value2: item.kills, total: item.total };
+                    // Tabela Geral: Time, Kills, Booyah, Pontos
+                    name = item.name.substring(0, 15);
+                    value1 = item.booyahs; // Coluna Booyah
+                    value2 = item.kills; // Coluna Abate (Kills)
+                    total = item.total; // Coluna Pontos
                 } else {
-                    // Mapeamento simplificado do MVP (se for o caso)
-                    return { rank: rank, name: item.name.substring(0, 15), value1: item.matchesPlayed, value2: item.kills, total: item.kills };
+                    // MVP: Jogador, Kills, Quedas, Kills (Total)
+                    name = item.name.substring(0, 15);
+                    value1 = item.matchesPlayed; // Coluna Quedas
+                    value2 = item.kills; // Coluna Abate (Kills)
+                    total = item.kills; // Coluna Pontos (Total de Kills)
                 }
+
+                return { rank, name, value1, value2, total };
             });
 
 
@@ -1205,13 +1215,16 @@
                 
                 columns.forEach(col => {
                     
-                    // --- ESTILOS DE COR E FONTE ---
+                    // --- ESTILOS DE COR E FONTE (MAIS GORDAS E NEGITO) ---
                     if (item.rank === 1) {
-                         ctx.fillStyle = '#FFD700'; // Dourado
-                         ctx.font = 'bold ' + col.fontSize + 'px Inter';
+                         ctx.fillStyle = '#FFD700'; // Dourado para 1º
+                         ctx.font = '900 ' + col.fontSize + 'px Inter'; // 900 = Extra Bold/Black
+                    } else if (item.rank <= 3) {
+                         ctx.fillStyle = '#FFFFFF'; // Branco para Top 3
+                         ctx.font = 'bold ' + col.fontSize + 'px Inter'; // Bold (700)
                     } else {
                          ctx.fillStyle = '#FFFFFF'; // Branco
-                         ctx.font = col.fontSize + 'px Inter';
+                         ctx.font = 'bold ' + col.fontSize + 'px Inter'; // Bold (700)
                     }
 
                     // --- ALINHAMENTO ---
@@ -1220,21 +1233,20 @@
                     let textX = col.x;
                     
                     // A coluna POSIÇÃO (rank) é desenhada na arte (01., 02., etc.). 
-                    // NÃO desenhamos os dados da coluna 'rank' para não sobrepor o texto '01., 02., etc.' da arte.
+                    // NÃO desenhamos os dados da coluna 'rank' para não sobrepor.
                     if (col.key === 'rank') {
                          return; // Pula o desenho da coluna 'rank'
                     }
 
                     const value = item[col.key];
                     
-                    // Desenha apenas as colunas de dados (Nome do Time, Kills, Booyah, Pontos)
                     ctx.fillText(value, textX, y); 
                 });
             });
 
             // 5. Opcional: Desenhar Créditos/Footer por cima
             ctx.fillStyle = '#FFFFFF'; 
-            ctx.font = '20px Inter';
+            ctx.font = 'bold 20px Inter';
             ctx.textAlign = 'right';
             ctx.fillText("Feito por RyanZ | Calculadora CPR/SPEC", width - 50, height - 30);
         }
