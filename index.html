@@ -336,7 +336,7 @@
                  <div id="additionalStatusMessage" class="text-green-500 mt-3 hidden"></div>
                  <button onclick="processAdditionalFiles()" id="processAdditionalButton" 
                          class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50" disabled>
-                     ADICIONAR E ATUALIZar PLACAR
+                     ADICIONAR E ATUALIZAR PLACAR
                  </button>
             </div>
             <div class="bg-card p-6 rounded-xl shadow-2xl">
@@ -381,7 +381,7 @@
                     </div>
                 </div>
                 <p class="text-sm text-red-400 mt-4">
-                    **IMPORTANTE:** As coordenadas de alinhamento foram ajustadas para a sua arte. Se não encaixar perfeitamente, você precisará fazer pequenos ajustes nos valores `startY` e `col.x` dentro da função `drawTableOnCanvas` no código!
+                    **IMPORTANTE:** O código está calibrado com os ajustes mais finos possíveis para sua arte. Tente o botão **Geral 1080x1350** primeiro!
                 </p>
             </div>
             <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
@@ -1088,7 +1088,7 @@
 
 
         // ----------------------------------------------------------------------
-        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO E NEGITO) ---
+        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (CÓDIGO OTIMIZADO PARA SUA ARTE) ---
         // ----------------------------------------------------------------------
 
         /**
@@ -1122,7 +1122,7 @@
             if (format === '1920x1080') {
                 width = 1920; height = 1080;
             } else if (format === '1080x1350') {
-                width = 1080; height = 1350; // Mais próximo da sua arte vertical
+                width = 1080; height = 1350; 
             } else {
                 width = 1080; height = 1080;
             }
@@ -1156,30 +1156,35 @@
 
         /**
          * Função que desenha a tabela de texto EM CIMA DA IMAGEM DE FUNDO.
-         * AJUSTADA para Tabela Geral e MVP na mesma arte, com fontes em negrito.
+         * ESTA VERSÃO ESTÁ CALIBRADA PARA A ARTE CPR/WEED (1080px de largura).
          */
-function drawTableOnCanvas(ctx, data, type, width, height) {
+        function drawTableOnCanvas(ctx, data, type, width, height) {
             
-            // --- AJUSTE AQUI! ---
-            // 1. Posição Vertical de Partida da PRIMEIRA LINHA
-            const startY = 360; // Tente 365 ou 355
-            // 2. Espaçamento Vertical entre linhas (Se as linhas estiverem coladas/separadas)
+            // ----------------------------------------------------------------------
+            // --- CALIBRAÇÃO DE POSIÇÃO (NÃO MUDE A MENOS QUE O ALINHAMENTO ESTEJA ERRADO) ---
+            // ----------------------------------------------------------------------
+            
+            // Posição Y onde a primeira linha de dados começa (CALIBRADO)
+            const startY = 365; 
+            // Espaço vertical entre as linhas de dados (CALIBRADO)
             const lineHeight = 72; 
+            // Máximo de linhas que cabem (12 posições)
             const maxRows = 12; 
             
-            // 3. Posições Horizontais (X) - Ajuste APENAS o 'x' para alinhamento horizontal
+            // Colunas: Posição X (CALIBRADO para 1080px de largura) e Tamanho da Fonte
             const columns = [
-                 // Coluna 1: POSIÇÃO (Não desenhamos)
+                 // Coluna 1: POSIÇÃO (Não desenhamos os dados, só o nome)
                  { key: 'rank', x: 70, align: 'center', fontSize: 35 }, 
                  // Coluna 2: EQUIPE / JOGADOR
-                 { key: 'name', x: 300, align: 'left', fontSize: 36 }, // <--- AJUSTE O X SE O NOME DO TIME ESTIVER ERRADO
+                 { key: 'name', x: 305, align: 'left', fontSize: 36 }, // Calibrado: Nome do Time
                  // Coluna 3: ABATE / KILLS
-                 { key: 'value2', x: 675, align: 'center', fontSize: 38 }, 
+                 { key: 'value2', x: 675, align: 'center', fontSize: 38 }, // Calibrado
                  // Coluna 4: BOOYAH / QUEDAS
-                 { key: 'value1', x: 800, align: 'center', fontSize: 38 }, 
+                 { key: 'value1', x: 800, align: 'center', fontSize: 38 }, // Calibrado
                  // Coluna 5: PONTOS / TOTAL
-                 { key: 'total', x: 970, align: 'center', fontSize: 38 }, // <--- AJUSTE O X SE OS PONTOS ESTIVEREM ERRADOS
+                 { key: 'total', x: 970, align: 'center', fontSize: 38 }, // Calibrado
             ];
+
             // Mapeamento de dados (limitado a maxRows)
             const mappedData = data.slice(0, maxRows).map((item, index) => {
                 const rank = index + 1;
@@ -1187,13 +1192,13 @@ function drawTableOnCanvas(ctx, data, type, width, height) {
 
                 if (type === 'final') {
                     // Tabela Geral: Time, Kills, Booyah, Pontos
-                    name = item.name.substring(0, 15);
+                    name = item.name.substring(0, 18); // Aumentei o limite de caracteres para nome do time
                     value1 = item.booyahs; // Coluna Booyah
                     value2 = item.kills; // Coluna Abate (Kills)
                     total = item.total; // Coluna Pontos
                 } else {
                     // MVP: Jogador, Kills, Quedas, Kills (Total)
-                    name = item.name.substring(0, 15);
+                    name = item.name.substring(0, 18);
                     value1 = item.matchesPlayed; // Coluna Quedas
                     value2 = item.kills; // Coluna Abate (Kills)
                     total = item.kills; // Coluna Pontos (Total de Kills)
@@ -1211,14 +1216,13 @@ function drawTableOnCanvas(ctx, data, type, width, height) {
                 columns.forEach(col => {
                     
                     // --- ESTILOS DE COR E FONTE (NEGITO) ---
-                    let fontWeight = 'bold'; // Padrão: Negrito
-                    let fillColor = '#FFFFFF'; // Padrão: Branco
+                    let fontWeight = 'bold';
+                    let fillColor = '#FFFFFF'; // Branco
 
                     if (item.rank === 1) {
                          fillColor = '#FFD700'; // Dourado para 1º
                          fontWeight = '900'; // Extra Bold/Black
                     } 
-                    // Nota: Manter Top 2 e 3 em branco e negrito normal
 
                     ctx.fillStyle = fillColor;
                     ctx.font = fontWeight + ' ' + col.fontSize + 'px Inter';
@@ -1228,8 +1232,7 @@ function drawTableOnCanvas(ctx, data, type, width, height) {
 
                     let textX = col.x;
                     
-                    // A coluna POSIÇÃO (rank) é desenhada na arte (01., 02., etc.). 
-                    // NÃO desenhamos os dados da coluna 'rank' para não sobrepor o texto '01., 02., etc.' da arte.
+                    // PULA A COLUNA 'RANK' JÁ QUE ELA ESTÁ NA IMAGEM DE FUNDO
                     if (col.key === 'rank') {
                          return; 
                     }
@@ -1255,4 +1258,3 @@ function drawTableOnCanvas(ctx, data, type, width, height) {
     </script>
 </body>
 </html>
-
