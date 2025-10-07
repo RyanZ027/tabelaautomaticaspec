@@ -336,7 +336,7 @@
                  <div id="additionalStatusMessage" class="text-green-500 mt-3 hidden"></div>
                  <button onclick="processAdditionalFiles()" id="processAdditionalButton" 
                          class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50" disabled>
-                     ADICIONAR E ATUALIZAR PLACAR
+                     ADICIONAR E ATUALIZar PLACAR
                  </button>
             </div>
             <div class="bg-card p-6 rounded-xl shadow-2xl">
@@ -1088,7 +1088,7 @@
 
 
         // ----------------------------------------------------------------------
-        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO E NEGIRTO) ---
+        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO E NEGITO) ---
         // ----------------------------------------------------------------------
 
         /**
@@ -1161,23 +1161,23 @@
         function drawTableOnCanvas(ctx, data, type, width, height) {
             
             // ----------------------------------------------------------------------
-            // --- AJUSTES DE ALINHAMENTO BASEADOS NA ARTE FORNECIDA (1080px de largura) ---
+            // --- AJUSTES FINAIS BASEADOS NA SUA ARTE (1080px de largura) ---
             // ----------------------------------------------------------------------
             
-            // Posição Y onde a primeira linha de dados começa (AJUSTADO para sua arte)
-            const startY = 345; 
-            // Espaço vertical entre as linhas de dados (AJUSTADO para sua arte)
-            const lineHeight = 74; 
+            // Posição Y onde a primeira linha de dados começa (AJUSTADO para o centro vertical da primeira linha)
+            const startY = 360; 
+            // Espaço vertical entre as linhas de dados (AJUSTADO)
+            const lineHeight = 72; 
             // Máximo de linhas que cabem (12 posições)
             const maxRows = 12; 
             
-            // Definição das colunas e seus X's (Fixos para a sua arte)
+            // Colunas: Posição X e Tamanho da Fonte (Ajustado para 1080px de largura)
             const columns = [
-                 // Coluna 1: POSIÇÃO (Não desenhamos, mas mantemos para alinhamento)
+                 // Coluna 1: POSIÇÃO (Não desenhamos, mas mantemos para mapear)
                  { key: 'rank', x: 70, align: 'center', fontSize: 35 }, 
                  // Coluna 2: EQUIPE / JOGADOR
-                 { key: 'name', x: 300, align: 'left', fontSize: 38 }, 
-                 // Coluna 3: KILLS / ABATE
+                 { key: 'name', x: 300, align: 'left', fontSize: 36 }, // AJUSTE AQUI
+                 // Coluna 3: ABATE / KILLS
                  { key: 'value2', x: 675, align: 'center', fontSize: 38 }, 
                  // Coluna 4: BOOYAH / QUEDAS
                  { key: 'value1', x: 800, align: 'center', fontSize: 38 }, 
@@ -1215,17 +1215,18 @@
                 
                 columns.forEach(col => {
                     
-                    // --- ESTILOS DE COR E FONTE (MAIS GORDAS E NEGITO) ---
+                    // --- ESTILOS DE COR E FONTE (NEGITO) ---
+                    let fontWeight = 'bold'; // Padrão: Negrito
+                    let fillColor = '#FFFFFF'; // Padrão: Branco
+
                     if (item.rank === 1) {
-                         ctx.fillStyle = '#FFD700'; // Dourado para 1º
-                         ctx.font = '900 ' + col.fontSize + 'px Inter'; // 900 = Extra Bold/Black
-                    } else if (item.rank <= 3) {
-                         ctx.fillStyle = '#FFFFFF'; // Branco para Top 3
-                         ctx.font = 'bold ' + col.fontSize + 'px Inter'; // Bold (700)
-                    } else {
-                         ctx.fillStyle = '#FFFFFF'; // Branco
-                         ctx.font = 'bold ' + col.fontSize + 'px Inter'; // Bold (700)
-                    }
+                         fillColor = '#FFD700'; // Dourado para 1º
+                         fontWeight = '900'; // Extra Bold/Black
+                    } 
+                    // Nota: Manter Top 2 e 3 em branco e negrito normal
+
+                    ctx.fillStyle = fillColor;
+                    ctx.font = fontWeight + ' ' + col.fontSize + 'px Inter';
 
                     // --- ALINHAMENTO ---
                     ctx.textAlign = col.align;
@@ -1233,9 +1234,9 @@
                     let textX = col.x;
                     
                     // A coluna POSIÇÃO (rank) é desenhada na arte (01., 02., etc.). 
-                    // NÃO desenhamos os dados da coluna 'rank' para não sobrepor.
+                    // NÃO desenhamos os dados da coluna 'rank' para não sobrepor o texto '01., 02., etc.' da arte.
                     if (col.key === 'rank') {
-                         return; // Pula o desenho da coluna 'rank'
+                         return; 
                     }
 
                     const value = item[col.key];
