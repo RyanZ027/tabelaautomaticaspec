@@ -1158,33 +1158,28 @@
          * Função que desenha a tabela de texto EM CIMA DA IMAGEM DE FUNDO.
          * AJUSTADA para Tabela Geral e MVP na mesma arte, com fontes em negrito.
          */
-        function drawTableOnCanvas(ctx, data, type, width, height) {
+function drawTableOnCanvas(ctx, data, type, width, height) {
             
-            // ----------------------------------------------------------------------
-            // --- AJUSTES FINAIS BASEADOS NA SUA ARTE (1080px de largura) ---
-            // ----------------------------------------------------------------------
-            
-            // Posição Y onde a primeira linha de dados começa (AJUSTADO para o centro vertical da primeira linha)
-            const startY = 360; 
-            // Espaço vertical entre as linhas de dados (AJUSTADO)
+            // --- AJUSTE AQUI! ---
+            // 1. Posição Vertical de Partida da PRIMEIRA LINHA
+            const startY = 360; // Tente 365 ou 355
+            // 2. Espaçamento Vertical entre linhas (Se as linhas estiverem coladas/separadas)
             const lineHeight = 72; 
-            // Máximo de linhas que cabem (12 posições)
             const maxRows = 12; 
             
-            // Colunas: Posição X e Tamanho da Fonte (Ajustado para 1080px de largura)
+            // 3. Posições Horizontais (X) - Ajuste APENAS o 'x' para alinhamento horizontal
             const columns = [
-                 // Coluna 1: POSIÇÃO (Não desenhamos, mas mantemos para mapear)
+                 // Coluna 1: POSIÇÃO (Não desenhamos)
                  { key: 'rank', x: 70, align: 'center', fontSize: 35 }, 
                  // Coluna 2: EQUIPE / JOGADOR
-                 { key: 'name', x: 300, align: 'left', fontSize: 36 }, // AJUSTE AQUI
+                 { key: 'name', x: 300, align: 'left', fontSize: 36 }, // <--- AJUSTE O X SE O NOME DO TIME ESTIVER ERRADO
                  // Coluna 3: ABATE / KILLS
                  { key: 'value2', x: 675, align: 'center', fontSize: 38 }, 
                  // Coluna 4: BOOYAH / QUEDAS
                  { key: 'value1', x: 800, align: 'center', fontSize: 38 }, 
                  // Coluna 5: PONTOS / TOTAL
-                 { key: 'total', x: 970, align: 'center', fontSize: 38 }, 
+                 { key: 'total', x: 970, align: 'center', fontSize: 38 }, // <--- AJUSTE O X SE OS PONTOS ESTIVEREM ERRADOS
             ];
-
             // Mapeamento de dados (limitado a maxRows)
             const mappedData = data.slice(0, maxRows).map((item, index) => {
                 const rank = index + 1;
@@ -1260,3 +1255,4 @@
     </script>
 </body>
 </html>
+
