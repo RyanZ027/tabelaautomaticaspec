@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- TÍTULO ATUALIZADO -->
     <title>Calculadora Automatica de Tabela Via SPEC</title>
-    <!-- Carrega o Tailwind CSS para design moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos base */
@@ -202,16 +200,13 @@
 </head>
 <body onload="checkFirstVisit()"> 
 
-    <!-- Modal de Boas-Vindas (Splash Screen) -->
     <div id="welcome-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <!-- TÍTULO E TEXTO ATUALIZADOS NO MODAL -->
             <h2 class="text-3xl font-bold mb-4">BEM VINDO (A)</h2>
             <p class="text-gray-600 mb-6">Desenvolvido por RyanZ © 2025.<br>Curtiu o projeto? Siga nas redes!</p>
 
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" 
                class="inline-block p-2 mx-2 rounded-xl bg-transparent hover:opacity-80 transition">
-                <!-- IMAGEM REAL DO INSTAGRAM (PNG de alta qualidade) -->
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
                      alt="Logo Instagram" class="insta-modal-img">
             </a>
@@ -223,20 +218,16 @@
     </div>
 
 
-    <!-- Tela de Configuração (Página 1) -->
     <div id="config-page" class="container-main space-y-8">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
-            <!-- TÍTULO DA PÁGINA -->
             <h1 class="4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
             <p class="text-gray-400 mt-1">Calculadora Automatica de Tabela Via SPEC</p>
         </header>
 
-        <!-- 1. Configuração de Pontuação -->
         <div class="bg-card p-6 rounded-xl shadow-2xl">
             <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">1. Configurar Pontuação</h2>
             
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                <!-- Seleção do Padrão de Pontuação -->
                 <div class="col-span-2">
                     <label for="pointPreset" class="block text-sm font-medium text-gray-400">Padrão de Pontuação:</label>
                     <select id="pointPreset" onchange="loadPreset()" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
@@ -246,14 +237,12 @@
                     </select>
                 </div>
 
-                <!-- Pontos por Kill -->
                 <div class="col-span-2">
                     <label for="killPoints" class="block text-sm font-medium text-gray-400">Pontos por Kill:</label>
                     <input type="number" id="killPoints" value="2" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" />
                 </div>
             </div>
             
-            <!-- CAMPO DE DESEMPATE -->
             <div class="grid grid-cols-1 gap-4 mb-4">
                 <div>
                     <label for="tiebreaker" class="block text-sm font-medium text-gray-400">Critério de Desempate (2º nível):</label>
@@ -264,17 +253,13 @@
                 </div>
             </div>
             
-            <!-- ACrÉSCIMO E PUNIÇÃO (REMOVIDO AGORA) -->
-
             <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
-                <!-- Colocação (1º ao 12º) -->
-            </div>
+                </div>
             <button onclick="addPlacementInput()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
                 + Adicionar Colocação
             </button>
         </div>
 
-        <!-- 2. Entrada de Logs (Upload de Arquivo) -->
         <div class="bg-card p-6 rounded-xl shadow-2xl">
             <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">2. Carregar Arquivos de Resultados</h2>
             <p class="text-sm text-gray-400 mb-3">
@@ -292,20 +277,17 @@
                 0 arquivo(s) selecionado(s).
             </p>
             
-            <!-- BOTÃO CALCULAR E NAVEGAR -->
             <button id="calculateButton" onclick="savePlacementPointsAndCalculate()" class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200">
                 CALCULAR E VER TABELAS
             </button>
         </div>
         
-        <!-- FOOTER (Rodapé da página de Configuração) -->
         <footer class="app-footer">
             <div class="flex items-center space-x-2">
                 <span class="text-white">Desenvolvido por RyanZ © 2025.</span>
                 <span class="text-gray-400">Curtiu o projeto?</span>
                 <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
                     Siga nas redes!
-                    <!-- IMAGEM REAL DO INSTAGRAM NO FOOTER -->
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
                          alt="Logo Instagram" class="insta-footer-img ml-2">
                 </a>
@@ -315,22 +297,18 @@
         
     </div>
 
-    <!-- Tela de Resultados (Página 2) -->
     <div id="results-page" class="container-main space-y-8" style="display: none;">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
             <h1 class="4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
-            <p class="text-gray-400 mt-1">Visão Geral e MVP</p>
+            <p class="text-gray-400 mt-1">Visão Geral, MVP e Arte Final</p>
         </header>
 
-        <!-- Botão de Navegação -->
         <button onclick="showPage('config')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
             ← Voltar para Configuração
         </button>
 
         <div class="space-y-10">
-            <!-- 3. Tabela de Pontuação Final -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <!-- SELEÇÃO DE VISUALIZAÇÃO GERAL -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
                     <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">3. Tabela Final (Geral)</h2>
                     <div class="flex space-x-2 p-1 bg-gray-700 rounded-lg">
@@ -347,7 +325,6 @@
                 </div>
             </div>
             
-            <!-- NOVO PAINEL: ADICIONAR MAIS ARQUIVOS NA PÁGINA DE RESULTADOS -->
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                  <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">4. Adicionar Mais Quedas</h2>
                  <p class="text-sm text-gray-400 mb-3">
@@ -362,14 +339,45 @@
                      ADICIONAR E ATUALIZAR PLACAR
                  </button>
             </div>
-            <!-- FIM DO NOVO PAINEL -->
+            <div class="bg-card p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Gerar Arte Final (Canvas)</h2>
+                <p class="text-sm text-gray-400 mb-3 font-bold text-accent">
+                    A arte é gerada no JavaScript Canvas, usando um design simples e limitado às primeiras posições devido ao espaço. Clique para baixar a imagem PNG.
+                </p>
 
-
-            <!-- 5. Top 5 MVP Individual -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2 text-white">Tabela Geral</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="generateCanvasArt('final', '1080x1080')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
+                            Geral 1080x1080 (PNG)
+                        </button>
+                        <button onclick="generateCanvasArt('final', '1080x1350')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
+                            Geral 1080x1350 (PNG)
+                        </button>
+                         <button onclick="generateCanvasArt('final', '1920x1080')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
+                            Geral 1920x1080 (PNG)
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 text-white">MVP Individual (Top 5)</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="generateCanvasArt('mvp', '1080x1080')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
+                            MVP 1080x1080 (PNG)
+                        </button>
+                        <button onclick="generateCanvasArt('mvp', '1080x1350')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
+                            MVP 1080x1350 (PNG)
+                        </button>
+                         <button onclick="generateCanvasArt('mvp', '1920x1080')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
+                            MVP 1920x1080 (PNG)
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
-                 <!-- SELEÇÃO DE VISUALIZAÇÃO MVP -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
-                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 MVP Individual</h2>
+                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
+                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 6. MVP Individual</h2>
                     <select id="mvpLimitSelector" onchange="switchMvpLimit(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm">
                         <option value="5">Top 5</option>
                         <option value="10">Top 10</option>
@@ -385,11 +393,9 @@
             </div>
         </div>
         
-        <!-- FOOTER (Rodapé da página de Resultados) -->
         <footer class="app-footer">
             Desenvolvido por RyanZ © 2025.
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <!-- IMAGEM REAL DO INSTAGRAM NO FOOTER -->
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
                      alt="Logo Instagram" class="insta-footer-img ml-2">
             </a>
@@ -409,6 +415,10 @@
         let matchCount = 0; 
         // Array que armazena os logs de cada partida separadamente (para o histórico)
         let matchLogsHistory = []; 
+
+        // Variáveis globais de resultados (preenchidas após o cálculo)
+        window.finalResults = [];
+        window.finalMVP = [];
 
         // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
@@ -533,11 +543,11 @@
             const manualAdjustments = getManualAdjustments(); // Agora retorna {}
 
             // Recalcula o placar final com todos os logs acumulados
-            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+            const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
             // Armazena os resultados globalmente para a página de resultados
-            window.finalResults = finalResults;
-            window.finalMVP = finalMVP;
+            window.finalResults = results;
+            window.finalMVP = mvp;
             window.matchCount = matchCount; 
             window.matchLogsHistory = matchLogsHistory; 
             
@@ -638,8 +648,6 @@
             matchLogsHistory = []; // ZERA HISTÓRICO DE LOGS
             matchCount = 0;
             
-            const totalFiles = files.length;
-            
             // Inicia o processamento
             processFilesSequentially(files, statusDiv, errorDiv, () => {
                  // CALLBACK: Finaliza o upload inicial
@@ -701,10 +709,10 @@
                  const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
                  const tiebreaker = document.getElementById('tiebreaker').value;
                  
-                 const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+                 const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
-                 window.finalResults = finalResults;
-                 window.finalMVP = finalMVP;
+                 window.finalResults = results;
+                 window.finalMVP = mvp;
                  
                  displayResults(); // Re-renderiza as tabelas na página de resultados
                  
@@ -865,8 +873,6 @@
 
                 if (!teamName || isNaN(place) || isNaN(kills)) continue;
 
-                // CORREÇÃO: Verifica se o placementPoints[place] existe antes de tentar ler
-                // e garante que a variável global placementPoints (que foi populada em savePlacementPoints) seja usada.
                 const placementScore = placementPoints[place] !== undefined ? placementPoints[place] : 0;
                 const killScore = kills * killPoints;
                 const totalScore = placementScore + killScore;
@@ -957,7 +963,7 @@
             
             // CABEÇALHO CONDICIONAL
             let headerHTML = `
-                <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                <th class="p-3 text-sm font-semibold uppercase">POS</th>
                 <th class="p-3 text-sm font-semibold uppercase">Time</th>
                 <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
                 <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
@@ -1014,7 +1020,6 @@
                     `;
                 }
 
-                // Remove o ícone de classificação (rankIcon) já que o ajuste manual foi removido
                 cellHTML += `<td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.total}</td>`;
                 
                 row.innerHTML = cellHTML;
@@ -1045,9 +1050,9 @@
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
-                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
+                        <th class="p-3 text-sm font-semibold uppercase">POS</th>
                         <th class="p-3 text-sm font-semibold uppercase">Jogador</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th> <!-- NOVA COLUNA -->
+                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th> 
                         <th class="p-3 text-sm font-semibold uppercase">Kills</th>
                         <th class="p-3 text-sm font-semibold uppercase hidden-mobile">MÉDIA KILLS</th>
                         <th class="p-3 text-sm font-semibold uppercase">Time</th>
@@ -1063,17 +1068,16 @@
                 const isTop = rank <= 3;
                 
                 const row = document.createElement('tr');
-                row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
+                // Nota: Mudar o estilo da linha para não usar as cores MVp do CSS para deixar o Canvas mais limpo
+                row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols text-white';
 
-                // APLICA O DESTAQUE MVP NO TEXTO (AZUL CIANO)
                 row.innerHTML = `
-                    <td class="p-3 font-bold text-base ${isTop ? 'text-accent' : 'text-white'}">${rank}º</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${isTop ? 'text-accent' : 'text-white'}">${player.name}</td>
-                    <td class="p-3 font-semibold ${isTop ? 'text-accent' : 'text-white'}">${player.matchesPlayed}</td> <!-- Quedas Jogadas -->
-                    <td class="p-3 font-extrabold text-lg ${isTop ? 'text-accent' : 'text-white'}">${player.kills}</td>
-                    <!-- MÉDIA KILLS -->
-                    <td class="p-3 hidden-mobile ${isTop ? 'text-accent' : 'text-white'}">${player.avgKills}</td>
-                    <td class="p-3 ${isTop ? 'text-accent' : 'text-white'}">${player.team}</td>
+                    <td class="p-3 font-bold text-base text-accent">${rank}º</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${player.name}</td>
+                    <td class="p-3 font-semibold">${player.matchesPlayed}</td> 
+                    <td class="p-3 font-extrabold text-lg">${player.kills}</td>
+                    <td class="p-3 hidden-mobile">${player.avgKills}</td>
+                    <td class="p-3">${player.team}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1092,7 +1096,184 @@
                 document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
             }
         }
+        
+        // ----------------------------------------------------------------------
+        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS ---
+        // ----------------------------------------------------------------------
 
+        /**
+         * Gera uma arte da tabela geral ou MVP em um formato específico e baixa.
+         * @param {string} type 'final' ou 'mvp'
+         * @param {string} format '1920x1080', '1080x1350' ou '1080x1080'
+         */
+        function generateCanvasArt(type, format) {
+            const data = type === 'final' ? window.finalResults : window.finalMVP.slice(0, currentMvpLimit);
+            if (data.length === 0) {
+                alert("Nenhum dado para gerar arte. Calcule os resultados primeiro.");
+                return;
+            }
+
+            // Adiciona o canvas se ainda não existir
+            let canvas = document.getElementById('artCanvas');
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.id = 'artCanvas';
+                canvas.style.display = 'none'; // Manter oculto
+                document.body.appendChild(canvas);
+            }
+            const ctx = canvas.getContext('2d');
+            
+            // 1. Configurar Dimensões e Título
+            let width, height, titleText;
+            if (format === '1920x1080') {
+                width = 1920; height = 1080;
+            } else if (format === '1080x1350') {
+                width = 1080; height = 1350;
+            } else { // '1080x1080' (Default)
+                width = 1080; height = 1080;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+
+            if (type === 'final') {
+                 titleText = "TABELA GERAL FINAL";
+            } else {
+                 titleText = "TOP " + data.length + " MVP INDIVIDUAL";
+            }
+            
+            // 2. Desenhar Fundo e Header
+            ctx.fillStyle = '#1a2c5b'; // Fundo Primário (Azul Escuro)
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = '#2c4a92'; // Header (Azul Marinho)
+            ctx.fillRect(0, 0, width, 100);
+
+            ctx.fillStyle = '#00bcd4'; // Texto Accent
+            ctx.font = 'bold 50px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(titleText, width / 2, 65);
+            
+            // 3. Desenhar a Tabela (simplificada)
+            
+            const startY = 150;
+            const lineHeight = 70;
+            // Número de linhas que cabem (Total Height - StartY - Footer) / LineHeight
+            const maxRows = Math.floor((height - startY - 50) / lineHeight); 
+
+            // Definição das colunas para Canvas
+            const columns = [
+                 { key: 'rank', label: 'POS', width: 0.10, align: 'center' },
+                 { key: 'name', label: type === 'final' ? 'TIME' : 'JOGADOR', width: 0.40, align: 'left' },
+                 { key: 'value1', label: type === 'final' ? 'BOOYAH' : 'QUEDAS', width: 0.15, align: 'center' },
+                 { key: 'value2', label: 'KILLS', width: 0.15, align: 'center' },
+                 { key: 'total', label: type === 'final' ? 'PONTOS' : 'TOTAL KILLS', width: 0.20, align: 'center' },
+            ];
+
+            // Mapear dados para as chaves genéricas e limitar o número de linhas
+            const mappedData = data.slice(0, maxRows).map((item, index) => {
+                const rank = index + 1;
+                if (type === 'final') {
+                    return {
+                        rank: rank,
+                        name: item.name.substring(0, 15),
+                        value1: item.booyahs,
+                        value2: item.kills,
+                        total: item.total,
+                    };
+                } else {
+                    return {
+                        rank: rank,
+                        name: item.name.substring(0, 15),
+                        value1: item.matchesPlayed,
+                        value2: item.kills,
+                        total: item.kills, // MVP total é kills
+                    };
+                }
+            });
+            
+            // --- DESENHAR CABEÇALHO DA TABELA ---
+            ctx.fillStyle = '#1f2937'; // Fundo da Linha
+            ctx.font = 'bold 30px Inter';
+            let currentX = 0;
+            columns.forEach(col => {
+                const colWidth = width * col.width;
+                let textX = currentX + colWidth / 2;
+                
+                // Alinhamento do Título da Coluna
+                ctx.fillStyle = '#f3f4f6'; // Texto Branco
+                if (col.align === 'left') {
+                    textX = currentX + 10;
+                    ctx.textAlign = 'left';
+                } else {
+                    ctx.textAlign = 'center';
+                }
+                ctx.fillText(col.label, textX, startY - 15);
+                currentX += colWidth;
+            });
+
+            // --- DESENHAR LINHAS DA TABELA ---
+            mappedData.forEach((item, index) => {
+                const y = startY + index * lineHeight;
+                
+                // Fundo da Linha (Alternado e Destaques)
+                if (item.rank === 1) {
+                    ctx.fillStyle = '#4CAF50'; // Booyah
+                } else if (item.rank <= 3) {
+                    ctx.fillStyle = '#FFC107'; // Top 3
+                } else {
+                    ctx.fillStyle = index % 2 === 0 ? '#1f2937' : '#1a2c5b'; // Alternado
+                }
+                ctx.fillRect(0, y - lineHeight + 15, width, lineHeight - 5);
+                
+                // Desenhar texto
+                ctx.font = '30px Inter';
+                currentX = 0;
+                columns.forEach(col => {
+                    const colWidth = width * col.width;
+                    let textX = currentX + colWidth / 2;
+                    
+                    // Cor do texto
+                    if (item.rank <= 3) {
+                        ctx.fillStyle = '#1a2c5b'; // Preto/Azul Escuro para destaque
+                        ctx.font = 'bold 30px Inter';
+                    } else {
+                        ctx.fillStyle = '#f3f4f6'; // Branco
+                    }
+
+                    // Alinhamento
+                    if (col.align === 'left') {
+                        textX = currentX + 10;
+                        ctx.textAlign = 'left';
+                    } else {
+                        ctx.textAlign = 'center';
+                    }
+
+                    const value = col.key === 'rank' ? item.rank + 'º' : item[col.key];
+                    ctx.fillText(value, textX, y + 25);
+                    currentX += colWidth;
+                });
+            });
+            
+            // 4. Desenhar Footer (Créditos)
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0, height - 40, width, 40);
+            ctx.fillStyle = '#9ca3af'; 
+            ctx.font = '20px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText("Calculadora por RyanZ © 2025", width - 20, height - 15);
+
+
+            // 5. Baixar Imagem
+            const imageURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = imageURL;
+            link.download = `Tabela_${type}_${format}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
         // Inicializa na primeira carga da página
         window.onload = function() {
             checkFirstVisit();
