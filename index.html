@@ -342,20 +342,26 @@
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Gerar Arte Final (Canvas)</h2>
                 <p class="text-sm text-gray-400 mb-3 font-bold text-accent">
-                    A arte é gerada no JavaScript Canvas, usando um design simples e limitado às primeiras posições devido ao espaço. Clique para baixar a imagem PNG.
+                    1. Carregue a imagem da sua arte (template vazio) antes de gerar.
                 </p>
 
-                <div class="mb-6">
+                <div class="mb-4">
+                    <label for="artFileInput" class="block text-sm font-medium text-gray-400">Upload da Imagem de Fundo (PNG/JPG):</label>
+                    <input type="file" id="artFileInput" accept="image/*" 
+                           class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white"/>
+                </div>
+
+                <div class="mb-4">
                     <h3 class="text-lg font-semibold mb-2 text-white">Tabela Geral</h3>
                     <div class="grid grid-cols-3 gap-3">
                         <button onclick="generateCanvasArt('final', '1080x1080')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
-                            Geral 1080x1080 (PNG)
+                            Geral 1080x1080
                         </button>
                         <button onclick="generateCanvasArt('final', '1080x1350')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
-                            Geral 1080x1350 (PNG)
+                            Geral 1080x1350
                         </button>
                          <button onclick="generateCanvasArt('final', '1920x1080')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
-                            Geral 1920x1080 (PNG)
+                            Geral 1920x1080
                         </button>
                     </div>
                 </div>
@@ -364,16 +370,19 @@
                     <h3 class="text-lg font-semibold mb-2 text-white">MVP Individual (Top 5)</h3>
                     <div class="grid grid-cols-3 gap-3">
                         <button onclick="generateCanvasArt('mvp', '1080x1080')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
-                            MVP 1080x1080 (PNG)
+                            MVP 1080x1080
                         </button>
                         <button onclick="generateCanvasArt('mvp', '1080x1350')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
-                            MVP 1080x1350 (PNG)
+                            MVP 1080x1350
                         </button>
                          <button onclick="generateCanvasArt('mvp', '1920x1080')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
-                            MVP 1920x1080 (PNG)
+                            MVP 1920x1080
                         </button>
                     </div>
                 </div>
+                <p class="text-sm text-red-400 mt-4">
+                    IMPORTANTE: O texto da tabela será desenhado em posições fixas. Você precisará ajustar sua arte para que a tabela caiba perfeitamente no template!
+                </p>
             </div>
             <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
@@ -420,6 +429,10 @@
         window.finalResults = [];
         window.finalMVP = [];
 
+        // Variável global para armazenar o URL da imagem de fundo carregada
+        let customArtImageURL = null;
+
+
         // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
             if (!sessionStorage.getItem('welcomeModalShown')) {
@@ -445,9 +458,7 @@
                 loadPreset(); 
             } else if (pageId === 'results') {
                 document.getElementById('results-page').style.display = 'block';
-                // Renderiza as tabelas ao entrar na página de resultados
                 displayResults();
-                // Garante que os botões reflitam o modo atual na reabertura da página
                 updateButtonStyles(currentTableMode); 
             }
         }
@@ -481,7 +492,6 @@
         function switchTableMode(mode) {
             currentTableMode = mode;
             updateButtonStyles(mode);
-            // Re-renderiza a tabela no novo modo
             if (window.finalResults && window.finalResults.length > 0) {
                  renderFinalTable(window.finalResults, 'finalTableContainer', mode);
             }
@@ -489,19 +499,14 @@
         
         function switchMvpLimit(limit) {
             currentMvpLimit = parseInt(limit);
-            // Re-renderiza a tabela MVP no novo limite
             if (window.finalMVP && window.finalMVP.length > 0) {
                 renderMVPTable(window.finalMVP, 'mvpTableContainer');
             }
         }
 
-        // --- LÓGICA DE ACRÉSCIMOS / PUNIÇÕES (REMOVIDA) ---
-        
-        // Função dummy para evitar erros no cálculo, retorna 0 (ajustes removidos)
         function getManualAdjustments() {
              return {};
         }
-
 
         // --- PRESETS E VARIÁVEIS ---
         const POINTS_PRESETS = {
@@ -540,12 +545,10 @@
             
             const killPoints = parseInt(killPointsInput.value) || 0;
             const tiebreaker = tiebreakerSelector.value; 
-            const manualAdjustments = getManualAdjustments(); // Agora retorna {}
+            const manualAdjustments = getManualAdjustments();
 
-            // Recalcula o placar final com todos os logs acumulados
             const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
-            // Armazena os resultados globalmente para a página de resultados
             window.finalResults = results;
             window.finalMVP = mvp;
             window.matchCount = matchCount; 
@@ -628,9 +631,6 @@
 
         // --- LÓGICA DE UPLOAD E ACÚMULO (SEPARADA PARA REUSO) ---
         
-        /**
-         * Lida com o upload inicial (Config Page). Zera os dados.
-         */
         function handleFileUpload(event) {
             errorDiv.classList.add('hidden');
             statusDiv.classList.add('hidden');
@@ -642,22 +642,16 @@
                 return;
             }
             
-            // ZERA DADOS GLOBAIS
             currentFileData = [];
             individualKillsData = [];
-            matchLogsHistory = []; // ZERA HISTÓRICO DE LOGS
+            matchLogsHistory = [];
             matchCount = 0;
             
-            // Inicia o processamento
             processFilesSequentially(files, statusDiv, errorDiv, () => {
-                 // CALLBACK: Finaliza o upload inicial
                  document.getElementById('fileCountDisplay').textContent = `${files.length} arquivo(s) selecionado(s).`;
             });
         }
         
-        /**
-         * Lida com o upload adicional (Results Page). Acumula nos dados existentes.
-         */
         let additionalFilesQueue = [];
         
         function handleAdditionalFileUpload(event) {
@@ -672,16 +666,12 @@
                  return;
             }
             
-            // Zera a queue e adiciona os novos arquivos
             additionalFilesQueue = Array.from(files); 
             statusDiv.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
             statusDiv.classList.remove('hidden');
             button.disabled = false;
         }
         
-        /**
-         * Processa os arquivos adicionais e recalcula o placar.
-         */
         function processAdditionalFiles() {
             const button = document.getElementById('processAdditionalButton');
             const statusDiv = document.getElementById('additionalStatusMessage');
@@ -699,13 +689,10 @@
             
             const initialMatchCount = matchCount; 
             
-            // Faz o processamento sequencialmente, ACUMULANDO nos arrays globais
             processFilesSequentially(additionalFilesQueue, statusDiv, errorDiv, () => {
-                 // CALLBACK: Recalcula e re-renderiza após processar tudo
                  const newQuedas = matchCount - initialMatchCount;
                  statusDiv.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
                  
-                 // Recalcula o placar final com todos os dados acumulados
                  const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
                  const tiebreaker = document.getElementById('tiebreaker').value;
                  
@@ -714,18 +701,13 @@
                  window.finalResults = results;
                  window.finalMVP = mvp;
                  
-                 displayResults(); // Re-renderiza as tabelas na página de resultados
+                 displayResults();
                  
-                 // Limpa o input de arquivo adicional e a fila
                  document.getElementById('additionalFileInput').value = '';
                  additionalFilesQueue = [];
             });
         }
 
-
-        /**
-         * Processa arquivos em sequência e acumula logs.
-         */
         function processFilesSequentially(files, statusDiv, errorDiv, callback) {
             const totalFiles = files.length;
             let index = 0;
@@ -758,13 +740,9 @@
                     } 
                     
                     if (data.length > 0) {
-                        // ACUMULA LOGS GLOBAIS
                         currentFileData.push(...data);
                         individualKillsData.push(...fileIndividualKills);
-                        
-                        // NOVO: SALVA O HISTÓRICO DE LOGS DESTA QUEDA
                         matchLogsHistory.push(data); 
-                        
                         matchCount++; 
                     }
                     
@@ -892,17 +870,16 @@
                 }
                 
                 teamScores[teamName].total += totalScore;
-                teamScores[teamName].placement += placementScore; // Pts Queda
-                teamScores[teamName].ptsKill += killScore; // Pts Kill
+                teamScores[teamName].placement += placementScore;
+                teamScores[teamName].ptsKill += killScore;
                 teamScores[teamName].kills += kills;
                 teamScores[teamName].quedasList += 1; 
-                if (place === 1) { teamScores[teamName].booyahs += 1; } // Contagem Booyah
+                if (place === 1) { teamScores[teamName].booyahs += 1; }
                 teamScores[teamName].lastPlace = place;
             }
             
             // 2. CALCULO DE PONTUAÇÃO DOS JOGADORES (MVP)
             
-            // Agrupar e somar Kills e contar partidas
             const processedPlayerMatches = {};
             
             for (const playerLog of individualKillsData) {
@@ -923,16 +900,14 @@
             const finalMVP = Object.values(processedPlayerMatches).map(player => {
                 const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
                 return { ...player, avgKills: avgKills };
-            }).sort((a, b) => b.kills - a.kills); // Ordena por Kills
+            }).sort((a, b) => b.kills - a.kills);
             
-            // 3. ORDENAÇÃO FINAL DA TABELA GERAL (CORREÇÃO DA ORDEM PRINCIPAL E DESEMPATE)
+            // 3. ORDENAÇÃO FINAL DA TABELA GERAL
             const finalResults = Object.values(teamScores).sort((a, b) => {
-                // 1. Ordena por Total (Pontos) descendente
                 if (b.total !== a.total) { 
                     return b.total - a.total; 
                 }
                 
-                // 2. Desempate (Critério Selecionado)
                 if (tiebreaker === 'booyahs') {
                     return b.booyahs - a.booyahs;
                 } else {
@@ -943,8 +918,6 @@
 
             return { finalResults: finalResults, finalMVP: finalMVP }; 
         }
-
-        // --- FUNÇÕES DE RENDERIZAÇÃO ---
 
         function renderFinalTable(results, containerId, mode = 'simplified') {
             const container = document.getElementById(containerId);
@@ -961,7 +934,6 @@
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // CABEÇALHO CONDICIONAL
             let headerHTML = `
                 <th class="p-3 text-sm font-semibold uppercase">POS</th>
                 <th class="p-3 text-sm font-semibold uppercase">Time</th>
@@ -994,17 +966,15 @@
                 const rank = index + 1;
                 let rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700';
                 
-                // DESTAQUE: Top 3
                 if (rank === 1) {
-                    rowClass = 'booyah-bg font-bold text-lg text-black'; // Top 1 (Verde/Booyah)
+                    rowClass = 'booyah-bg font-bold text-lg text-black';
                 } else if (rank <= 3) {
-                    rowClass = 'top-3-general font-bold text-lg text-black'; // Top 2 e 3 (Amarelo Dourado)
+                    rowClass = 'top-3-general font-bold text-lg text-black';
                 }
                 
                 const row = document.createElement('tr');
                 row.className = rowClass + ' hover:bg-gray-600 transition duration-150 ' + colsClass;
 
-                // CÉLULAS CONDICIONAIS
                 let cellHTML = `
                     <td class="p-3 font-bold text-base ${rank <= 3 ? 'text-black' : ''}">${rank}</td>
                     <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${rank <= 3 ? 'text-black' : ''}">${team.name}</td>
@@ -1039,14 +1009,12 @@
                  return;
             }
 
-            // Aplica o limite de visualização
             const limit = currentMvpLimit;
             const mvpResults = limit === 999 ? playerResults : playerResults.slice(0, limit);
             
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
-            // CABEÇALHO MVP (6 COLUNAS, INCLUINDO QUEDAS)
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
@@ -1068,7 +1036,6 @@
                 const isTop = rank <= 3;
                 
                 const row = document.createElement('tr');
-                // Nota: Mudar o estilo da linha para não usar as cores MVp do CSS para deixar o Canvas mais limpo
                 row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols text-white';
 
                 row.innerHTML = `
@@ -1087,7 +1054,6 @@
         }
 
         function displayResults() {
-            // 1. Renderiza as tabelas finais
             if (window.finalResults && window.finalResults.length > 0) {
                 renderFinalTable(window.finalResults, 'finalTableContainer', currentTableMode);
                 renderMVPTable(window.finalMVP, 'mvpTableContainer');
@@ -1098,11 +1064,35 @@
         }
         
         // ----------------------------------------------------------------------
-        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS ---
+        // --- FUNÇÃO DE UPLOAD DA IMAGEM DE ARTE ---
+        // ----------------------------------------------------------------------
+
+        document.addEventListener('DOMContentLoaded', () => {
+             const artFileInput = document.getElementById('artFileInput');
+             if (artFileInput) {
+                 artFileInput.addEventListener('change', function(event) {
+                     const file = event.target.files[0];
+                     if (file) {
+                         const reader = new FileReader();
+                         reader.onload = function(e) {
+                             customArtImageURL = e.target.result;
+                             alert("Arte de fundo carregada com sucesso! Agora você pode gerar a imagem.");
+                         };
+                         reader.readAsDataURL(file);
+                     } else {
+                         customArtImageURL = null;
+                     }
+                 });
+             }
+        });
+
+
+        // ----------------------------------------------------------------------
+        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (AGORA COM IMAGEM DE FUNDO) ---
         // ----------------------------------------------------------------------
 
         /**
-         * Gera uma arte da tabela geral ou MVP em um formato específico e baixa.
+         * Gera uma arte da tabela geral ou MVP, desenhando sobre a imagem de fundo customizada.
          * @param {string} type 'final' ou 'mvp'
          * @param {string} format '1920x1080', '1080x1350' ou '1080x1080'
          */
@@ -1113,135 +1103,135 @@
                 return;
             }
 
-            // Adiciona o canvas se ainda não existir
+            if (!customArtImageURL) {
+                 alert("ERRO: Por favor, carregue sua imagem de fundo (sua arte) no campo acima antes de gerar.");
+                 return;
+            }
+
             let canvas = document.getElementById('artCanvas');
             if (!canvas) {
                 canvas = document.createElement('canvas');
                 canvas.id = 'artCanvas';
-                canvas.style.display = 'none'; // Manter oculto
+                canvas.style.display = 'none';
                 document.body.appendChild(canvas);
             }
             const ctx = canvas.getContext('2d');
             
-            // 1. Configurar Dimensões e Título
-            let width, height, titleText;
+            // 1. Configurar Dimensões do Canvas (Baseado no formato para a imagem ser desenhada)
+            let width, height;
             if (format === '1920x1080') {
                 width = 1920; height = 1080;
             } else if (format === '1080x1350') {
                 width = 1080; height = 1350;
-            } else { // '1080x1080' (Default)
+            } else {
                 width = 1080; height = 1080;
             }
             
             canvas.width = width;
             canvas.height = height;
 
-            if (type === 'final') {
-                 titleText = "TABELA GERAL FINAL";
-            } else {
-                 titleText = "TOP " + data.length + " MVP INDIVIDUAL";
-            }
-            
-            // 2. Desenhar Fundo e Header
-            ctx.fillStyle = '#1a2c5b'; // Fundo Primário (Azul Escuro)
-            ctx.fillRect(0, 0, width, height);
+            // 2. Carregar e Desenhar a Imagem de Fundo (A SUA ARTE)
+            const img = new Image();
+            img.onload = function() {
+                // Desenha a imagem de fundo, cobrindo todo o Canvas
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // 3. Desenhar a Tabela de Dados (Texto)
+                drawTableOnCanvas(ctx, data, type, width, height);
 
-            ctx.fillStyle = '#2c4a92'; // Header (Azul Marinho)
-            ctx.fillRect(0, 0, width, 100);
+                // 4. Baixar Imagem
+                const imageURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = `Tabela_${type}_${format}_CUSTOM.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+            img.onerror = function() {
+                 alert("Erro ao carregar a imagem de fundo. Certifique-se de que é um arquivo de imagem válido.");
+            };
+            img.src = customArtImageURL;
+        }
 
-            ctx.fillStyle = '#00bcd4'; // Texto Accent
-            ctx.font = 'bold 50px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(titleText, width / 2, 65);
+        /**
+         * Função que desenha a tabela de texto EM CIMA DA IMAGEM DE FUNDO.
+         * ESTE É O BLOCO QUE VOCÊ PRECISA AJUSTAR PARA ALINHAR O TEXTO COM SUA ARTE.
+         */
+        function drawTableOnCanvas(ctx, data, type, width, height) {
             
-            // 3. Desenhar a Tabela (simplificada)
+            // --- POSICIONAMENTO DA TABELA (AJUSTE AQUI!) ---
+            // Você precisará medir a posição na sua arte onde a tabela começa e o espaço entre as linhas.
             
-            const startY = 150;
-            const lineHeight = 70;
-            // Número de linhas que cabem (Total Height - StartY - Footer) / LineHeight
-            const maxRows = Math.floor((height - startY - 50) / lineHeight); 
+            // Posição Y onde a tabela de dados COMEÇA (após o cabeçalho da sua arte)
+            const startY = 300; // Ajuste este valor! Ex: 1080x1080, se começar no meio
+            const lineHeight = 70; // Espaço vertical entre as linhas (Ajuste este valor!)
+            const maxRows = 10; // Máximo de linhas para caber na arte
 
-            // Definição das colunas para Canvas
+            // Colunas e Larguras relativas (ajustadas para 1080 ou 1920)
             const columns = [
-                 { key: 'rank', label: 'POS', width: 0.10, align: 'center' },
-                 { key: 'name', label: type === 'final' ? 'TIME' : 'JOGADOR', width: 0.40, align: 'left' },
-                 { key: 'value1', label: type === 'final' ? 'BOOYAH' : 'QUEDAS', width: 0.15, align: 'center' },
-                 { key: 'value2', label: 'KILLS', width: 0.15, align: 'center' },
-                 { key: 'total', label: type === 'final' ? 'PONTOS' : 'TOTAL KILLS', width: 0.20, align: 'center' },
+                 // Pos, Time, Booyah/Quedas, Kills/Kills, Pontos/Total
+                 { key: 'rank', label: 'POS', width: 0.10, align: 'center', fontSize: 35 },
+                 { key: 'name', label: type === 'final' ? 'TIME' : 'JOGADOR', width: 0.40, align: 'left', fontSize: 35 },
+                 { key: 'value1', label: type === 'final' ? 'BOOYAH' : 'QUEDAS', width: 0.15, align: 'center', fontSize: 35 },
+                 { key: 'value2', label: 'KILLS', width: 0.15, align: 'center', fontSize: 40 },
+                 { key: 'total', label: type === 'final' ? 'PONTOS' : 'TOTAL', width: 0.20, align: 'center', fontSize: 40 },
             ];
 
-            // Mapear dados para as chaves genéricas e limitar o número de linhas
+            // Mapeamento de dados (igual ao anterior, mas apenas 10 linhas)
             const mappedData = data.slice(0, maxRows).map((item, index) => {
                 const rank = index + 1;
                 if (type === 'final') {
-                    return {
-                        rank: rank,
-                        name: item.name.substring(0, 15),
-                        value1: item.booyahs,
-                        value2: item.kills,
-                        total: item.total,
-                    };
+                    return { rank: rank, name: item.name.substring(0, 15), value1: item.booyahs, value2: item.kills, total: item.total };
                 } else {
-                    return {
-                        rank: rank,
-                        name: item.name.substring(0, 15),
-                        value1: item.matchesPlayed,
-                        value2: item.kills,
-                        total: item.kills, // MVP total é kills
-                    };
+                    return { rank: rank, name: item.name.substring(0, 15), value1: item.matchesPlayed, value2: item.kills, total: item.kills };
                 }
             });
-            
-            // --- DESENHAR CABEÇALHO DA TABELA ---
-            ctx.fillStyle = '#1f2937'; // Fundo da Linha
-            ctx.font = 'bold 30px Inter';
+
+            // --- DESENHAR CABEÇALHO DA TABELA (Opcional, se sua arte não tiver) ---
             let currentX = 0;
             columns.forEach(col => {
                 const colWidth = width * col.width;
                 let textX = currentX + colWidth / 2;
                 
-                // Alinhamento do Título da Coluna
-                ctx.fillStyle = '#f3f4f6'; // Texto Branco
+                // AJUSTE A POSIÇÃO Y AQUI TAMBÉM (EX: 50 pixels acima do startY)
+                const headerY = startY - 50; 
+
+                ctx.fillStyle = '#00bcd4'; // Cor do Título da Coluna
+                ctx.font = 'bold 30px Inter'; // Fonte do Título
+
                 if (col.align === 'left') {
                     textX = currentX + 10;
                     ctx.textAlign = 'left';
                 } else {
                     ctx.textAlign = 'center';
                 }
-                ctx.fillText(col.label, textX, startY - 15);
+                // ctx.fillText(col.label, textX, headerY); // Descomente se precisar do cabeçalho da tabela
                 currentX += colWidth;
             });
 
-            // --- DESENHAR LINHAS DA TABELA ---
+
+            // --- DESENHAR LINHAS DA TABELA (DADOS) ---
             mappedData.forEach((item, index) => {
-                const y = startY + index * lineHeight;
-                
-                // Fundo da Linha (Alternado e Destaques)
-                if (item.rank === 1) {
-                    ctx.fillStyle = '#4CAF50'; // Booyah
-                } else if (item.rank <= 3) {
-                    ctx.fillStyle = '#FFC107'; // Top 3
-                } else {
-                    ctx.fillStyle = index % 2 === 0 ? '#1f2937' : '#1a2c5b'; // Alternado
-                }
-                ctx.fillRect(0, y - lineHeight + 15, width, lineHeight - 5);
-                
-                // Desenhar texto
-                ctx.font = '30px Inter';
+                // Calcula a posição Y da linha
+                const y = startY + index * lineHeight; 
                 currentX = 0;
+                
                 columns.forEach(col => {
                     const colWidth = width * col.width;
                     let textX = currentX + colWidth / 2;
                     
-                    // Cor do texto
+                    // Estilo do Texto para a LINHA DE DADOS
+                    // Se você não tem fundo na sua arte, defina a cor aqui.
                     if (item.rank <= 3) {
-                        ctx.fillStyle = '#1a2c5b'; // Preto/Azul Escuro para destaque
-                        ctx.font = 'bold 30px Inter';
+                        ctx.fillStyle = '#FFD700'; // Cor Dourada para TOP 3
+                        ctx.font = 'bold ' + col.fontSize + 'px Inter';
                     } else {
-                        ctx.fillStyle = '#f3f4f6'; // Branco
+                        ctx.fillStyle = '#FFFFFF'; // Branco para as outras posições
+                        ctx.font = col.fontSize + 'px Inter';
                     }
 
-                    // Alinhamento
+                    // Ajuste de Alinhamento
                     if (col.align === 'left') {
                         textX = currentX + 10;
                         ctx.textAlign = 'left';
@@ -1250,28 +1240,16 @@
                     }
 
                     const value = col.key === 'rank' ? item.rank + 'º' : item[col.key];
-                    ctx.fillText(value, textX, y + 25);
+                    ctx.fillText(value, textX, y); // Desenha o texto na posição Y
                     currentX += colWidth;
                 });
             });
-            
-            // 4. Desenhar Footer (Créditos)
-            ctx.fillStyle = '#1f2937';
-            ctx.fillRect(0, height - 40, width, 40);
+
+            // 5. Opcional: Desenhar Créditos/Footer por cima
             ctx.fillStyle = '#9ca3af'; 
             ctx.font = '20px Inter';
             ctx.textAlign = 'right';
-            ctx.fillText("Calculadora por RyanZ © 2025", width - 20, height - 15);
-
-
-            // 5. Baixar Imagem
-            const imageURL = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = imageURL;
-            link.download = `Tabela_${type}_${format}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            ctx.fillText("Feito por RyanZ | Calculadora SPEC", width - 20, height - 20);
         }
         
         // Inicializa na primeira carga da página
