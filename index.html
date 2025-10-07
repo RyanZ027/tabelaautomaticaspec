@@ -300,7 +300,7 @@
     <div id="results-page" class="container-main space-y-8" style="display: none;">
         <header class="text-center py-6 bg-gray-900 shadow-lg">
             <h1 class="4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
-            <p class="text-gray-400 mt-1">Visão Geral, MVP e Arte Final</p>
+            <p class="text-gray-400 mt-1">Visão Geral, MVP e Exportação Rápida</p>
         </header>
 
         <button onclick="showPage('config')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
@@ -342,7 +342,7 @@
             <div class="bg-card p-6 rounded-xl shadow-2xl">
                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Exportar Dados (CSV Rápido)</h2>
                 <p class="text-sm text-gray-400 mb-3 font-bold text-accent">
-                    Baixe os dados para importar diretamente em ferramentas de design (Canva/Planilhas) ou use o gerador de arte.
+                    A forma mais rápida de colocar dados na sua arte! Baixe os dados para importar diretamente em ferramentas de design (Canva/Planilhas).
                 </p>
 
                 <div class="mb-4">
@@ -350,31 +350,6 @@
                         ⬇️ EXPORTAR DADOS GERAL + MVP (CSV)
                     </button>
                 </div>
-                
-                <hr class="border-gray-700 my-6">
-
-                <h3 class="text-lg font-semibold mb-2 text-white">Gerador de Arte (Calibrado)</h3>
-
-                <div class="mb-4">
-                    <label for="artFileInput" class="block text-sm font-medium text-gray-400">1. Upload da Imagem de Fundo (Arte Vazia):</label>
-                    <input type="file" id="artFileInput" accept="image/*" 
-                           class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white"/>
-                </div>
-
-                <div class="grid grid-cols-3 gap-3">
-                    <button onclick="generateCanvasArt('final', '1080x1350')" class="py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition duration-200">
-                        GERAR GERAL 1080x1350
-                    </button>
-                    <button onclick="generateCanvasArt('mvp', '1080x1350')" class="py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition duration-200">
-                        GERAR MVP 1080x1350
-                    </button>
-                     <button onclick="generateCanvasArt('final', '1920x1080')" class="py-2 px-4 rounded-lg bg-yellow-600 hover:bg-yellow-700 text-black font-bold text-sm transition duration-200">
-                        GERAR 1920x1080
-                    </button>
-                </div>
-                <p class="text-sm text-red-400 mt-4">
-                    **AVISO:** A geração da arte exige que sua imagem de fundo tenha as dimensões exatas e a arte final está calibrada para o layout CPR/WEED.
-                </p>
             </div>
             <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
@@ -421,10 +396,8 @@
         window.finalResults = [];
         window.finalMVP = [];
 
-        // Variável global para armazenar o URL da imagem de fundo carregada
-        let customArtImageURL = null;
-
-
+        // REMOVIDO: Variável customArtImageURL
+        
         // --- MODAL / SPLASH SCREEN LOGIC ---
         function checkFirstVisit() {
             if (!sessionStorage.getItem('welcomeModalShown')) {
@@ -757,7 +730,7 @@
         
         function extractIndividualKills(logText) {
             const playerResults = [];
-            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)/i; 
+            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s**Rank:\s*(\d+)/i; 
             const playerLineRegex = /NAME:\s*([^:]+?)\s*ID:\s*[^ ]+?\s*KILL:\s*(\d+)/i;
             
             let currentTeam = '';
@@ -1056,7 +1029,7 @@
         }
         
         // ----------------------------------------------------------------------
-        // --- NOVO: EXPORTAR DADOS DA TABELA GERAL E MVP PARA CSV ---
+        // --- FUNÇÃO DE EXPORTAR DADOS DA TABELA GERAL E MVP PARA CSV ---
         // ----------------------------------------------------------------------
 
         /**
@@ -1109,187 +1082,270 @@
 
 
         // ----------------------------------------------------------------------
-        // --- FUNÇÃO DE UPLOAD DA IMAGEM DE ARTE ---
+        // --- FUNÇÕES DE LÓGICA (AS ORIGINAIS) ---
         // ----------------------------------------------------------------------
+        
+        // Funções de upload, processamento de log, calcularPontuacoes e renderização de tabelas
+        // (Mantidas aqui para funcionalidade total do site)
 
-        document.addEventListener('DOMContentLoaded', () => {
-             const artFileInput = document.getElementById('artFileInput');
-             if (artFileInput) {
-                 artFileInput.addEventListener('change', function(event) {
-                     const file = event.target.files[0];
-                     if (file) {
-                         const reader = new FileReader();
-                         reader.onload = function(e) {
-                             customArtImageURL = e.target.result;
-                             alert("Arte de fundo carregada com sucesso! Agora você pode gerar a imagem.");
-                         };
-                         reader.readAsDataURL(file);
-                     } else {
-                         customArtImageURL = null;
-                     }
-                 });
-             }
-        });
+        function extractIndividualKills(logText) {
+            const playerResults = [];
+            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)/i; 
+            const playerLineRegex = /NAME:\s*([^:]+?)\s*ID:\s*[^ ]+?\s*KILL:\s*(\d+)/i;
+            
+            let currentTeam = '';
+
+            for (const line of logText.split('\n')) {
+                let teamMatch = line.match(teamHeaderRegex);
+                let playerMatch = line.match(playerLineRegex);
+
+                if (teamMatch) {
+                    currentTeam = teamMatch[1].trim().replace(/\s+$/, ''); 
+                } else if (playerMatch && currentTeam) {
+                    const playerName = playerMatch[1].trim().replace(/\s+$/, '');
+                    const kills = parseInt(playerMatch[2]);
+                    
+                    if (playerName && !isNaN(kills)) {
+                        playerResults.push({
+                            name: playerName,
+                            team: currentTeam,
+                            kills: kills
+                        });
+                    }
+                }
+            }
+            return playerResults;
+        }
+
+        function processTextLog(logText) {
+            const lines = logText.split('\n').filter(line => line.trim() !== '');
+            const teamResults = [];
+            const processedNames = new Set();
+            
+            const detailedLogRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)\s*.*KillScore:\s*(\d+)/i;
+            const playerResults = extractIndividualKills(logText);
+            
+            for (const line of lines) {
+                const match = line.match(detailedLogRegex);
+                
+                if (match) {
+                    const teamName = match[1].trim().replace(/\s+$/, '');
+                    const rank = parseInt(match[2]);
+                    const kills = parseInt(match[3]);
+
+                    if (teamName && !isNaN(rank) && rank >= 1 && !isNaN(kills)) {
+                        if (!processedNames.has(teamName)) {
+                            teamResults.push({ team_name: teamName, placement: rank, kills: kills });
+                            processedNames.add(teamName);
+                        }
+                    }
+                }
+            }
+
+            if (teamResults.length > 0) {
+                return { teamResults: teamResults, playerResults: playerResults }; 
+            }
+            
+            for (const line of lines) {
+                const parts = line.trim().split(/\s+/);
+                
+                if (parts.length >= 3) {
+                    const kills = parseInt(parts.pop());
+                    const place = parseInt(parts.pop());
+                    const teamName = parts.join(' ');
+                    
+                    if (teamName && !isNaN(place) && place >= 1 && !isNaN(kills) && kills >= 0) {
+                        teamResults.push({ team_name: teamName, placement: place, kills: kills });
+                    }
+                }
+            }
+            
+            return { teamResults: teamResults, playerResults: [] };
+        }
+
+        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker) {
+            const teamScores = {};
+            
+            for (const teamLog of logData) {
+                const teamName = teamLog.team_name;
+                const place = parseInt(teamLog.placement);
+                const kills = parseInt(teamLog.kills);
+
+                if (!teamName || isNaN(place) || isNaN(kills)) continue;
+
+                const placementScore = placementPoints[place] !== undefined ? placementPoints[place] : 0;
+                const killScore = kills * killPoints;
+                const totalScore = placementScore + killScore;
+
+                if (!teamScores[teamName]) {
+                    teamScores[teamName] = {
+                        total: 0,
+                        placement: 0, 
+                        ptsKill: 0, 
+                        kills: 0, 
+                        booyahs: 0, 
+                        quedasList: 0, 
+                        lastPlace: place, 
+                        name: teamName,
+                        manualAdjustment: 0 
+                    };
+                }
+                
+                teamScores[teamName].total += totalScore;
+                teamScores[teamName].placement += placementScore;
+                teamScores[teamName].ptsKill += killScore;
+                teamScores[teamName].kills += kills;
+                teamScores[teamName].quedasList += 1; 
+                if (place === 1) { teamScores[teamName].booyahs += 1; }
+                teamScores[teamName].lastPlace = place;
+            }
+            
+            const processedPlayerMatches = {};
+            
+            for (const playerLog of individualKillsData) {
+                const playerName = playerLog.name;
+                
+                if (!processedPlayerMatches[playerName]) {
+                    processedPlayerMatches[playerName] = {
+                        name: playerName,
+                        team: playerLog.team,
+                        kills: 0,
+                        matchesPlayed: 0
+                    };
+                }
+                processedPlayerMatches[playerName].kills += playerLog.kills;
+                processedPlayerMatches[playerName].matchesPlayed += 1; 
+            }
+            
+            const finalMVP = Object.values(processedPlayerMatches).map(player => {
+                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
+                return { ...player, avgKills: avgKills };
+            }).sort((a, b) => b.kills - a.kills);
+            
+            const finalResults = Object.values(teamScores).sort((a, b) => {
+                if (b.total !== a.total) { 
+                    return b.total - a.total; 
+                }
+                
+                if (tiebreaker === 'booyahs') {
+                    return b.booyahs - a.booyahs;
+                } else {
+                    return b.kills - a.kills;
+                }
+            });
 
 
-        // ----------------------------------------------------------------------
-        // --- LÓGICA DE GERAÇÃO DE ARTE EM CANVAS (CALIBRADA) ---
-        // ----------------------------------------------------------------------
+            return { finalResults: finalResults, finalMVP: finalMVP }; 
+        }
 
-        /**
-         * Gera uma arte da tabela geral ou MVP, desenhando sobre a imagem de fundo customizada.
-         */
-        function generateCanvasArt(type, format) {
-            const data = type === 'final' ? window.finalResults : window.finalMVP.slice(0, currentMvpLimit);
-            if (data.length === 0) {
-                alert("Nenhum dado para gerar arte. Calcule os resultados primeiro.");
+        function processFilesSequentially(files, statusDiv, errorDiv, callback) {
+            const totalFiles = files.length;
+            let index = 0;
+
+            const processNextFile = () => {
+                if (index >= totalFiles) {
+                    if (callback) callback();
+                    return;
+                }
+
+                const file = files[index];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const fileContent = e.target.result.replace(/^\uFEFF/, '').trim();
+                    let data = null;
+                    let fileIndividualKills = [];
+
+                    try {
+                        data = JSON.parse(fileContent);
+                        if (!Array.isArray(data) || data.length === 0 || !data[0].team_name) {
+                             data = null; 
+                        }
+                    } catch (e) { }
+
+                    if (!data) {
+                        const logData = processTextLog(fileContent);
+                        data = logData.teamResults;
+                        fileIndividualKills = logData.playerResults;
+                    } 
+                    
+                    if (data.length > 0) {
+                        currentFileData.push(...data);
+                        individualKillsData.push(...fileIndividualKills);
+                        matchLogsHistory.push(data); 
+                        matchCount++; 
+                    }
+                    
+                    index++;
+                    processNextFile();
+                };
+                
+                reader.onerror = () => {
+                    errorDiv.textContent = `Erro ao ler o arquivo: ${file.name}.`;
+                    errorDiv.classList.remove('hidden');
+                    index++;
+                    processNextFile();
+                };
+
+                reader.readAsText(file);
+            };
+
+            processNextFile();
+        }
+
+        // Funções de UPLOAD e ADIÇÃO de arquivos (Mantidas para funcionalidade)
+        function handleAdditionalFileUpload(event) {
+            const files = event.target.files;
+            const statusDiv = document.getElementById('additionalStatusMessage');
+            const button = document.getElementById('processAdditionalButton');
+
+            if (files.length === 0) {
+                 additionalFilesQueue = [];
+                 button.disabled = true;
+                 statusDiv.classList.add('hidden');
+                 return;
+            }
+            
+            additionalFilesQueue = Array.from(files); 
+            statusDiv.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
+            statusDiv.classList.remove('hidden');
+            button.disabled = false;
+        }
+        
+        function processAdditionalFiles() {
+            const button = document.getElementById('processAdditionalButton');
+            const statusDiv = document.getElementById('additionalStatusMessage');
+            const errorDiv = document.getElementById('errorMessage');
+
+            if (additionalFilesQueue.length === 0) {
+                statusDiv.textContent = "Nenhum arquivo novo para processar.";
+                statusDiv.classList.remove('hidden');
                 return;
             }
 
-            if (!customArtImageURL) {
-                 alert("ERRO: Por favor, carregue sua imagem de fundo (sua arte) no campo acima antes de gerar.");
-                 return;
-            }
-
-            let canvas = document.getElementById('artCanvas');
-            if (!canvas) {
-                canvas = document.createElement('canvas');
-                canvas.id = 'artCanvas';
-                canvas.style.display = 'none';
-                document.body.appendChild(canvas);
-            }
-            const ctx = canvas.getContext('2d');
+            button.disabled = true;
+            statusDiv.textContent = 'Processando arquivos...';
+            errorDiv.classList.add('hidden');
             
-            // 1. Configurar Dimensões do Canvas
-            let width, height;
-            if (format === '1920x1080') {
-                width = 1920; height = 1080;
-            } else if (format === '1080x1350') {
-                width = 1080; height = 1350; 
-            } else {
-                width = 1080; height = 1080;
-            }
+            const initialMatchCount = matchCount; 
             
-            canvas.width = width;
-            canvas.height = height;
+            processFilesSequentially(additionalFilesQueue, statusDiv, errorDiv, () => {
+                 const newQuedas = matchCount - initialMatchCount;
+                 statusDiv.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
+                 
+                 const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
+                 const tiebreaker = document.getElementById('tiebreaker').value;
+                 
+                 const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
 
-            // 2. Carregar e Desenhar a Imagem de Fundo (A SUA ARTE)
-            const img = new Image();
-            img.onload = function() {
-                // Desenha a imagem de fundo, cobrindo todo o Canvas
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // 3. Desenhar a Tabela de Dados (Texto)
-                drawTableOnCanvas(ctx, data, type, width, height);
-
-                // 4. Baixar Imagem
-                const imageURL = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = imageURL;
-                link.download = `Tabela_${type}_${format}_CUSTOM.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
-            img.onerror = function() {
-                 alert("Erro ao carregar a imagem de fundo. Certifique-se de que é um arquivo de imagem válido.");
-            };
-            img.src = customArtImageURL;
-        }
-
-        /**
-         * Função que desenha a tabela de texto EM CIMA DA IMAGEM DE FUNDO.
-         * CALIBRADO PARA A ARTE CPR/WEED (1080px de largura).
-         */
-        function drawTableOnCanvas(ctx, data, type, width, height) {
-            
-            // ----------------------------------------------------------------------
-            // --- CALIBRAÇÃO DE POSIÇÃO (AJUSTADO PARA ARTE) ---
-            // ----------------------------------------------------------------------
-            
-            // Posição Y onde a primeira linha de dados começa (CALIBRADO)
-            const startY = 365; 
-            // Espaço vertical entre as linhas de dados (CALIBRADO)
-            const lineHeight = 72; 
-            // Máximo de linhas que cabem (12 posições)
-            const maxRows = 12; 
-            
-            // Colunas: Posição X (CALIBRADO para 1080px de largura)
-            const columns = [
-                 // Coluna 1: POSIÇÃO (Não desenhamos, mas mantemos para mapear)
-                 { key: 'rank', x: 70, align: 'center', fontSize: 35 }, 
-                 // Coluna 2: EQUIPE / JOGADOR
-                 { key: 'name', x: 305, align: 'left', fontSize: 36 }, 
-                 // Coluna 3: ABATE / KILLS
-                 { key: 'value2', x: 675, align: 'center', fontSize: 38 }, 
-                 // Coluna 4: BOOYAH / QUEDAS
-                 { key: 'value1', x: 800, align: 'center', fontSize: 38 }, 
-                 // Coluna 5: PONTOS / TOTAL
-                 { key: 'total', x: 970, align: 'center', fontSize: 38 }, 
-            ];
-
-            // Mapeamento de dados (limitado a maxRows)
-            const mappedData = data.slice(0, maxRows).map((item, index) => {
-                const rank = index + 1;
-                let name, value1, value2, total;
-
-                if (type === 'final') {
-                    // Tabela Geral
-                    name = item.name.substring(0, 18); 
-                    value1 = item.booyahs; 
-                    value2 = item.kills; 
-                    total = item.total; 
-                } else {
-                    // MVP
-                    name = item.name.substring(0, 18);
-                    value1 = item.matchesPlayed; 
-                    value2 = item.kills; 
-                    total = item.kills; 
-                }
-
-                return { rank, name, value1, value2, total };
+                 window.finalResults = results;
+                 window.finalMVP = mvp;
+                 
+                 displayResults();
+                 
+                 document.getElementById('additionalFileInput').value = '';
+                 additionalFilesQueue = [];
             });
-
-
-            // --- DESENHAR LINHAS DA TABELA (DADOS) ---
-            mappedData.forEach((item, index) => {
-                const y = startY + index * lineHeight; 
-                
-                columns.forEach(col => {
-                    
-                    // --- ESTILOS DE COR E FONTE (NEGITO) ---
-                    let fontWeight = 'bold';
-                    let fillColor = '#FFFFFF'; // Branco
-
-                    if (item.rank === 1) {
-                         fillColor = '#FFD700'; // Dourado para 1º
-                         fontWeight = '900'; // Extra Bold/Black
-                    } 
-
-                    ctx.fillStyle = fillColor;
-                    ctx.font = fontWeight + ' ' + col.fontSize + 'px Inter';
-
-                    // --- ALINHAMENTO ---
-                    ctx.textAlign = col.align;
-
-                    let textX = col.x;
-                    
-                    // PULA A COLUNA 'RANK' JÁ QUE ELA ESTÁ NA IMAGEM DE FUNDO
-                    if (col.key === 'rank') {
-                         return; 
-                    }
-
-                    const value = item[col.key];
-                    
-                    ctx.fillText(value, textX, y); 
-                });
-            });
-
-            // 5. Opcional: Desenhar Créditos/Footer por cima
-            ctx.fillStyle = '#FFFFFF'; 
-            ctx.font = 'bold 20px Inter';
-            ctx.textAlign = 'right';
-            ctx.fillText("Feito por RyanZ | Calculadora CPR/SPEC", width - 50, height - 30);
         }
         
         // Inicializa na primeira carga da página
