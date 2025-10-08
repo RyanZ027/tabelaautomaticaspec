@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Automatica de Tabela Via SPEC</title>
+    <title>Calculadora e Calibrador SPEC Unificado</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         /* Estilos base */
         body { font-family: 'Inter', sans-serif; background-color: #1a2c5b; color: #f3f4f6; }
@@ -13,192 +14,115 @@
         .bg-card { background-color: #1f2937; }
         .table-header { background-color: #2c4a92; color: #ffffff; }
         
-        /* DESTAQUES DE CORES */
-        .booyah-bg { background-color: #4CAF50; } /* Verde para 1º Lugar */
+        /* DESTAQUES DE CORES (Calculadora) */
+        .booyah-bg { background-color: #4CAF50; }
         .mvp-bg { 
-            background-color: #FFC107; /* Amarelo Dourado para Top 3 MVP */
-            /* Texto PRETO/AZUL ESCURO para MELHOR contraste no Amarelo */
+            background-color: #FFC107;
             color: #1a2c5b !important; 
             font-weight: 700; 
         } 
-        /* Destaque Top 2 e Top 3 na Tabela Geral (Amarelo Dourado) */
         .top-3-general {
             background-color: #FFC107 !important; 
             color: #1a2c5b !important;
             font-weight: 600;
         }
 
-        /* Estilo para o campo de arquivo */
-        #jsonFileInput {
-            cursor: pointer;
-        }
+        /* TABELA GERAL */
+        .full-width-table table { table-layout: fixed; width: 100%; border-collapse: collapse; border: 1px solid #4a5568; }
+        .full-width-table th, .full-width-table td { font-size: 0.85rem; padding: 0.4rem 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid #4a5568; text-align: center; }
+        .full-width-table th { text-align: center !important; }
         
-        /* --- AJUSTES DE TABELA PARA EXIBIÇÃO COMPLETA (RESPONSIVIDADE) --- */
-        .full-width-table table {
-            table-layout: fixed; 
-            width: 100%;
-            border-collapse: collapse; /* Adiciona bordas visíveis */
-            border: 1px solid #4a5568; /* Borda externa */
-        }
+        /* Ajuste de colunas para acomodar AJUSTE MANUAL (simplified) */
+        .simplified-table-cols td:nth-child(2) { text-align: left; } 
+        .simplified-table-cols td:nth-child(1), .simplified-table-cols th:nth-child(1) { width: 8%; } 
+        .simplified-table-cols td:nth-child(2), .simplified-table-cols th:nth-child(2) { width: 28%; } /* Time */
+        .simplified-table-cols td:nth-child(3), .simplified-table-cols th:nth-child(3) { width: 8%; } /* Booyah */
+        .simplified-table-cols td:nth-child(4), .simplified-table-cols th:nth-child(4) { width: 8%; } /* Quedas */
+        .simplified-table-cols td:nth-child(5), .simplified-table-cols th:nth-child(5) { width: 10%; } /* Kills */
+        .simplified-table-cols td:nth-child(6), .simplified-table-cols th:nth-child(6) { width: 20%; } /* AJUSTE */
+        .simplified-table-cols td:nth-child(7), .simplified-table-cols th:nth-child(7) { width: 18%; } /* Total */
         
-        .full-width-table th, .full-width-table td {
-            font-size: 0.85rem; 
-            padding: 0.4rem 0.2rem; 
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border: 1px solid #4a5568; /* Linhas internas da tabela */
-        }
-        
-        /* Larguras das colunas para Tabela Final Simplificada (6 Colunas) */
-        .final-table-cols td:nth-child(1), .final-table-cols th:nth-child(1) { width: 10%; } /* POSIÇÃO */
-        .final-table-cols td:nth-child(2), .final-table-cols th:nth-child(2) { width: 35%; } /* Time */
-        .final-table-cols td:nth-child(3), .final-table-cols th:nth-child(3) { width: 10%; } /* Booyah */
-        .final-table-cols td:nth-child(4), .final-table-cols th:nth-child(4) { width: 10%; } /* Quedas */
-        .final-table-cols td:nth-child(5), .final-table-cols th:nth-child(5) { width: 15%; } /* Kills */
-        .final-table-cols td:nth-child(6), .final-table-cols th:nth-child(6) { width: 20%; } /* Total Geral (Pontos) */
-
-        /* Larguras das colunas para Tabela Final Detalhada (8 Colunas) */
-        /* POS, TIME, BOOYAH, QUEDAS, KILLS, Pts Queda, Pts Kill, PONTOS */
-        .detailed-table-cols td:nth-child(1), .detailed-table-cols th:nth-child(1) { width: 8%; }  /* POSIÇÃO */
-        .detailed-table-cols td:nth-child(2), .detailed-table-cols th:nth-child(2) { width: 28%; } /* Time */
-        .detailed-table-cols td:nth-child(3), .detailed-table-cols th:nth-child(3) { width: 8%; }  /* Booyah */
-        .detailed-table-cols td:nth-child(4), .detailed-table-cols th:nth-child(4) { width: 10%; } /* Quedas */
-        .detailed-table-cols td:nth-child(5), .detailed-table-cols th:nth-child(5) { width: 10%; } /* Kills */
-        .detailed-table-cols td:nth-child(6), .detailed-table-cols th:nth-child(6) { width: 12%; } /* Pts Queda */
-        .detailed-table-cols td:nth-child(7), .detailed-table-cols th:nth-child(7) { width: 12%; } /* Pts Kill */
-        .detailed-table-cols td:nth-child(8), .detailed-table-cols th:nth-child(8) { width: 12%; } /* Total Geral (Pontos) */
+        /* Colunas da tabela Detalhada (mantendo a proporção original - sem ajuste manual) */
+        .detailed-table-cols td:nth-child(2) { text-align: left; } 
+        .detailed-table-cols td:nth-child(1), .detailed-table-cols th:nth-child(1) { width: 8%; }
+        .detailed-table-cols td:nth-child(2), .detailed-table-cols th:nth-child(2) { width: 25%; }
+        .detailed-table-cols td:nth-child(3), .detailed-table-cols th:nth-child(3) { width: 10%; }
+        .detailed-table-cols td:nth-child(4), .detailed-table-cols th:nth-child(4) { width: 8%; }
+        .detailed-table-cols td:nth-child(5), .detailed-table-cols th:nth-child(5) { width: 10%; }
+        .detailed-table-cols td:nth-child(6), .detailed-table-cols th:nth-child(6) { width: 13%; }
+        .detailed-table-cols td:nth-child(7), .detailed-table-cols th:nth-child(7) { width: 13%; }
+        .detailed-table-cols td:nth-child(8), .detailed-table-cols th:nth-child(8) { width: 13%; }
 
 
-        /* Centraliza os cabeçalhos de TODAS as tabelas */
-        .full-width-table th {
-            text-align: center !important;
-        }
+        .mvp-table-cols td:nth-child(2) { text-align: left; } 
+        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 8%; } 
+        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 30%; } 
+        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 12%; } 
+        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 15%; } 
+        .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { width: 18%; } 
+        .mvp-table-cols td:nth-child(6), .mvp-table-cols th:nth-child(6) { width: 17%; } 
 
-        /* Centraliza o texto das células da tabela geral (SIMPLIFICADA), exceto a coluna Time (coluna 2) */
-        .final-table-cols td {
-            text-align: center;
-        }
-        .final-table-cols td:nth-child(2) {
-            text-align: left; /* Mantém o nome do Time alinhado à esquerda */
-        }
-        
-        /* Centraliza o texto das células da tabela geral (DETALHADA), exceto a coluna Time (coluna 2) */
-        .detailed-table-cols td {
-            text-align: center;
-        }
-        .detailed-table-cols td:nth-child(2) {
-            text-align: left; /* Mantém o nome do Time alinhado à esquerda */
-        }
-
-
-        /* Centraliza o texto das células da tabela MVP, exceto a coluna Jogador (coluna 2) */
-        .mvp-table-cols td {
-            text-align: center;
-        }
-        .mvp-table-cols td:nth-child(2) {
-            text-align: left; /* Mantém o nome do Jogador alinhado à esquerda */
-        }
-
-        /* Larguras das colunas para MVP Individual (AGORA 6 COLUNAS) */
-        /* POS, JOGADOR, QUEDAS, KILLS, MÉDIA KILLS, TIME */
-        .mvp-table-cols td:nth-child(1), .mvp-table-cols th:nth-child(1) { width: 8%; } /* POSIÇÃO */
-        .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 30%; } /* Jogador */
-        .mvp-table-cols td:nth-child(3), .mvp-table-cols th:nth-child(3) { width: 12%; } /* Quedas (NOVA) */
-        .mvp-table-cols td:nth-child(4), .mvp-table-cols th:nth-child(4) { width: 15%; } /* Kills */
-        .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { width: 18%; } /* Média Kills */
-        .mvp-table-cols td:nth-child(6), .mvp-table-cols th:nth-child(6) { width: 17%; } /* Time */
-
-
-        /* Oculta as colunas de time e pts queda em telas muito pequenas para o MVP */
-        @media (max-width: 639px) { /* Mobile */
-            /* Esconde Coluna Média Kills em mobile para salvar espaço */
+        @media (max-width: 639px) { 
             .mvp-table-cols td:nth-child(5), .mvp-table-cols th:nth-child(5) { display: none; }
-            .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 45%; } /* Jogador expande */
+            .mvp-table-cols td:nth-child(2), .mvp-table-cols th:nth-child(2) { width: 45%; } 
         }
         
-        /* Layout principal */
-        .container-main {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        /* Footer Style CORRIGIDO */
-        .app-footer {
-            display: flex;
-            flex-direction: column; /* Coloca os itens em coluna para melhor organização */
-            justify-content: center; 
-            align-items: center; 
-            padding: 15px;
-            margin-top: 30px;
-            font-size: 0.8rem;
-            color: #9ca3af; /* Gray 400 */
-        }
-        .app-footer-links {
-            display: flex;
-            align-items: center;
-            margin-top: 5px; /* Espaço entre o texto e os links */
-        }
-        .app-footer a {
-            color: #fff;
-            margin-left: 10px;
-            transition: color 0.3s;
-            display: flex;
-            align-items: center;
-        }
-        .app-footer a:hover {
-            color: #00bcd4; /* Accent color */
-        }
-
-        /* Aviso Legal */
-        .aviso-legal {
-            margin-top: 15px;
-            font-size: 0.75rem;
-            color: #f44336; /* Vermelho para destaque */
-            font-weight: 600;
-        }
-
-        /* --- Estilos do Modal de Boas-Vindas --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 50;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            color: #1a2c5b; /* Texto escuro */
-        }
-        
-        /* NOVOS ESTILOS PARA IMAGENS REAIS DO INSTAGRAM */
-        .insta-footer-img {
-            width: 24px; /* Tamanho para o footer */
-            height: 24px;
-            border-radius: 6px;
-        }
-        .insta-modal-img {
-            width: 50px; /* Tamanho para o modal */
-            height: 50px;
-            border-radius: 12px;
+        /* Ajuste do input de ajuste manual na tabela */
+        .adjustment-input {
+            width: 90%; 
+            padding: 2px 4px; 
+            text-align: center; 
+            border: 1px solid #4b5563; 
+            border-radius: 4px; 
+            background-color: #1f2937; 
+            color: #d1d5db; 
+            font-size: 0.75rem; 
             margin: 0 auto;
+            display: block;
         }
 
+        /* --- ESTILOS DO CALIBRADOR DE ARTE --- */
+        #art-preview-container {
+            width: 100%; max-width: 500px; margin: 20px auto; position: relative;
+            border: 2px dashed #00bcd4; background-color: #2c4a92;
+        }
+        #calibration-canvas { display: block; width: 100%; height: auto; }
+        .grid-item { display: flex; flex-direction: column; padding: 0.75rem; border-radius: 0.5rem; background-color: #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .grid-item label { font-size: 0.875rem; font-weight: bold; color: #d1d5db; }
+        /* Ajuste do px-input para melhor alinhamento */
+        .px-input { width: 60px; padding: 2px 4px; text-align: right; border: 1px solid #4b5563; border-radius: 4px; background-color: #1f2937; color: #d1d5db; font-size: 0.75rem; margin-left: 8px; }
+
+        /* Estilos da Modal (Pop-up Calibrador) */
+        .modal-calibrador { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 50; }
+        .modal-content-calibrador { max-width: 95vw; max-height: 95vh; overflow: auto; background-color: #1f2937; padding: 1rem; border-radius: 0.5rem; position: relative; }
+        .modal-image-calibrador { max-width: 100%; max-height: calc(95vh - 50px); height: auto; display: block; margin: 0 auto; border-radius: 0.25rem; }
+        
+        /* Estilos específicos para a fonte Bebas Neue */
+        .text-4xl, .text-2xl, .text-lg, .font-extrabold { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+        
+        /* FOOTER */
+        .app-footer { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; margin-top: 30px; font-size: 0.8rem; color: #9ca3af; }
+        .app-footer a { color: #fff; margin-left: 10px; transition: color 0.3s; display: flex; align-items: center; }
+        .insta-footer-img { width: 24px; height: 24px; border-radius: 6px; }
+        .aviso-legal { margin-top: 15px; font-size: 0.75rem; color: #f44336; font-weight: 600; }
+        
+        /* Estilo da Navegação por Abas */
+        .tab-button { padding: 10px 20px; cursor: pointer; border-bottom: 3px solid transparent; font-weight: bold; transition: all 0.2s; }
+        .tab-button.active { border-color: #00bcd4; color: #00bcd4; }
+        .tab-button:hover:not(.active) { border-color: #374151; }
+        
+        /* Modal de Boas-Vindas */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 50; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); width: 90%; max-width: 400px; text-align: center; color: #1a2c5b; }
     </style>
 </head>
-<body onload="checkFirstVisit()"> 
+<body onload="initApp()"> 
+    <script>
+        // Variáveis globais de controle do localStorage (NOVAS)
+        const SCORE_PRESET_KEY = 'scoreCalculatorPresets';
+        const CALCULATOR_STATE_KEY = 'calculatorState';
+    </script>
+
 
     <div id="welcome-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -208,7 +132,7 @@
             <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" 
                class="inline-block p-2 mx-2 rounded-xl bg-transparent hover:opacity-80 transition">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
-                     alt="Logo Instagram" class="insta-modal-img">
+                     alt="Logo Instagram" class="insta-modal-img w-12 h-12 rounded-lg mx-auto">
             </a>
 
             <button onclick="closeModal()" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200">
@@ -218,68 +142,381 @@
     </div>
 
 
-    <div id="config-page" class="container-main space-y-8">
-        <header class="text-center py-6 bg-gray-900 shadow-lg">
-            <h1 class="4xl font-extrabold text-accent">1. Configurar e Carregar Logs</h1>
-            <p class="text-gray-400 mt-1">Calculadora Automatica de Tabela Via SPEC</p>
+    <div class="container-main max-w-6xl mx-auto p-4 sm:p-8 space-y-8">
+        <header class="text-center py-6 bg-gray-900 shadow-lg rounded-lg">
+            <h1 class="4xl font-extrabold text-teal-400">Calculadora e Calibrador SPEC Unificado</h1>
+            <p class="text-gray-400 mt-1">Ferramentas essenciais para organização de torneios.</p>
         </header>
 
-        <div class="bg-card p-6 rounded-xl shadow-2xl">
-            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">1. Configurar Pontuação</h2>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-                <div class="col-span-2">
-                    <label for="pointPreset" class="block text-sm font-medium text-gray-400">Padrão de Pontuação:</label>
-                    <select id="pointPreset" onchange="loadPreset()" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
-                        <option value="custom">Personalizado (Definir abaixo)</option>
-                        <option value="emulador_20_2" selected>Emulador (20/15/10 - 2 Pts/Kill)</option>
-                        <option value="wb_12_1">WB (12/9/8 - 1 Pts/Kill)</option>
-                    </select>
-                </div>
-
-                <div class="col-span-2">
-                    <label for="killPoints" class="block text-sm font-medium text-gray-400">Pontos por Kill:</label>
-                    <input type="number" id="killPoints" value="2" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" />
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 gap-4 mb-4">
-                <div>
-                    <label for="tiebreaker" class="block text-sm font-medium text-gray-400">Critério de Desempate (2º nível):</label>
-                    <select id="tiebreaker" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
-                        <option value="kills" selected>Kills (Abates)</option>
-                        <option value="booyahs">Booyah (1ª Posição)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
-                </div>
-            <button onclick="addPlacementInput()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
-                + Adicionar Colocação
+        <div class="bg-gray-800 rounded-lg p-2 flex justify-center sticky top-0 z-10 shadow-xl">
+            <button id="tab-calculadora" onclick="switchTab('calculadora')" class="tab-button text-white">
+                📊 CALCULADORA DE TABELA
+            </button>
+            <button id="tab-calibrador" onclick="switchTab('calibrador')" class="tab-button text-white">
+                🛠️ CALIBRADOR DE ARTE
             </button>
         </div>
+        
+        
+        <div id="content-calculadora" style="display: none;">
+            <h1 class="text-3xl font-extrabold text-accent text-center">1. Configurar e Carregar Logs</h1>
 
-        <div class="bg-card p-6 rounded-xl shadow-2xl">
-            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">2. Carregar Arquivos de Resultados</h2>
-            <p class="text-sm text-gray-400 mb-3">
-                Selecione múltiplos arquivos de log. O formato deve ser o log detalhado ("TeamName:...") ou JSON.
-            </p>
+            <div id="config-page" class="space-y-8">
+                <div class="bg-card p-6 rounded-xl shadow-2xl">
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">1. Configurar Pontuação</h2>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                        <div class="col-span-2">
+                            <label for="pointPreset" class="block text-sm font-medium text-gray-400">Padrão de Pontuação:</label>
+                            <select id="pointPreset" onchange="loadPresetCalculator()" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
+                                <option value="custom">Personalizado (Definir abaixo)</option>
+                                <option value="emulador_20_2" selected>Emulador (20/15/10 - 2 Pts/Kill)</option>
+                                <option value="wb_12_1">WB (12/9/8 - 1 Pts/Kill)</option>
+                                </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label for="killPoints" class="block text-sm font-medium text-gray-400">Pontos por Kill:</label>
+                            <input type="number" id="killPoints" value="2" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" />
+                        </div>
+                    </div>
+                    
+                    <div id="customPresetControls" class="bg-gray-700 p-4 rounded-lg shadow-inner mb-6">
+                        <h3 class="text-lg font-bold text-teal-300 mb-2 flex justify-between items-center">
+                            <span>Gerenciar Personalizado</span>
+                            <span id="preset-status" class="text-xs text-red-400 font-normal hidden">Selecione 'Personalizado' acima.</span>
+                        </h3>
+                        
+                        <div class="mb-3">
+                            <label for="newPresetName" class="block text-xs font-medium text-gray-400">Nome da Pontuação:</label>
+                            <input type="text" id="newPresetName" placeholder="Ex: Finais V2" 
+                                   class="mt-1 w-full p-2 rounded-md bg-gray-600 text-white border border-gray-500" disabled/>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button id="savePresetBtn" onclick="saveCustomPreset()" 
+                                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm disabled:opacity-50" disabled>
+                                💾 SALVAR/ATUALIZAR
+                            </button>
+                            <button id="deletePresetBtn" onclick="deleteCustomPreset()" 
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm disabled:opacity-50" disabled>
+                                🗑️ EXCLUIR
+                            </button>
+                        </div>
+                    </div>
+
+                    
+                    <div class="grid grid-cols-1 gap-4 mb-4">
+                        <div>
+                            <label for="tiebreaker" class="block text-sm font-medium text-gray-400">Critério de Desempate (2º nível):</label>
+                            <select id="tiebreaker" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white">
+                                <option value="kills" selected>Kills (Abates)</option>
+                                <option value="booyahs">Booyah (1ª Posição)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="placementInputs" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-6">
+                        </div>
+                    <button id="addPlacementBtn" onclick="addPlacementInput()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                        + Adicionar Colocação
+                    </button>
+                </div>
+
+                <div class="bg-card p-6 rounded-xl shadow-2xl">
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">2. Carregar Arquivos de Resultados</h2>
+                    <p class="text-sm text-gray-400 mb-3">
+                        Selecione múltiplos arquivos de log. O formato deve ser o log detalhado ("TeamName:...") ou JSON.
+                    </p>
+                    
+                    <input type="file" id="jsonFileInput" accept="*/*" multiple
+                           class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
+                           onchange="handleFileUpload(event)"/>
+
+                    <div id="errorMessage" class="text-red-500 mt-3 hidden"></div>
+                    <div id="statusMessage" class="text-green-500 mt-3 hidden"></div>
+
+                    <p id="fileCountDisplay" class="text-sm text-gray-400 mt-3 font-semibold">
+                        0 arquivo(s) selecionado(s).
+                    </p>
+                    
+                    <button id="calculateButton" onclick="savePlacementPointsAndCalculate()" class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200">
+                        CALCULAR E VER TABELAS
+                    </button>
+                </div>
+            </div>
+
+            <div id="results-page" class="space-y-8" style="display: none;">
+                <h1 class="text-3xl font-extrabold text-accent text-center">Resultados Finais do Torneio</h1>
+
+                <button onclick="showPage('config')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                    ← Voltar para Configuração
+                </button>
+
+                <div class="space-y-10">
+                    <div class="bg-card p-6 rounded-xl shadow-2xl">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
+                            <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">3. Tabela Final (Geral)</h2>
+                            <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                                <div class="copy-button-group">
+                                    <button id="copyResultsSimpleButton" onclick="copyFinalResultsSimpleArray()" 
+                                            class="px-4 py-2 text-xs sm:text-sm rounded-lg font-bold bg-purple-600 hover:bg-purple-700 text-white transition duration-200">
+                                        Copiar JSON (Array Puro)
+                                    </button>
+                                </div>
+                                <div class="flex space-x-2 p-1 bg-gray-700 rounded-lg">
+                                    <button id="btn-simplified" onclick="switchTableMode('simplified')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
+                                        Simplificada (7 Col.)
+                                    </button>
+                                    <button id="btn-detailed" onclick="switchTableMode('detailed')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
+                                        Detalhada (8 Col.)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="adjustmentControls" class="mb-4 hidden">
+                            <button onclick="applyManualAdjustmentsAndRecalculate()" 
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+                                🔄 Aplicar Ajustes e Recalcular Tabela
+                            </button>
+                            <p class="text-sm text-gray-400 mt-2">
+                                Pontos extras (positivos ou negativos) devem ser inseridos na coluna **AJUSTE**.
+                            </p>
+                        </div>
+                        
+                        <div id="finalTableContainer" class="full-width-table">
+                            <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-xl shadow-2xl">
+                         <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">4. Adicionar Mais Quedas</h2>
+                         <p class="text-sm text-gray-400 mb-3">
+                            Carregue arquivos adicionais para somar os pontos ao placar atual.
+                         </p>
+                         <input type="file" id="additionalFileInput" accept="*/*" multiple
+                                class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
+                                onchange="handleAdditionalFileUpload(event)"/>
+                         <div id="additionalStatusMessage" class="text-green-500 mt-3 hidden"></div>
+                         <button onclick="processAdditionalFiles()" id="processAdditionalButton" 
+                                 class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50" disabled>
+                             ADICIONAR E ATUALIZAR PLACAR
+                         </button>
+                    </div>
+
+                    <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
+                            <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 MVP Individual</h2>
+                            <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                                <select id="mvpLimitSelector" onchange="switchMvpLimit(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm">
+                                    <option value="5">Top 5</option>
+                                    <option value="10">Top 10</option>
+                                    <option value="25">Top 25</option>
+                                    <option value="100">Top 100</option>
+                                    <option value="999">Todos</option>
+                                </select>
+                                
+                                <button id="copyMvpButton" onclick="copyFinalMVP()" 
+                                        class="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm rounded-lg font-bold bg-purple-600 hover:bg-purple-700 text-white transition duration-200">
+                                    Copiar MVP (Top N)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="mvpTableContainer" class="full-width-table">
+                            <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="content-calibrador" style="display: none;">
+            <h1 class="text-3xl font-extrabold text-teal-400 text-center">2. Calibrador Visual de Arte Simplificado</h1>
+            <p class="text-gray-400 mt-1 text-center">Primeiro Calibre (2.) e depois Cole os Dados (3.)</p>
             
-            <input type="file" id="jsonFileInput" accept="*/*" multiple
-                   class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
-                   onchange="handleFileUpload(event)"/>
+            <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+                
+                <div class="bg-card p-6 rounded-xl shadow-2xl h-fit">
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">1. Configurar Arte e Cores</h2>
+                    
+                    <div class="mb-4">
+                        <label for="art-file-input" class="block text-sm font-medium text-gray-400">Upload da Imagem de Fundo (Arte Vazia):</label>
+                        <input type="file" id="art-file-input" accept="image/*" 
+                               class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" onchange="loadArt()"/>
+                    </div>
 
-            <div id="errorMessage" class="text-red-500 mt-3 hidden"></div>
-            <div id="statusMessage" class="text-green-500 mt-3 hidden"></div>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                         <div>
+                            <label for="resolution-selector" class="block text-sm font-medium text-gray-400">Resolução do Canvas:</label>
+                            <select id="resolution-selector" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" onchange="setCanvasResolution()">
+                                <option value="1080x1350">1080x1350 (Feed Retrato)</option>
+                                <option value="1080x1080">1080x1080 (Feed Quadrado)</option>
+                                <option value="1920x1080">1920x1080 (Story/YouTube)</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="font-color-selector" class="block text-sm font-medium text-gray-400">Cor da Fonte (Padrão):</label>
+                            <select id="font-color-selector" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" onchange="redrawCanvas()">
+                                <option value="#FFFFFF" selected>Branco (Para fundo escuro)</option>
+                                <option value="#000000">Preto (Para fundo claro)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2 flex items-center space-x-4">
+                            <label for="rank1-color-selector" class="block text-sm font-medium text-gray-400 whitespace-nowrap">Cor Rank 1:</label>
+                            <input type="color" id="rank1-color-selector" value="#FFD700"
+                                   class="mt-1 w-full h-10 p-1 border-gray-700 bg-gray-700 rounded-md cursor-pointer" onchange="redrawCanvas()"/>
+                        </div>
+                    </div>
 
-            <p id="fileCountDisplay" class="text-sm text-gray-400 mt-3 font-semibold">
-                0 arquivo(s) selecionado(s).
-            </p>
+
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">2. Calibração (Ajuste os Sliders)</h2>
+                    <p class="text-xs text-red-400 mb-4">Use os dados de simulação padrão para calibrar a posição antes de colar seus próprios dados.</p>
+                    
+                    <div class="bg-gray-700 p-4 rounded-lg mb-6 shadow-inner">
+                        <h3 class="text-lg font-bold text-teal-300 mb-2">Gerenciar Predefinições</h3>
+                        <div class="mb-3">
+                            <label for="preset-name" class="block text-xs font-medium text-gray-400">Nome da Arte/Predefinição:</label>
+                            <input type="text" id="preset-name" placeholder="Ex: Arte Retrato V1" 
+                                   class="mt-1 w-full p-2 rounded-md bg-gray-600 text-white border border-gray-500"/>
+                        </div>
+                        <div class="flex space-x-2 mb-3">
+                            <button onclick="savePreset()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm">
+                                💾 SALVAR PREDEFINIÇÃO
+                            </button>
+                            <button onclick="deletePreset()" id="deleteArtPresetBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200 text-sm disabled:opacity-50" disabled>
+                                🗑️ EXCLUIR PREDEFINIÇÃO
+                            </button>
+                        </div>
+                        <div>
+                             <label for="preset-selector" class="block text-xs font-medium text-gray-400">Carregar Predefinição Salva:</label>
+                             <select id="preset-selector" class="mt-1 w-full p-2 rounded-md bg-gray-600 text-white border border-gray-500" onchange="loadPreset()">
+                                 <option value="">-- Selecione uma Predefinição --</option>
+                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div id="y-start-slider-container" class="grid-item">
+                            <label for="y-start" class="flex justify-between items-center"><span>Y-Start:</span>
+                                <input type="number" id="y-start-input" class="px-input" 
+                                       min="100" max="1000" step="1" onchange="updateSlider('y-start', this.value)"/>
+                            </label>
+                            <input type="range" id="y-start" min="100" max="1000" value="365" step="1" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="y-start-value" class="text-teal-400 text-xs">365 px</span>
+                        </div>
+
+                        <div id="line-height-slider-container" class="grid-item">
+                            <label for="line-height" class="flex justify-between items-center"><span>Line-Height:</span>
+                                 <input type="number" id="line-height-input" class="px-input" 
+                                       min="50" max="150" step="0.5" onchange="updateSlider('line-height', this.value)"/>
+                            </label>
+                            <input type="range" id="line-height" min="50" max="150" value="72" step="0.5" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="line-height-value" class="text-teal-400 text-xs">72.0 px</span>
+                        </div>
+                        
+                        <div id="x-name-slider-container" class="grid-item">
+                            <label for="x-name" class="flex justify-between items-center"><span>X (Nome/Time):</span>
+                                <input type="number" id="x-name-input" class="px-input" 
+                                       min="100" max="800" step="1" onchange="updateSlider('x-name', this.value)"/>
+                            </label>
+                            <input type="range" id="x-name" min="100" max="800" value="305" step="1" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="x-name-value" class="text-teal-400 text-xs">305 px</span>
+                        </div>
+                        
+                         <div id="x-kills-slider-container" class="grid-item">
+                            <label for="x-kills" class="flex justify-between items-center"><span>X (Abates/Kills):</span>
+                                <input type="number" id="x-kills-input" class="px-input" 
+                                       min="600" max="1500" step="1" onchange="updateSlider('x-kills', this.value)"/>
+                            </label>
+                            <input type="range" id="x-kills" min="600" max="1500" value="675" step="1" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="x-kills-value" class="text-teal-400 text-xs">675 px</span>
+                        </div>
+                        
+                        <div id="x-booyah-slider-container" class="grid-item">
+                            <label for="x-booyah" class="flex justify-between items-center"><span>X (Booyah/Quedas):</span>
+                                <input type="number" id="x-booyah-input" class="px-input" 
+                                       min="700" max="1700" step="1" onchange="updateSlider('x-booyah', this.value)"/>
+                            </label>
+                            <input type="range" id="x-booyah" min="700" max="1700" value="800" step="1" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="x-booyah-value" class="text-teal-400 text-xs">800 px</span>
+                        </div>
+
+                         <div id="x-pontos-slider-container" class="grid-item">
+                            <label for="x-pontos" class="flex justify-between items-center"><span>X (Pontos/Total):</span>
+                                <input type="number" id="x-pontos-input" class="px-input" 
+                                       min="800" max="1900" step="1" onchange="updateSlider('x-pontos', this.value)"/>
+                            </label>
+                            <input type="range" id="x-pontos" min="800" max="1900" value="970" step="1" 
+                                   class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-1"/>
+                            <span id="x-pontos-value" class="text-teal-400 text-xs">970 px</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="openArtModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2 px-4 rounded-lg transition duration-200 mt-6">
+                        👀 VER ARTE AMPLIADA (MODAL)
+                    </button>
+                </div>
+
+                <div class="bg-card p-6 rounded-xl shadow-2xl">
+                    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">3. Pré-visualização</h2>
+                    
+                    <div id="art-preview-container">
+                         <p class="text-white text-center p-10">Carregue sua arte de fundo na seção 1.</p>
+                    </div>
+
+                    <h2 class="text-2xl font-semibold mt-8 mb-4 border-b border-gray-700 pb-2 text-white">4. Colar Dados e Gerar PNG</h2>
+                    <p class="text-sm text-gray-300 mb-3">
+                        Cole o JSON copiado da *Tabela Final* (aba Calculadora) aqui.
+                        <br>
+                        <span class="font-bold text-teal-400">Dica: Use "Copiar JSON (Array Puro)" ou "Copiar MVP (Top N)".</span>
+                    </p>
+
+                    <textarea id="json-input" rows="6" placeholder="Cole o código JSON da tabela aqui..." 
+                              class="w-full p-3 bg-gray-700 text-white rounded-lg mb-4"></textarea>
+
+                    <button onclick="processJSON()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 px-4 rounded-lg transition duration-200 mb-4">
+                        📋 COLAR E PROCESSAR DADOS (Passo 1/2)
+                    </button>
+                    
+                    <div class="mb-4">
+                        <label for="data-type" class="block text-sm font-medium text-gray-400">Tipo de Dados a Usar:</label>
+                        <select id="data-type" class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" onchange="redrawCanvas()">
+                            <option value="final">Tabela Geral (Final Results)</option>
+                            <option value="mvp">Tabela de Kills (MVP)</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="generatePNG()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-3 px-4 rounded-lg transition duration-200 mb-4">
+                        ⬇️ GERAR E BAIXAR PNG FINAL (Passo 2/2)
+                    </button>
+
+                    <div class="bg-gray-800 p-4 rounded-lg overflow-x-auto text-sm">
+                        <code id="output-code" class="text-red-400 whitespace-pre">
+                            // O código de calibração para seu site principal aparecerá aqui.
+                        </code>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="art-modal" class="modal-calibrador hidden">
+                <div class="modal-content-calibrador">
+                    <button onclick="closeArtModal()" 
+                            class="absolute top-2 right-2 text-white text-3xl font-bold p-2 hover:text-red-400 transition duration-200">
+                        &times;
+                    </button>
+                    <h3 class="text-lg font-bold text-center text-teal-300 mb-3">Pré-visualização em Tamanho Real</h3>
+                    <img id="modal-image-preview" class="modal-image-calibrador" alt="Pré-visualização da Arte Calibrada"/>
+                </div>
+            </div>
             
-            <button id="calculateButton" onclick="savePlacementPointsAndCalculate()" class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200">
-                CALCULAR E VER TABELAS
-            </button>
         </div>
         
         <footer class="app-footer">
@@ -289,116 +526,123 @@
                 <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
                     Siga nas redes!
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
-                         alt="Logo Instagram" class="insta-footer-img ml-2">
+                     alt="Logo Instagram" class="insta-footer-img ml-2">
                 </a>
             </div>
-            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA!</p>
-        </footer>
-        
-    </div>
-
-    <div id="results-page" class="container-main space-y-8" style="display: none;">
-        <header class="text-center py-6 bg-gray-900 shadow-lg">
-            <h1 class="4xl font-extrabold text-accent">Resultados Finais do Torneio</h1>
-            <p class="text-gray-400 mt-1">Visão Geral, MVP e Exportação Rápida</p>
-        </header>
-
-        <button onclick="showPage('config')" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
-            ← Voltar para Configuração
-        </button>
-
-        <div class="space-y-10">
-            <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
-                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">3. Tabela Final (Geral)</h2>
-                    <div class="flex space-x-2 p-1 bg-gray-700 rounded-lg">
-                        <button id="btn-simplified" onclick="switchTableMode('simplified')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
-                            Simplificada (6 Col.)
-                        </button>
-                        <button id="btn-detailed" onclick="switchTableMode('detailed')" class="px-3 py-1 text-xs sm:text-sm rounded-md font-bold transition duration-200">
-                            Detalhada (8 Col.)
-                        </button>
-                    </div>
-                </div>
-                <div id="finalTableContainer" class="full-width-table">
-                    <p class="text-gray-500 text-sm">Nenhum resultado processado.</p>
-                </div>
-            </div>
-            
-            <div class="bg-card p-6 rounded-xl shadow-2xl">
-                 <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">4. Adicionar Mais Quedas</h2>
-                 <p class="text-sm text-gray-400 mb-3">
-                    Carregue arquivos adicionais para somar os pontos ao placar atual.
-                 </p>
-                 <input type="file" id="additionalFileInput" accept="*/*" multiple
-                        class="mt-1 w-full p-2 rounded-md bg-gray-700 text-white" 
-                        onchange="handleAdditionalFileUpload(event)"/>
-                 <div id="additionalStatusMessage" class="text-green-500 mt-3 hidden"></div>
-                 <button onclick="processAdditionalFiles()" id="processAdditionalButton" 
-                         class="mt-4 w-full bg-accent hover:bg-teal-500 text-black font-extrabold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50" disabled>
-                     ADICIONAR E ATUALIZAR PLACAR
-                 </button>
-            </div>
-            <div class="bg-card p-6 rounded-xl shadow-2xl">
-                <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-white">5. Exportar Dados (CSV Rápido)</h2>
-                <p class="text-sm text-gray-400 mb-3 font-bold text-accent">
-                    A forma mais rápida de colocar dados na sua arte! Baixe os dados para importar diretamente em ferramentas de design (Canva/Planilhas).
-                </p>
-
-                <div class="mb-4">
-                    <button onclick="downloadCSV()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-3 px-4 rounded-lg transition duration-200">
-                        ⬇️ EXPORTAR DADOS GERAL + MVP (CSV)
-                    </button>
-                </div>
-            </div>
-            <div id="mvp-container-section" class="bg-card p-6 rounded-xl shadow-2xl">
-                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-gray-700 pb-2">
-                    <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 6. MVP Individual</h2>
-                    <select id="mvpLimitSelector" onchange="switchMvpLimit(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm">
-                        <option value="5">Top 5</option>
-                        <option value="10">Top 10</option>
-                        <option value="25">Top 25</option>
-                        <option value="100">Top 100</option>
-                        <option value="999">Todos</option>
-                    </select>
-                </div>
-
-                <div id="mvpTableContainer" class="full-width-table">
-                    <p class="text-gray-500 text-sm">O MVP é baseado no total de Kills do jogador individual.</p>
-                </div>
-            </div>
-        </div>
-        
-        <footer class="app-footer">
-            Desenvolvido por RyanZ © 2025.
-            <a href="https://www.instagram.com/ryan_alv3s_/" target="_blank" title="Instagram de RyanZ" class="inline-flex items-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1200px-Instagram_icon.png" 
-                     alt="Logo Instagram" class="insta-footer-img ml-2">
-            </a>
-            <p class="aviso-legal">PROIBIDO A VENDA, FEITO PARA UTILIZAÇÃO GRATUITA!</p>
+            <p class="aviso-legal">PROIBIDO A VENTA, FEITO PARA UTILIZAÇÃO GRATUITA!</p>
         </footer>
     </div>
 
 
     <script>
-        // Variável global para armazenar o modo atual da tabela
-        let currentTableMode = 'simplified'; // Tabela Geral: Inicia no modo simplificado
-        let currentMvpLimit = 5; // MVP: Inicia no Top 5
+        // ===================================================================================
+        // 1. VARIÁVEIS GLOBAIS (Unificadas)
+        // ===================================================================================
 
-        // Variáveis globais para armazenamento de dados
+        // CALCULADORA
+        let currentTableMode = 'simplified'; 
+        let currentMvpLimit = 5; 
         let currentFileData = []; // Lista plana de todos os logs de times de todas as quedas
         let individualKillsData = []; // Lista plana de todos os logs de jogadores de todas as quedas
         let matchCount = 0; 
-        // Array que armazena os logs de cada partida separadamente (para o histórico)
         let matchLogsHistory = []; 
-
-        // Variáveis globais de resultados (preenchidas após o cálculo)
-        window.finalResults = [];
-        window.finalMVP = [];
-
-        // REMOVIDO: Variável customArtImageURL
+        window.finalResults = []; 
+        window.finalMVP = []; 
+        let placementPoints = {}; 
+        let additionalFilesQueue = [];
+        window.manualAdjustments = {}; 
         
-        // --- MODAL / SPLASH SCREEN LOGIC ---
+        // NOVO: Armazena presets personalizados carregados do localStorage
+        window.customPresets = {}; 
+
+        const POINTS_PRESETS = {
+            emulador_20_2: {
+                killPoints: 2,
+                placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
+            },
+            wb_12_1: {
+                killPoints: 1,
+                placements: { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 }
+            }
+        };
+
+        const errorDiv = () => document.getElementById('errorMessage');
+        const statusDiv = () => document.getElementById('statusMessage');
+        const killPointsInput = () => document.getElementById('killPoints');
+        const presetSelector = () => document.getElementById('pointPreset');
+        const tiebreakerSelector = () => document.getElementById('tiebreaker');
+        
+        // CALIBRADOR
+        let artImage = null;
+        let canvas = null;
+        let CANVAS_WIDTH = 1080; 
+        let CANVAS_HEIGHT = 1350; 
+        let currentData = null; // Dados JSON do calibrador
+        const CALIBRATOR_PRESET_KEY = 'artCalibrationPresets'; 
+        
+        const SIMULATION_DATA = [
+            { rank: 1, name: "DUX INVICTUS", value1: 2, value2: 60, total: 200 }, 
+            { rank: 2, name: "VASCO E-SPORTS", value1: 1, value2: 50, total: 180 },
+            { rank: 3, name: "TERRORNET", value1: 0, value2: 40, total: 150 },
+            { rank: 4, name: "NOVA ORDEM", value1: 0, value2: 35, total: 120 },
+            { rank: 5, name: "FUZUE ELITE", value1: 0, value2: 30, total: 100 },
+        ];
+        
+        // Mapeamento dos IDs de Calibrador (para fácil referência)
+        const SLIDER_IDS = [
+            'y-start', 'line-height', 'x-name', 'x-pontos', 'x-booyah', 'x-kills'
+        ];
+        
+        // ===================================================================================
+        // 2. FUNÇÕES DE NAVEGAÇÃO E INICIALIZAÇÃO
+        // ===================================================================================
+        
+        function initApp() {
+            // Inicialização do Calibrador (usa localStorage)
+            initCalibrator();
+            // Carrega presets de pontuação do localStorage (NOVO)
+            loadCustomPresetsFromLocalStorage();
+            // Carrega estado da calculadora do localStorage (NOVO)
+            loadCalculatorStateFromLocalStorage();
+
+            // Verifica a modal de boas-vindas
+            checkFirstVisit();
+            // Garante que a aba da calculadora está ativa por padrão
+            switchTab('calculadora'); 
+            
+            // Listeners para Calibrador
+            document.querySelectorAll('#content-calibrador input[type="range"]').forEach(input => {
+                input.addEventListener('input', updateSliderAndRedraw);
+            });
+            document.querySelectorAll('#content-calibrador input[type="number"]').forEach(input => {
+                input.addEventListener('change', (event) => {
+                    updateSlider(event.target.id.replace('-input', ''), event.target.value);
+                });
+            });
+            document.getElementById('data-type').addEventListener('change', redrawCanvas);
+
+            // Chamada de carregamento inicial (que carrega o preset padrão)
+            loadPresetCalculator(); 
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('content-calculadora').style.display = 'none';
+            document.getElementById('content-calibrador').style.display = 'none';
+
+            document.getElementById('tab-calculadora').classList.remove('active');
+            document.getElementById('tab-calibrador').classList.remove('active');
+
+            if (tabId === 'calculadora') {
+                document.getElementById('content-calculadora').style.display = 'block';
+                document.getElementById('tab-calculadora').classList.add('active');
+                showPage(document.getElementById('results-page').style.display === 'block' ? 'results' : 'config');
+            } else if (tabId === 'calibrador') {
+                document.getElementById('content-calibrador').style.display = 'block';
+                document.getElementById('tab-calibrador').classList.add('active');
+                setTimeout(redrawCanvas, 50); 
+            }
+        }
+        
         function checkFirstVisit() {
             if (!sessionStorage.getItem('welcomeModalShown')) {
                 document.getElementById('welcome-modal').classList.remove('hidden');
@@ -413,130 +657,372 @@
             showPage('config');
         }
 
-        // --- FUNÇÕES GLOBAIS DE NAVEGAÇÃO ---
         function showPage(pageId) {
             document.getElementById('config-page').style.display = 'none';
             document.getElementById('results-page').style.display = 'none';
             
             if (pageId === 'config') {
                 document.getElementById('config-page').style.display = 'block';
-                loadPreset(); 
+                // Recarrega o preset ativo para garantir que os inputs estejam corretos
+                loadPresetCalculator(presetSelector().value);
             } else if (pageId === 'results') {
                 document.getElementById('results-page').style.display = 'block';
                 displayResults();
                 updateButtonStyles(currentTableMode); 
             }
         }
-
-        // --- LÓGICA DE ALTERNÂNCIA DE VISUALIZAÇÃO ---
         
-        function updateButtonStyles(mode) {
-             const btnSimplified = document.getElementById('btn-simplified');
-             const btnDetailed = document.getElementById('btn-detailed');
+        // ===================================================================================
+        // 3. FUNÇÕES DE ARMAZENAMENTO LOCAL (localStorage) - NOVO
+        // ===================================================================================
+        
+        async function saveCalculatorStateToDB() {
+            // 1. Coleta todo o estado atual da calculadora
+            const calculatorState = {
+                killPoints: parseInt(killPointsInput().value) || 0,
+                tiebreaker: tiebreakerSelector().value,
+                placementPoints: placementPoints,
+                // Serializa logs para string
+                matchLogs: JSON.stringify(currentFileData), 
+                individualLogs: JSON.stringify(individualKillsData),
+                matchCount: matchCount,
+                manualAdjustments: window.manualAdjustments,
+                updatedAt: new Date().toISOString()
+            };
 
-             if (!btnSimplified || !btnDetailed) return;
-
-             // Estilos para o botão selecionado
-             const activeClasses = ['bg-accent', 'text-black'];
-             // Estilos para o botão inativo
-             const inactiveClasses = ['text-white', 'hover:bg-gray-600'];
-
-             if (mode === 'simplified') {
-                btnSimplified.classList.add(...activeClasses);
-                btnSimplified.classList.remove(...inactiveClasses);
-                btnDetailed.classList.remove(...activeClasses);
-                btnDetailed.classList.add(...inactiveClasses);
-             } else {
-                btnDetailed.classList.add(...activeClasses);
-                btnDetailed.classList.remove(...inactiveClasses);
-                btnSimplified.classList.remove(...activeClasses);
-                btnSimplified.classList.add(...inactiveClasses);
-             }
-        }
-
-        function switchTableMode(mode) {
-            currentTableMode = mode;
-            updateButtonStyles(mode);
-            if (window.finalResults && window.finalResults.length > 0) {
-                 renderFinalTable(window.finalResults, 'finalTableContainer', mode);
+            try {
+                localStorage.setItem(CALCULATOR_STATE_KEY, JSON.stringify(calculatorState));
+                console.log("Estado da calculadora salvo no LocalStorage.");
+            } catch (e) {
+                console.error("Erro ao salvar o estado da calculadora no LocalStorage:", e);
             }
         }
         
-        function switchMvpLimit(limit) {
-            currentMvpLimit = parseInt(limit);
-            if (window.finalMVP && window.finalMVP.length > 0) {
-                renderMVPTable(window.finalMVP, 'mvpTableContainer');
+        function loadCalculatorStateFromLocalStorage() {
+            try {
+                const state = JSON.parse(localStorage.getItem(CALCULATOR_STATE_KEY) || '{}');
+
+                if (Object.keys(state).length > 0) {
+                    console.log("Estado da calculadora carregado do LocalStorage.");
+                    
+                    // 1. Carrega configurações e ajustes
+                    killPointsInput().value = state.killPoints || 0;
+                    tiebreakerSelector().value = state.tiebreaker || 'kills';
+                    placementPoints = state.placementPoints || POINTS_PRESETS.emulador_20_2.placements;
+                    window.manualAdjustments = state.manualAdjustments || {};
+
+                    // 2. Carrega logs desserializando
+                    currentFileData = state.matchLogs ? JSON.parse(state.matchLogs) : [];
+                    individualKillsData = state.individualLogs ? JSON.parse(state.individualLogs) : [];
+                    matchCount = state.matchCount || 0;
+                    
+                    document.getElementById('fileCountDisplay').textContent = `${matchCount} partida(s) carregada(s).`;
+                    
+                    // 3. Recalcula a tabela para re-estabelecer finalResults/MVP
+                    const killPoints = parseInt(killPointsInput().value) || 0;
+                    const tiebreaker = tiebreakerSelector().value;
+                    
+                    const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker, window.manualAdjustments);
+
+                    window.finalResults = finalResults;
+                    window.finalMVP = finalMVP;
+                    
+                    // 4. Atualiza a UI para o estado 'config' com os valores carregados
+                    initializePlacementInputs(Object.keys(placementPoints).length); 
+                    loadPresetCalculator(presetSelector().value); // Recarrega o preset para atualizar inputs
+                    
+                } else {
+                    console.log("Nenhum estado da calculadora salvo encontrado. Carregando defaults.");
+                    loadPresetCalculator();
+                }
+            } catch (e) {
+                console.error("Erro ao carregar o estado da calculadora do LocalStorage:", e);
+                // Em caso de erro, garante que a UI carrega com os defaults locais.
+                loadPresetCalculator();
             }
         }
 
-        function getManualAdjustments() {
-             return {};
-        }
+        // ===================================================================================
+        // 4. FUNÇÕES DE PRESET DE PONTUAÇÃO (localStorage) - NOVO
+        // ===================================================================================
+        
+        function loadCustomPresetsFromLocalStorage() {
+            try {
+                const presets = JSON.parse(localStorage.getItem(SCORE_PRESET_KEY) || '{}');
+                window.customPresets = {};
+                
+                Object.keys(presets).forEach(name => {
+                    const data = presets[name];
+                    window.customPresets[name] = { 
+                        name: name,
+                        killPoints: data.killPoints,
+                        placements: data.placements
+                    };
+                });
+                console.log(`Presets customizados carregados do LocalStorage: ${Object.keys(window.customPresets).length}`);
+                updatePresetSelector();
 
-        // --- PRESETS E VARIÁVEIS ---
-        const POINTS_PRESETS = {
-            emulador_20_2: {
-                killPoints: 2,
-                placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
-            },
-            wb_12_1: {
-                killPoints: 1,
-                placements: { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 }
-            },
-            custom: {
-                killPoints: 2,
-                placements: { 1: 20, 2: 15, 3: 10, 4: 8, 5: 7, 6: 6, 7: 5, 8: 4, 9: 3, 10: 2, 11: 1, 12: 0 }
+            } catch (e) {
+                console.error("Erro ao carregar presets customizados do LocalStorage:", e);
             }
-        };
-
-        let placementPoints = { ...POINTS_PRESETS.emulador_20_2.placements }; 
+        }
         
-        const errorDiv = document.getElementById('errorMessage');
-        const statusDiv = document.getElementById('statusMessage');
-        const killPointsInput = document.getElementById('killPoints');
-        const presetSelector = document.getElementById('pointPreset');
-        const tiebreakerSelector = document.getElementById('tiebreaker');
-        
-        // --- FUNÇÕES DE CONTROLE E CÁLCULO ---
-
-        function savePlacementPointsAndCalculate() {
-            savePlacementPoints(); 
+        function updatePresetSelector() {
+            const selector = presetSelector();
+            const currentValue = selector.value;
             
-            if (!currentFileData || currentFileData.length === 0) {
-                 errorDiv.textContent = "Por favor, carregue os arquivos de resultados primeiro.";
-                 errorDiv.classList.remove('hidden');
+            // Remove opções antigas que não são padrão
+            selector.querySelectorAll('option').forEach(option => {
+                if (option.value !== 'custom' && !POINTS_PRESETS[option.value]) {
+                    selector.removeChild(option);
+                }
+            });
+
+            // Adiciona presets customizados
+            Object.values(window.customPresets).forEach(preset => {
+                const option = document.createElement('option');
+                option.value = preset.name;
+                option.textContent = `[💾] ${preset.name}`;
+                selector.appendChild(option);
+            });
+            
+            // Mantém a seleção anterior, se possível
+            if (selector.querySelector(`option[value="${currentValue}"]`)) {
+                 selector.value = currentValue;
+            } else {
+                 selector.value = 'emulador_20_2';
+            }
+        }
+
+        function saveCustomPreset() {
+            
+            const nameInput = document.getElementById('newPresetName');
+            const presetName = nameInput.value.trim();
+
+            if (!presetName) {
+                console.error("Por favor, digite um nome para salvar a pontuação.");
+                alert("Por favor, digite um nome para salvar a pontuação."); 
+                return;
+            }
+            if (['custom', 'emulador_20_2', 'wb_12_1'].includes(presetName)) {
+                console.error("Este nome é reservado.");
+                alert("Este nome é reservado.");
+                return;
+            }
+
+            // 1. Coleta os dados de pontuação atuais
+            savePlacementPoints(); // Garantindo que 'placementPoints' está atualizado
+            const killPoints = parseInt(killPointsInput().value) || 0;
+            
+            const presetData = {
+                killPoints: killPoints,
+                placements: placementPoints,
+                updatedAt: new Date().toISOString()
+            };
+
+            const presets = JSON.parse(localStorage.getItem(SCORE_PRESET_KEY) || '{}');
+            presets[presetName] = presetData;
+            
+            try {
+                localStorage.setItem(SCORE_PRESET_KEY, JSON.stringify(presets));
+
+                alert(`Preset "${presetName}" salvo/atualizado com sucesso!`);
+                // Atualiza a lista local e o seletor
+                window.customPresets[presetName] = { name: presetName, ...presetData };
+                updatePresetSelector();
+                presetSelector().value = presetName; // Seleciona o novo preset
+                loadPresetCalculator();
+            } catch (e) {
+                console.error("Erro ao salvar o preset no LocalStorage:", e);
+                alert("Erro ao salvar o preset. Veja o console para detalhes.");
+            }
+        }
+        
+        function deleteCustomPreset() {
+            
+            const presetName = document.getElementById('newPresetName').value.trim();
+
+            if (!presetName || POINTS_PRESETS[presetName] || !window.customPresets[presetName]) {
+                 console.error("Selecione um preset customizado para excluir.");
+                 alert("Selecione um preset customizado para excluir.");
                  return;
             }
             
-            const killPoints = parseInt(killPointsInput.value) || 0;
-            const tiebreaker = tiebreakerSelector.value; 
-            const manualAdjustments = getManualAdjustments();
+            if (!confirm(`Tem certeza que deseja excluir o preset "${presetName}"?`)) {
+                return;
+            }
+            
+            const presets = JSON.parse(localStorage.getItem(SCORE_PRESET_KEY) || '{}');
 
-            const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+            if (presets[presetName]) {
+                try {
+                    delete presets[presetName];
+                    localStorage.setItem(SCORE_PRESET_KEY, JSON.stringify(presets));
 
-            window.finalResults = results;
-            window.finalMVP = mvp;
+                    alert(`Preset "${presetName}" excluído com sucesso!`);
+                    delete window.customPresets[presetName];
+                    updatePresetSelector();
+                    presetSelector().value = 'emulador_20_2'; // Volta para o padrão
+                    loadPresetCalculator();
+                } catch (e) {
+                    console.error("Erro ao excluir o preset do LocalStorage:", e);
+                    alert("Erro ao excluir o preset. Veja o console para detalhes.");
+                }
+            }
+        }
+
+
+        // ===================================================================================
+        // 5. FUNÇÕES DA CALCULADORA (INALTERADAS NO FLUXO)
+        // ===================================================================================
+
+        async function savePlacementPointsAndCalculate() {
+            savePlacementPoints(); 
+            
+            if (!currentFileData || currentFileData.length === 0) {
+                 errorDiv().textContent = "Por favor, carregue os arquivos de resultados primeiro.";
+                 errorDiv().classList.remove('hidden');
+                 return;
+            }
+            
+            const killPoints = parseInt(killPointsInput().value) || 0;
+            const tiebreaker = tiebreakerSelector().value;
+            
+            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker, window.manualAdjustments);
+
+            window.finalResults = finalResults;
+            window.finalMVP = finalMVP;
             window.matchCount = matchCount; 
             window.matchLogsHistory = matchLogsHistory; 
             
+            // Salva o estado atual da calculadora no localStorage (mantendo a função async)
+            await saveCalculatorStateToDB();
+            
             showPage('results');
         }
+        
+        async function applyManualAdjustmentsAndRecalculate() {
+             // 1. Coleta os ajustes da tabela
+            const adjustmentInputs = document.querySelectorAll('.adjustment-input');
+            const newAdjustments = {};
+            let hasAdjustments = false;
 
-        function loadPreset() {
-            const selectedPreset = presetSelector.value;
-            const preset = POINTS_PRESETS[selectedPreset] || POINTS_PRESETS.custom;
+            adjustmentInputs.forEach(input => {
+                const teamName = input.getAttribute('data-team-name');
+                const adjustmentValue = parseInt(input.value) || 0;
+                newAdjustments[teamName] = adjustmentValue;
+                if (adjustmentValue !== 0) {
+                    hasAdjustments = true;
+                }
+            });
+
+            window.manualAdjustments = newAdjustments;
+
+            if (!window.finalResults || window.finalResults.length === 0) {
+                console.error("Nenhum resultado processado para aplicar ajustes.");
+                return;
+            }
+
+            // 2. Recalcula com os novos ajustes
+            const killPoints = parseInt(killPointsInput().value) || 0;
+            const tiebreaker = tiebreakerSelector().value;
             
-            killPointsInput.value = preset.killPoints;
-            placementPoints = { ...preset.placements };
+            const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker, window.manualAdjustments);
+
+            window.finalResults = finalResults;
+            window.finalMVP = finalMVP;
+
+            // 3. Re-exibe os resultados
+            displayResults();
+            
+            const adjustmentControls = document.getElementById('adjustmentControls');
+            if (hasAdjustments || currentTableMode === 'simplified') {
+                 adjustmentControls.classList.remove('hidden');
+            } else {
+                 adjustmentControls.classList.add('hidden');
+            }
+            
+            console.log("Ajustes manuais aplicados e tabela recalculada.");
+            
+            // Salva o estado atual da calculadora no localStorage
+            await saveCalculatorStateToDB();
+        }
+
+
+        function loadPresetCalculator(selectedPreset = presetSelector().value) {
+            
+            let preset = null;
+            
+            if (selectedPreset === 'custom') {
+                 // Modo Customizado não sobrescreve a pontuação, apenas habilita inputs.
+            } else if (POINTS_PRESETS[selectedPreset]) {
+                // Preset Padrão (Emulador/WB)
+                preset = POINTS_PRESETS[selectedPreset];
+                killPointsInput().value = preset.killPoints;
+                placementPoints = { ...preset.placements };
+            } else if (window.customPresets[selectedPreset]) {
+                // Preset Customizado carregado do localStorage
+                preset = window.customPresets[selectedPreset];
+                killPointsInput().value = preset.killPoints;
+                placementPoints = { ...preset.placements };
+            } else {
+                // Fallback 
+                preset = POINTS_PRESETS.emulador_20_2; 
+                selectedPreset = 'emulador_20_2';
+                presetSelector().value = selectedPreset;
+                killPointsInput().value = preset.killPoints;
+                placementPoints = { ...preset.placements };
+            }
+
+            // Inicializa a UI com base no placementPoints atualizado ou mantido (se for 'custom')
             initializePlacementInputs(Object.keys(placementPoints).length); 
             
+            // --- Controle da Seção de Presets Personalizados ---
+            const isCustomMode = selectedPreset === 'custom';
+            const isCustomPresetLoaded = !!window.customPresets[selectedPreset];
+            const nameInput = document.getElementById('newPresetName');
+            const saveBtn = document.getElementById('savePresetBtn');
+            const deleteBtn = document.getElementById('deletePresetBtn');
+            const addBtn = document.getElementById('addPlacementBtn');
+            const presetStatus = document.getElementById('preset-status');
+
+
+            // Habilita/Desabilita inputs de pontuação
             const isDisabled = selectedPreset !== 'custom';
             document.getElementById('placementInputs').querySelectorAll('input').forEach(input => {
                 input.disabled = isDisabled;
             });
-            killPointsInput.disabled = isDisabled;
-            const addBtn = document.querySelector('#config-page .bg-blue-600');
+            killPointsInput().disabled = isDisabled;
             if (addBtn) addBtn.disabled = isDisabled; 
+            
+            // Configura controles de Salvar/Excluir
+            if (isCustomMode) {
+                // MODO PERSONALIZADO (Pode salvar/excluir se estiver editando um)
+                nameInput.disabled = false;
+                saveBtn.disabled = false;
+                deleteBtn.disabled = true;
+                presetStatus.classList.add('hidden');
+                
+                // Se o modo CUSTOM foi selecionado, mas estava em um preset antes, limpa o nome
+                if (nameInput.value !== '' && !isCustomPresetLoaded) {
+                     nameInput.value = '';
+                }
+                
+            } else if (isCustomPresetLoaded) {
+                // MODO PRESET CUSTOMIZADO CARREGADO
+                nameInput.value = selectedPreset;
+                nameInput.disabled = false; // Pode renomear e salvar
+                saveBtn.disabled = false;
+                deleteBtn.disabled = false;
+                presetStatus.classList.add('hidden');
+            } else {
+                // MODO PRESET PADRÃO (Emulador/WB)
+                nameInput.value = '';
+                nameInput.disabled = true;
+                saveBtn.disabled = true;
+                deleteBtn.disabled = true;
+                presetStatus.classList.remove('hidden');
+            }
         }
 
         function initializePlacementInputs(count = 12) {
@@ -557,15 +1043,15 @@
         }
         
         function addPlacementInput() {
-            if (presetSelector.value !== 'custom') return; 
+            if (presetSelector().value !== 'custom') return; 
 
             const container = document.getElementById('placementInputs');
             const newPlace = container.children.length + 1;
             
             if (newPlace > 20) {
-                errorDiv.textContent = "Máximo de 20 colocações atingido.";
-                errorDiv.classList.remove('hidden');
-                statusDiv.classList.add('hidden');
+                errorDiv().textContent = "Máximo de 20 colocações atingido.";
+                errorDiv().classList.remove('hidden');
+                statusDiv().classList.add('hidden');
                 return;
             }
             
@@ -579,9 +1065,13 @@
         }
         
         function savePlacementPoints() {
-            if (presetSelector.value !== 'custom') {
-                 placementPoints = { ...POINTS_PRESETS[presetSelector.value].placements };
+            const currentPreset = presetSelector().value;
+            
+            if (currentPreset !== 'custom' && POINTS_PRESETS[currentPreset]) {
+                 // Modo Padrão: Usa os valores hardcoded do preset
+                 placementPoints = { ...POINTS_PRESETS[currentPreset].placements };
             } else {
+                // Modo Customizado ou Preset Customizado (usa os inputs na tela)
                 const container = document.getElementById('placementInputs');
                 const inputs = container.querySelectorAll('input[id^="place-"]');
                 placementPoints = {};
@@ -593,12 +1083,11 @@
                 });
             }
         }
-
-        // --- LÓGICA DE UPLOAD E ACÚMULO (SEPARADA PARA REUSO) ---
         
+        // --- Lógica de Upload e Acúmulo ---
         function handleFileUpload(event) {
-            errorDiv.classList.add('hidden');
-            statusDiv.classList.add('hidden');
+            errorDiv().classList.add('hidden');
+            statusDiv().classList.add('hidden');
             const files = event.target.files;
 
             if (files.length === 0) {
@@ -609,71 +1098,72 @@
             
             currentFileData = [];
             individualKillsData = [];
-            matchLogsHistory = [];
+            matchLogsHistory = []; 
             matchCount = 0;
             
-            processFilesSequentially(files, statusDiv, errorDiv, () => {
+            processFilesSequentially(files, statusDiv(), errorDiv(), () => {
                  document.getElementById('fileCountDisplay').textContent = `${files.length} arquivo(s) selecionado(s).`;
             });
         }
         
-        let additionalFilesQueue = [];
-        
         function handleAdditionalFileUpload(event) {
             const files = event.target.files;
-            const statusDiv = document.getElementById('additionalStatusMessage');
+            const statusDivAdditional = document.getElementById('additionalStatusMessage');
             const button = document.getElementById('processAdditionalButton');
 
             if (files.length === 0) {
                  additionalFilesQueue = [];
                  button.disabled = true;
-                 statusDiv.classList.add('hidden');
+                 statusDivAdditional.classList.add('hidden');
                  return;
             }
             
             additionalFilesQueue = Array.from(files); 
-            statusDiv.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
-            statusDiv.classList.remove('hidden');
+            statusDivAdditional.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
+            statusDivAdditional.classList.remove('hidden');
             button.disabled = false;
         }
         
         function processAdditionalFiles() {
             const button = document.getElementById('processAdditionalButton');
-            const statusDiv = document.getElementById('additionalStatusMessage');
-            const errorDiv = document.getElementById('errorMessage');
+            const statusDivAdditional = document.getElementById('additionalStatusMessage');
+            const errorDivMain = document.getElementById('errorMessage');
 
             if (additionalFilesQueue.length === 0) {
-                statusDiv.textContent = "Nenhum arquivo novo para processar.";
-                statusDiv.classList.remove('hidden');
+                statusDivAdditional.textContent = "Nenhum arquivo novo para processar.";
+                statusDivAdditional.classList.remove('hidden');
                 return;
             }
 
             button.disabled = true;
-            statusDiv.textContent = 'Processando arquivos...';
-            errorDiv.classList.add('hidden');
+            statusDivAdditional.textContent = 'Processando arquivos...';
+            errorDivMain.classList.add('hidden');
             
             const initialMatchCount = matchCount; 
             
-            processFilesSequentially(additionalFilesQueue, statusDiv, errorDiv, () => {
+            processFilesSequentially(additionalFilesQueue, statusDivAdditional, errorDivMain, async () => {
                  const newQuedas = matchCount - initialMatchCount;
-                 statusDiv.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
+                 statusDivAdditional.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
                  
-                 const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
-                 const tiebreaker = document.getElementById('tiebreaker').value;
+                 const killPoints = parseInt(killPointsInput().value) || 0;
+                 const tiebreaker = tiebreakerSelector().value;
                  
-                 const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+                 const { finalResults, finalMVP } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker, window.manualAdjustments);
 
-                 window.finalResults = results;
-                 window.finalMVP = mvp;
+                 window.finalResults = finalResults;
+                 window.finalMVP = finalMVP;
                  
                  displayResults();
                  
                  document.getElementById('additionalFileInput').value = '';
                  additionalFilesQueue = [];
+                 
+                 // Salva o estado atual da calculadora no localStorage
+                 await saveCalculatorStateToDB();
             });
         }
 
-        function processFilesSequentially(files, statusDiv, errorDiv, callback) {
+        function processFilesSequentially(files, statusDisplay, errorDisplay, callback) {
             const totalFiles = files.length;
             let index = 0;
 
@@ -716,8 +1206,8 @@
                 };
                 
                 reader.onerror = () => {
-                    errorDiv.textContent = `Erro ao ler o arquivo: ${file.name}.`;
-                    errorDiv.classList.remove('hidden');
+                    errorDisplay.textContent = `Erro ao ler o arquivo: ${file.name}.`;
+                    errorDisplay.classList.remove('hidden');
                     index++;
                     processNextFile();
                 };
@@ -730,7 +1220,7 @@
         
         function extractIndividualKills(logText) {
             const playerResults = [];
-            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s**Rank:\s*(\d+)/i; 
+            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)/i; 
             const playerLineRegex = /NAME:\s*([^:]+?)\s*ID:\s*[^ ]+?\s*KILL:\s*(\d+)/i;
             
             let currentTeam = '';
@@ -805,10 +1295,10 @@
             return { teamResults: teamResults, playerResults: [] };
         }
 
-        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker) {
+        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker, adjustments = {}) {
             const teamScores = {};
             
-            // 1. CALCULO DE PONTUAÇÃO DOS TIMES
+            // 1. Calcula os pontos base (do log)
             for (const teamLog of logData) {
                 const teamName = teamLog.team_name;
                 const place = parseInt(teamLog.placement);
@@ -822,14 +1312,8 @@
 
                 if (!teamScores[teamName]) {
                     teamScores[teamName] = {
-                        total: 0,
-                        placement: 0, 
-                        ptsKill: 0, 
-                        kills: 0, 
-                        booyahs: 0, 
-                        quedasList: 0, 
-                        lastPlace: place, 
-                        name: teamName,
+                        total: 0, placement: 0, ptsKill: 0, kills: 0, 
+                        booyahs: 0, quedasList: 0, lastPlace: place, name: teamName,
                         manualAdjustment: 0 
                     };
                 }
@@ -843,7 +1327,13 @@
                 teamScores[teamName].lastPlace = place;
             }
             
-            // 2. CALCULO DE PONTUAÇÃO DOS JOGADORES (MVP)
+            // 2. Aplica os ajustes manuais e atualiza o total final
+            const finalResultsBase = Object.values(teamScores).map(team => {
+                 const adjustment = adjustments[team.name] || 0;
+                 team.manualAdjustment = adjustment; // Armazena o ajuste
+                 team.total += adjustment; // Aplica o ajuste ao total
+                 return team;
+            });
             
             const processedPlayerMatches = {};
             
@@ -852,23 +1342,21 @@
                 
                 if (!processedPlayerMatches[playerName]) {
                     processedPlayerMatches[playerName] = {
-                        name: playerName,
-                        team: playerLog.team,
-                        kills: 0,
-                        matchesPlayed: 0
+                        name: playerName, team: playerLog.team, kills: 0, matchesPlayed: 0
                     };
                 }
                 processedPlayerMatches[playerName].kills += playerLog.kills;
+                // Cada log individual é uma caída
                 processedPlayerMatches[playerName].matchesPlayed += 1; 
             }
             
             const finalMVP = Object.values(processedPlayerMatches).map(player => {
-                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
+                const avgKills = player.matchesPlayed > 0 ? (player.kills / player.matchesPlayed).toFixed(2) : '0.00';
                 return { ...player, avgKills: avgKills };
             }).sort((a, b) => b.kills - a.kills);
             
-            // 3. ORDENAÇÃO FINAL DA TABELA GERAL
-            const finalResults = Object.values(teamScores).sort((a, b) => {
+            // 3. Ordena os resultados com base no novo total
+            const finalResults = finalResultsBase.sort((a, b) => {
                 if (b.total !== a.total) { 
                     return b.total - a.total; 
                 }
@@ -880,8 +1368,56 @@
                 }
             });
 
-
             return { finalResults: finalResults, finalMVP: finalMVP }; 
+        }
+
+        function updateButtonStyles(mode) {
+             const btnSimplified = document.getElementById('btn-simplified');
+             const btnDetailed = document.getElementById('btn-detailed');
+
+             if (!btnSimplified || !btnDetailed) return;
+
+             const activeClasses = ['bg-accent', 'text-black'];
+             const inactiveClasses = ['text-white', 'hover:bg-gray-600'];
+
+             if (mode === 'simplified') {
+                btnSimplified.classList.add(...activeClasses);
+                btnSimplified.classList.remove(...inactiveClasses);
+                btnDetailed.classList.remove(...activeClasses);
+                btnDetailed.classList.add(...inactiveClasses);
+             } else {
+                btnDetailed.classList.add(...activeClasses);
+                btnDetailed.classList.remove(...inactiveClasses);
+                btnSimplified.classList.remove(...activeClasses);
+                btnSimplified.classList.add(...inactiveClasses);
+             }
+             
+             // NOVO: Exibe ou esconde os controles de ajuste dependendo do modo de tabela
+             const adjustmentControls = document.getElementById('adjustmentControls');
+             if (mode === 'simplified') {
+                 adjustmentControls.classList.remove('hidden');
+             } else {
+                 adjustmentControls.classList.add('hidden');
+             }
+        }
+
+        function switchTableMode(mode) {
+            currentTableMode = mode;
+            updateButtonStyles(mode);
+            if (window.finalResults && window.finalResults.length > 0) {
+                 renderFinalTable(window.finalResults, 'finalTableContainer', mode);
+            }
+        }
+        
+        function switchMvpLimit(limit) {
+            currentMvpLimit = parseInt(limit);
+            if (window.finalMVP && window.finalMVP.length > 0) {
+                renderMVPTable(window.finalMVP, 'mvpTableContainer');
+            }
+            const button = document.getElementById('copyMvpButton');
+            if (button) {
+                button.textContent = parseInt(limit) === 999 ? 'Copiar MVP (Todos)' : `Copiar MVP (Top ${limit})`;
+            }
         }
 
         function renderFinalTable(results, containerId, mode = 'simplified') {
@@ -893,35 +1429,30 @@
                 return;
             }
             
-            const isDetailed = mode === 'detailed';
-            const colsClass = isDetailed ? 'detailed-table-cols' : 'final-table-cols';
+            const isSimplified = mode === 'simplified';
+            const colsClass = isSimplified ? 'simplified-table-cols' : 'detailed-table-cols';
 
             const table = document.createElement('table');
             table.className = "min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden shadow-xl";
             
             let headerHTML = `
-                <th class="p-3 text-sm font-semibold uppercase">POS</th>
+                <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
                 <th class="p-3 text-sm font-semibold uppercase">Time</th>
                 <th class="p-3 text-sm font-semibold uppercase">Booyah</th>
                 <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
                 <th class="p-3 text-sm font-semibold uppercase">Kills</th>
             `;
             
-            if (isDetailed) {
-                headerHTML += `
-                    <th class="p-3 text-sm font-semibold uppercase">Pts Queda</th>
-                    <th class="p-3 text-sm font-semibold uppercase">Pts Kill</th>
-                `;
+            if (!isSimplified) { // Modo Detalhado
+                headerHTML += `<th class="p-3 text-sm font-semibold uppercase">Pts Queda</th><th class="p-3 text-sm font-semibold uppercase">Pts Kill</th>`;
+            } else { // Modo Simplificado, adiciona coluna de Ajuste Manual
+                 headerHTML += `<th class="p-3 text-sm font-semibold uppercase">AJUSTE</th>`;
             }
-
-            headerHTML += `<th class="p-3 text-sm font-semibold uppercase">Pontos</th>`;
+            
+            headerHTML += `<th class="p-3 text-sm font-semibold uppercase">TOTAL</th>`;
 
             table.innerHTML = `
-                <thead>
-                    <tr class="table-header ${colsClass}">
-                        ${headerHTML}
-                    </tr>
-                </thead>
+                <thead><tr class="table-header ${colsClass}">${headerHTML}</tr></thead>
                 <tbody class="divide-y divide-gray-800 bg-gray-800"></tbody>
             `;
             
@@ -937,25 +1468,39 @@
                     rowClass = 'top-3-general font-bold text-lg text-black';
                 }
                 
+                const textColor = rank <= 3 ? 'text-black' : '';
                 const row = document.createElement('tr');
                 row.className = rowClass + ' hover:bg-gray-600 transition duration-150 ' + colsClass;
 
                 let cellHTML = `
-                    <td class="p-3 font-bold text-base ${rank <= 3 ? 'text-black' : ''}">${rank}</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${rank <= 3 ? 'text-black' : ''}">${team.name}</td>
-                    <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.booyahs}</td>
-                    <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.quedasList}</td>
-                    <td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.kills}</td>
+                    <td class="p-3 font-bold text-base ${textColor}">${rank}</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${textColor}">${team.name}</td>
+                    <td class="p-3 font-semibold ${textColor}">${team.booyahs}</td>
+                    <td class="p-3 font-semibold ${textColor}">${team.quedasList}</td>
+                    <td class="p-3 font-extrabold text-lg ${textColor}">${team.kills}</td>
                 `;
 
-                if (isDetailed) {
+                if (!isSimplified) {
                     cellHTML += `
-                        <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.placement}</td>
-                        <td class="p-3 font-semibold ${rank <= 3 ? 'text-black' : ''}">${team.ptsKill}</td>
+                        <td class="p-3 font-semibold ${textColor}">${team.placement}</td>
+                        <td class="p-3 font-semibold ${textColor}">${team.ptsKill}</td>
                     `;
+                } else {
+                     // Campo de input para Ajuste Manual
+                     const adjustmentValue = window.manualAdjustments[team.name] !== undefined 
+                                             ? window.manualAdjustments[team.name] : 0;
+                     cellHTML += `
+                        <td class="p-1 font-semibold ${textColor}">
+                            <input type="number" 
+                                   class="adjustment-input" 
+                                   data-team-name="${team.name}" 
+                                   value="${adjustmentValue}" 
+                                   placeholder="0">
+                        </td>
+                     `;
                 }
 
-                cellHTML += `<td class="p-3 font-extrabold text-lg ${rank <= 3 ? 'text-black' : ''}">${team.total}</td>`;
+                cellHTML += `<td class="p-3 font-extrabold text-lg ${textColor}">${team.total}</td>`;
                 
                 row.innerHTML = cellHTML;
                 tbody.appendChild(row);
@@ -983,9 +1528,9 @@
             table.innerHTML = `
                 <thead>
                     <tr class="table-header mvp-table-cols">
-                        <th class="p-3 text-sm font-semibold uppercase">POS</th>
+                        <th class="p-3 text-sm font-semibold uppercase">POSIÇÃO</th>
                         <th class="p-3 text-sm font-semibold uppercase">Jogador</th>
-                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th> 
+                        <th class="p-3 text-sm font-semibold uppercase">Quedas</th>
                         <th class="p-3 text-sm font-semibold uppercase">Kills</th>
                         <th class="p-3 text-sm font-semibold uppercase hidden-mobile">MÉDIA KILLS</th>
                         <th class="p-3 text-sm font-semibold uppercase">Time</th>
@@ -1001,15 +1546,17 @@
                 const isTop = rank <= 3;
                 
                 const row = document.createElement('tr');
-                row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols text-white';
+                row.className = 'bg-gray-800 hover:bg-gray-700 transition duration-150 mvp-table-cols ' + (isTop ? 'mvp-bg' : 'text-white');
+
+                const textColor = isTop ? 'text-black' : 'text-white';
 
                 row.innerHTML = `
-                    <td class="p-3 font-bold text-base text-accent">${rank}º</td>
-                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis">${player.name}</td>
-                    <td class="p-3 font-semibold">${player.matchesPlayed}</td> 
-                    <td class="p-3 font-extrabold text-lg">${player.kills}</td>
-                    <td class="p-3 hidden-mobile">${player.avgKills}</td>
-                    <td class="p-3">${player.team}</td>
+                    <td class="p-3 font-bold text-base ${textColor}">${rank}º</td>
+                    <td class="p-3 font-medium whitespace-nowrap overflow-hidden text-ellipsis ${textColor}">${player.name}</td>
+                    <td class="p-3 font-semibold ${textColor}">${player.matchesPlayed}</td>
+                    <td class="p-3 font-extrabold text-lg ${textColor}">${player.kills}</td>
+                    <td class="p-3 hidden-mobile ${textColor}">${player.avgKills}</td>
+                    <td class="p-3 ${textColor}">${player.team}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1026,333 +1573,755 @@
                 document.getElementById('finalTableContainer').innerHTML = `<p class="text-gray-500">Nenhum resultado processado. Volte para a configuração e clique em CALCULAR.</p>`;
                 document.getElementById('mvpTableContainer').innerHTML = `<p class="text-gray-500">O MVP individual só é calculado ao carregar logs detalhados (formato "TeamName:...")</p>`;
             }
+            
+            // NOVO: Assegura que os controles de ajuste sejam visíveis no modo simplificado após o cálculo.
+            const adjustmentControls = document.getElementById('adjustmentControls');
+            if (currentTableMode === 'simplified' && window.finalResults.length > 0) {
+                 adjustmentControls.classList.remove('hidden');
+            } else {
+                 adjustmentControls.classList.add('hidden');
+            }
         }
         
-        // ----------------------------------------------------------------------
-        // --- FUNÇÃO DE EXPORTAR DADOS DA TABELA GERAL E MVP PARA CSV ---
-        // ----------------------------------------------------------------------
-
-        /**
-         * Gera e baixa um arquivo CSV com os dados da Tabela Geral e do MVP.
-         * Usa '\t' (tabulação) como separador para melhor compatibilidade com planilhas (Excel/Sheets).
-         */
-        function downloadCSV() {
-            if (!window.finalResults || window.finalResults.length === 0) {
-                alert("Nenhum resultado final para exportar. Calcule os resultados primeiro.");
+        function copyToClipboard(textToCopy, buttonId, originalText) {
+            const button = document.getElementById(buttonId);
+            let success = false;
+            
+            if (!textToCopy) {
+                button.textContent = '❌ Sem dados para copiar';
+                button.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-gray-500', 'hover:bg-gray-600');
+                button.classList.add('bg-red-600');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-red-600');
+                    if (buttonId === 'copyMvpButton') { 
+                         button.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                    } else if (buttonId === 'copyResultsSimpleButton') {
+                         button.classList.add('bg-purple-600', 'hover:bg-purple-700'); 
+                    }
+                }, 2000);
                 return;
             }
 
-            // --- 1. TABELA GERAL ---
-            let csvGeral = "TABELA GERAL\n";
-            csvGeral += "POS\tTIME\tBOOYAH\tKILLS\tPONTOS\n";
+            try {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                tempTextArea.style.position = 'fixed';
+                tempTextArea.style.top = '0';
+                tempTextArea.style.left = '0';
+                tempTextArea.style.opacity = '0';
+                
+                document.body.appendChild(tempTextArea);
+                
+                tempTextArea.focus(); 
+                tempTextArea.select();
+                success = document.execCommand('copy');
+                
+                document.body.removeChild(tempTextArea);
+                
+            } catch (err) {
+                console.error('Falha ao copiar JSON via document.execCommand:', err);
+                success = false;
+            }
 
-            window.finalResults.forEach((team, index) => {
-                const rank = index + 1;
-                // O nome do time é envolvido por aspas para evitar problemas com vírgulas/caracteres especiais
-                csvGeral += `${rank}\t"${team.name}"\t${team.booyahs}\t${team.kills}\t${team.total}\n`;
-            });
-            
-            // --- 2. TABELA MVP ---
-            let csvMVP = "\n\nTABELA MVP INDIVIDUAL\n"; // Duas quebras de linha para separar as tabelas
-            csvMVP += "POS\tJOGADOR\tTIME\tKILLS\tQUEDAS JOGADAS\tMEDIA KILLS\n";
+            button.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-gray-500', 'hover:bg-gray-600', 'bg-red-600');
 
-            window.finalMVP.forEach((player, index) => {
-                const rank = index + 1;
-                // Note: O MVP é exportado com o time completo de kills (window.finalMVP)
-                csvMVP += `${rank}\t"${player.name}"\t"${player.team}"\t${player.kills}\t${player.matchesPlayed}\t${player.avgKills}\n`;
-            });
-
-            const csvContent = csvGeral + csvMVP;
+            if (success) {
+                button.textContent = '✅ JSON copiado!';
+                button.classList.add('bg-green-600', 'hover:bg-green-700');
+            } else {
+                button.textContent = '❌ Erro ao copiar!';
+                button.classList.add('bg-red-600', 'hover:bg-red-700');
+            }
             
-            // Cria e baixa o link
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute("href", url);
-            link.setAttribute("download", "tabela_completa_SPEC.csv");
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert("Arquivo CSV completo (Geral + MVP) exportado com sucesso! Use a opção 'Importar' ou 'Abrir com...' em seu programa de planilha.");
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700');
+                if (buttonId === 'copyMvpButton') {
+                     button.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                } else if (buttonId === 'copyResultsSimpleButton') {
+                     button.classList.add('bg-purple-600', 'hover:bg-purple-700'); 
+                }
+            }, 2000);
         }
 
-
-        // ----------------------------------------------------------------------
-        // --- FUNÇÕES DE LÓGICA (AS ORIGINAIS) ---
-        // ----------------------------------------------------------------------
-        
-        // Funções de upload, processamento de log, calcularPontuacoes e renderização de tabelas
-        // (Mantidas aqui para funcionalidade total do site)
-
-        function extractIndividualKills(logText) {
-            const playerResults = [];
-            const teamHeaderRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)/i; 
-            const playerLineRegex = /NAME:\s*([^:]+?)\s*ID:\s*[^ ]+?\s*KILL:\s*(\d+)/i;
+        function copyFinalResultsSimpleArray() {
+            const buttonId = 'copyResultsSimpleButton';
+            const button = document.getElementById(buttonId);
+            const originalText = button.textContent;
             
-            let currentTeam = '';
-
-            for (const line of logText.split('\n')) {
-                let teamMatch = line.match(teamHeaderRegex);
-                let playerMatch = line.match(playerLineRegex);
-
-                if (teamMatch) {
-                    currentTeam = teamMatch[1].trim().replace(/\s+$/, ''); 
-                } else if (playerMatch && currentTeam) {
-                    const playerName = playerMatch[1].trim().replace(/\s+$/, '');
-                    const kills = parseInt(playerMatch[2]);
-                    
-                    if (playerName && !isNaN(kills)) {
-                        playerResults.push({
-                            name: playerName,
-                            team: currentTeam,
-                            kills: kills
-                        });
-                    }
-                }
+            if (!window.finalResults || window.finalResults.length === 0) {
+                copyToClipboard(null, buttonId, originalText); 
+                return;
             }
-            return playerResults;
+
+            const dataToCopy = window.finalResults.map(team => ({
+                rank: team.rank, // A rank property doesn't exist directly on the team object in window.finalResults, but we can map it if needed.
+                team_name: team.name,
+                booyahs: team.booyahs,
+                quedas: team.quedasList,
+                kills: team.kills,
+                pts_queda: team.placement,
+                pts_kill: team.ptsKill,
+                ajuste_manual: team.manualAdjustment, // Inclui o ajuste manual
+                total: team.total
+            }));
+            
+            const jsonToCopy = JSON.stringify(dataToCopy, null, 2);
+            copyToClipboard(jsonToCopy, buttonId, originalText);
         }
 
-        function processTextLog(logText) {
-            const lines = logText.split('\n').filter(line => line.trim() !== '');
-            const teamResults = [];
-            const processedNames = new Set();
+        function copyFinalMVP() {
+            const buttonId = 'copyMvpButton';
+            const button = document.getElementById(buttonId);
+            const originalText = button.textContent;
             
-            const detailedLogRegex = /TeamName:\s*([^:]+?)\s*Rank:\s*(\d+)\s*.*KillScore:\s*(\d+)/i;
-            const playerResults = extractIndividualKills(logText);
-            
-            for (const line of lines) {
-                const match = line.match(detailedLogRegex);
-                
-                if (match) {
-                    const teamName = match[1].trim().replace(/\s+$/, '');
-                    const rank = parseInt(match[2]);
-                    const kills = parseInt(match[3]);
-
-                    if (teamName && !isNaN(rank) && rank >= 1 && !isNaN(kills)) {
-                        if (!processedNames.has(teamName)) {
-                            teamResults.push({ team_name: teamName, placement: rank, kills: kills });
-                            processedNames.add(teamName);
-                        }
-                    }
-                }
-            }
-
-            if (teamResults.length > 0) {
-                return { teamResults: teamResults, playerResults: playerResults }; 
+            if (!window.finalMVP || window.finalMVP.length === 0) {
+                copyToClipboard(null, buttonId, originalText); 
+                return;
             }
             
-            for (const line of lines) {
-                const parts = line.trim().split(/\s+/);
-                
-                if (parts.length >= 3) {
-                    const kills = parseInt(parts.pop());
-                    const place = parseInt(parts.pop());
-                    const teamName = parts.join(' ');
-                    
-                    if (teamName && !isNaN(place) && place >= 1 && !isNaN(kills) && kills >= 0) {
-                        teamResults.push({ team_name: teamName, placement: place, kills: kills });
-                    }
-                }
-            }
-            
-            return { teamResults: teamResults, playerResults: [] };
-        }
+            const limit = parseInt(currentMvpLimit);
+            const mvpToCopy = limit === 999 ? window.finalMVP : window.finalMVP.slice(0, limit);
 
-        function calcularPontuacoes(logData, killPoints, placementPoints, individualKillsData, tiebreaker) {
-            const teamScores = {};
-            
-            for (const teamLog of logData) {
-                const teamName = teamLog.team_name;
-                const place = parseInt(teamLog.placement);
-                const kills = parseInt(teamLog.kills);
-
-                if (!teamName || isNaN(place) || isNaN(kills)) continue;
-
-                const placementScore = placementPoints[place] !== undefined ? placementPoints[place] : 0;
-                const killScore = kills * killPoints;
-                const totalScore = placementScore + killScore;
-
-                if (!teamScores[teamName]) {
-                    teamScores[teamName] = {
-                        total: 0,
-                        placement: 0, 
-                        ptsKill: 0, 
-                        kills: 0, 
-                        booyahs: 0, 
-                        quedasList: 0, 
-                        lastPlace: place, 
-                        name: teamName,
-                        manualAdjustment: 0 
-                    };
-                }
-                
-                teamScores[teamName].total += totalScore;
-                teamScores[teamName].placement += placementScore;
-                teamScores[teamName].ptsKill += killScore;
-                teamScores[teamName].kills += kills;
-                teamScores[teamName].quedasList += 1; 
-                if (place === 1) { teamScores[teamName].booyahs += 1; }
-                teamScores[teamName].lastPlace = place;
-            }
-            
-            const processedPlayerMatches = {};
-            
-            for (const playerLog of individualKillsData) {
-                const playerName = playerLog.name;
-                
-                if (!processedPlayerMatches[playerName]) {
-                    processedPlayerMatches[playerName] = {
-                        name: playerName,
-                        team: playerLog.team,
-                        kills: 0,
-                        matchesPlayed: 0
-                    };
-                }
-                processedPlayerMatches[playerName].kills += playerLog.kills;
-                processedPlayerMatches[playerName].matchesPlayed += 1; 
-            }
-            
-            const finalMVP = Object.values(processedPlayerMatches).map(player => {
-                const avgKills = matchCount > 0 ? (player.kills / matchCount).toFixed(2) : '0.00';
-                return { ...player, avgKills: avgKills };
-            }).sort((a, b) => b.kills - a.kills);
-            
-            const finalResults = Object.values(teamScores).sort((a, b) => {
-                if (b.total !== a.total) { 
-                    return b.total - a.total; 
-                }
-                
-                if (tiebreaker === 'booyahs') {
-                    return b.booyahs - a.booyahs;
-                } else {
-                    return b.kills - a.kills;
-                }
-            });
-
-
-            return { finalResults: finalResults, finalMVP: finalMVP }; 
-        }
-
-        function processFilesSequentially(files, statusDiv, errorDiv, callback) {
-            const totalFiles = files.length;
-            let index = 0;
-
-            const processNextFile = () => {
-                if (index >= totalFiles) {
-                    if (callback) callback();
-                    return;
-                }
-
-                const file = files[index];
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const fileContent = e.target.result.replace(/^\uFEFF/, '').trim();
-                    let data = null;
-                    let fileIndividualKills = [];
-
-                    try {
-                        data = JSON.parse(fileContent);
-                        if (!Array.isArray(data) || data.length === 0 || !data[0].team_name) {
-                             data = null; 
-                        }
-                    } catch (e) { }
-
-                    if (!data) {
-                        const logData = processTextLog(fileContent);
-                        data = logData.teamResults;
-                        fileIndividualKills = logData.playerResults;
-                    } 
-                    
-                    if (data.length > 0) {
-                        currentFileData.push(...data);
-                        individualKillsData.push(...fileIndividualKills);
-                        matchLogsHistory.push(data); 
-                        matchCount++; 
-                    }
-                    
-                    index++;
-                    processNextFile();
-                };
-                
-                reader.onerror = () => {
-                    errorDiv.textContent = `Erro ao ler o arquivo: ${file.name}.`;
-                    errorDiv.classList.remove('hidden');
-                    index++;
-                    processNextFile();
-                };
-
-                reader.readAsText(file);
+            const dataToCopy = {
+                finalResults: [], 
+                finalMVP: mvpToCopy
             };
+            
+            const jsonToCopy = JSON.stringify(dataToCopy, null, 2);
+            copyToClipboard(jsonToCopy, buttonId, originalText);
+        }
+        
+        // ===================================================================================
+        // 6. FUNÇÕES DO CALIBRADOR (Baseado no localStorage - Mantido)
+        // ===================================================================================
 
-            processNextFile();
+        function initCalibrator() {
+            const previewContainer = document.getElementById('art-preview-container');
+            if (previewContainer) {
+                 canvas = document.createElement('canvas');
+                 canvas.id = 'calibration-canvas';
+                 canvas.width = CANVAS_WIDTH;
+                 canvas.height = CANVAS_HEIGHT;
+                 previewContainer.innerHTML = '';
+                 previewContainer.appendChild(canvas);
+            }
+            
+            loadPresetsToSelector();
+            setCanvasResolution(); 
+            // Habilita/Desabilita o botão de exclusão do calibrador na inicialização
+            toggleDeleteArtPresetButton(); 
         }
 
-        // Funções de UPLOAD e ADIÇÃO de arquivos (Mantidas para funcionalidade)
-        function handleAdditionalFileUpload(event) {
-            const files = event.target.files;
-            const statusDiv = document.getElementById('additionalStatusMessage');
-            const button = document.getElementById('processAdditionalButton');
+        function updateSliderAndRedraw() {
+             updateSliderValuesDisplay();
+             redrawCanvas(); 
+        }
 
-            if (files.length === 0) {
-                 additionalFilesQueue = [];
-                 button.disabled = true;
-                 statusDiv.classList.add('hidden');
+        function updateSlider(sliderId, value) {
+            const sliderElement = document.getElementById(sliderId); 
+            
+            if (!sliderElement) return;
+
+            const floatValue = parseFloat(value);
+            
+            if (isNaN(floatValue) || floatValue < parseFloat(sliderElement.min) || floatValue > parseFloat(sliderElement.max)) {
                  return;
             }
+
+            sliderElement.value = floatValue;
             
-            additionalFilesQueue = Array.from(files); 
-            statusDiv.textContent = `${files.length} arquivo(s) aguardando. Clique no botão abaixo para adicionar.`;
-            statusDiv.classList.remove('hidden');
-            button.disabled = false;
+            updateSliderValuesDisplay(); 
+            redrawCanvas(); 
         }
         
-        function processAdditionalFiles() {
-            const button = document.getElementById('processAdditionalButton');
-            const statusDiv = document.getElementById('additionalStatusMessage');
-            const errorDiv = document.getElementById('errorMessage');
+        function updateSliderValuesDisplay() {
+            SLIDER_IDS.forEach(id => {
+                const slider = document.getElementById(id);
+                const valueSpan = document.getElementById(`${id}-value`);
+                const input = document.getElementById(`${id}-input`);
 
-            if (additionalFilesQueue.length === 0) {
-                statusDiv.textContent = "Nenhum arquivo novo para processar.";
-                statusDiv.classList.remove('hidden');
-                return;
-            }
+                if (slider && valueSpan) {
+                     let value = parseFloat(slider.value);
+                     let formattedValue;
+                     
+                     if (id === 'line-height') {
+                          formattedValue = value.toFixed(1);
+                     } else {
+                          formattedValue = value.toFixed(0);
+                     }
 
-            button.disabled = true;
-            statusDiv.textContent = 'Processando arquivos...';
-            errorDiv.classList.add('hidden');
-            
-            const initialMatchCount = matchCount; 
-            
-            processFilesSequentially(additionalFilesQueue, statusDiv, errorDiv, () => {
-                 const newQuedas = matchCount - initialMatchCount;
-                 statusDiv.textContent = `✅ ${newQuedas} queda(s) adicionada(s)! Placar atualizado.`;
-                 
-                 const killPoints = parseInt(document.getElementById('killPoints').value) || 0;
-                 const tiebreaker = document.getElementById('tiebreaker').value;
-                 
-                 const { finalResults: results, finalMVP: mvp } = calcularPontuacoes(currentFileData, killPoints, placementPoints, individualKillsData, tiebreaker);
+                     valueSpan.textContent = `${formattedValue} px`;
 
-                 window.finalResults = results;
-                 window.finalMVP = mvp;
-                 
-                 displayResults();
-                 
-                 document.getElementById('additionalFileInput').value = '';
-                 additionalFilesQueue = [];
+                     if (input) {
+                         input.value = formattedValue;
+                     }
+                }
             });
         }
         
-        // Inicializa na primeira carga da página
-        window.onload = function() {
-            checkFirstVisit();
-            updateButtonStyles(currentTableMode);
-        };
+        function setCanvasResolution() {
+            const selector = document.getElementById('resolution-selector');
+            const resolution = selector.value;
+            
+            if (resolution === '1920x1080') {
+                CANVAS_WIDTH = 1920;
+                CANVAS_HEIGHT = 1080;
+            } else if (resolution === '1080x1080') {
+                CANVAS_WIDTH = 1080;
+                CANVAS_HEIGHT = 1080;
+            } else { // 1080x1350
+                CANVAS_WIDTH = 1080;
+                CANVAS_HEIGHT = 1350;
+            }
+
+            if (canvas) {
+                canvas.width = CANVAS_WIDTH;
+                canvas.height = CANVAS_HEIGHT;
+            }
+            
+            updateSliderValuesDisplay();
+            
+            const maxX = CANVAS_WIDTH - 50;
+            const maxY = CANVAS_HEIGHT - 200;
+            
+            SLIDER_IDS.forEach(id => {
+                const slider = document.getElementById(id);
+                const input = document.getElementById(`${id}-input`);
+                
+                if (id.startsWith('x-')) {
+                    if (slider) slider.max = maxX;
+                    if (input) input.max = maxX;
+                } else if (id === 'y-start') {
+                    if (slider) slider.max = maxY;
+                    if (input) input.max = maxY;
+                }
+            });
+
+            if (event && event.type === 'change' && event.target.id === 'resolution-selector') {
+                 redrawCanvas();
+            }
+        }
+        
+        function getAllSliderValues() {
+            const values = {
+                resolution: document.getElementById('resolution-selector').value,
+                fontColor: document.getElementById('font-color-selector').value, 
+                rank1Color: document.getElementById('rank1-color-selector').value 
+            };
+            SLIDER_IDS.forEach(id => {
+                values[id] = document.getElementById(id).value;
+            });
+            return values;
+        }
+
+        function setAllSliderValues(preset) {
+            if (!preset) return;
+            
+            document.getElementById('resolution-selector').value = preset.resolution || '1080x1350';
+            setCanvasResolution(); 
+
+            if (preset.fontColor) { document.getElementById('font-color-selector').value = preset.fontColor; }
+            if (preset.rank1Color) { document.getElementById('rank1-color-selector').value = preset.rank1Color; }
+            
+            SLIDER_IDS.forEach(id => {
+                const slider = document.getElementById(id);
+                const input = document.getElementById(`${id}-input`);
+
+                if (slider && preset[id] !== undefined) {
+                    const presetValue = parseFloat(preset[id]);
+                    const clampedValue = Math.max(parseFloat(slider.min), Math.min(parseFloat(slider.max), presetValue));
+                    slider.value = clampedValue;
+                    
+                    if (input) {
+                       input.value = id === 'line-height' ? clampedValue.toFixed(1) : clampedValue.toFixed(0);
+                    }
+                }
+            });
+            
+            updateSliderValuesDisplay();
+            redrawCanvas(); 
+        }
+        
+        function toggleDeleteArtPresetButton() {
+            const presetSelector = document.getElementById('preset-selector');
+            const deleteBtn = document.getElementById('deleteArtPresetBtn');
+            if (deleteBtn) {
+                 deleteBtn.disabled = presetSelector.value === '';
+            }
+        }
+
+
+        function loadPresetsToSelector() {
+            const selector = document.getElementById('preset-selector');
+            // Nota: Os presets do calibrador continuam usando localStorage, pois são configurações visuais locais.
+            const presets = JSON.parse(localStorage.getItem(CALIBRATOR_PRESET_KEY) || '{}'); 
+            
+            selector.innerHTML = '<option value="">-- Selecione uma Predefinição --</option>';
+
+            const keys = Object.keys(presets).sort();
+
+            if (keys.length > 0) {
+                keys.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    selector.appendChild(option);
+                });
+            }
+            
+            // Re-avalia o estado do botão de exclusão
+            toggleDeleteArtPresetButton();
+        }
+
+        function savePreset() {
+            const nameInput = document.getElementById('preset-name');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                console.error("Por favor, digite um nome para a predefinição antes de salvar.");
+                alert("Por favor, digite um nome para a predefinição antes de salvar.");
+                return;
+            }
+
+            const presets = JSON.parse(localStorage.getItem(CALIBRATOR_PRESET_KEY) || '{}');
+            const values = getAllSliderValues();
+            
+            presets[name] = values;
+            
+            localStorage.setItem(CALIBRATOR_PRESET_KEY, JSON.stringify(presets));
+            
+            loadPresetsToSelector(); 
+            nameInput.value = name; // Mantém o nome no input
+            document.getElementById('preset-selector').value = name; // Seleciona o preset salvo
+            toggleDeleteArtPresetButton();
+            alert(`Predefinição "${name}" salva com sucesso!`);
+        }
+
+        function loadPreset() {
+            const selector = document.getElementById('preset-selector');
+            const name = selector.value;
+            const nameInput = document.getElementById('preset-name');
+            
+            if (!name) {
+                nameInput.value = '';
+                toggleDeleteArtPresetButton();
+                return;
+            }
+
+            const presets = JSON.parse(localStorage.getItem(CALIBRATOR_PRESET_KEY) || '{}');
+            const preset = presets[name];
+
+            if (preset) {
+                setAllSliderValues(preset);
+                nameInput.value = name; 
+                console.log(`Predefinição "${name}" carregada.`);
+            } else {
+                 console.error(`Predefinição "${name}" não encontrada.`);
+                 nameInput.value = '';
+            }
+            toggleDeleteArtPresetButton();
+        }
+
+        function deletePreset() {
+            const selector = document.getElementById('preset-selector');
+            const name = selector.value;
+            
+            if (!name) {
+                console.error("Nenhuma predefinição selecionada para exclusão.");
+                alert("Nenhuma predefinição selecionada para exclusão.");
+                return;
+            }
+            
+            const presets = JSON.parse(localStorage.getItem(CALIBRATOR_PRESET_KEY) || '{}');
+            
+            if (presets[name]) {
+                 // Removendo do localStorage
+                 delete presets[name];
+                 localStorage.setItem(CALIBRATOR_PRESET_KEY, JSON.stringify(presets));
+                 
+                 // Limpando campos e atualizando UI
+                 document.getElementById('preset-name').value = '';
+                 selector.value = '';
+                 loadPresetsToSelector(); // Recarrega o seletor
+                 toggleDeleteArtPresetButton();
+                 alert(`Predefinição "${name}" excluída com sucesso!`);
+            } else {
+                 console.error(`Predefinição "${name}" não encontrada no armazenamento local.`);
+                 alert(`Predefinição "${name}" não encontrada.`);
+            }
+        }
+        
+        function loadArt() {
+            const fileInput = document.getElementById('art-file-input');
+            const previewContainer = document.getElementById('art-preview-container');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    artImage = new Image();
+                    artImage.onload = function() {
+                        if (!canvas) {
+                             canvas = document.createElement('canvas');
+                             canvas.id = 'calibration-canvas';
+                             previewContainer.innerHTML = '';
+                             previewContainer.appendChild(canvas);
+                        }
+                        
+                        setCanvasResolution(); 
+                        redrawCanvas();
+                    };
+                    artImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function mapRealDataToGeneric(sourceData, isMVP) {
+            return sourceData.map((item, index) => {
+                let nameValue, totalValue, booyahValue, killsValue, avgKillsValue;
+
+                if (isMVP) {
+                    nameValue = item.name || item.player_name || 'N/A';
+                    
+                    let rawAvgKills = 
+                        item.avgkills || item.avg_kills || item.averageKills || 
+                        item.avgKill || item.average_kills || item.avg_kill_rate || 
+                        item.avgKills; 
+                    
+                    const valueToParse = rawAvgKills !== undefined && rawAvgKills !== null && rawAvgKills !== '' 
+                                         ? rawAvgKills 
+                                         : 0;
+
+                    const numericAvgKills = parseFloat(valueToParse) || 0; 
+                    
+                    avgKillsValue = numericAvgKills.toFixed(2);
+                    
+                    booyahValue = item.matchesPlayed || 0; 
+                    totalValue = item.kills || 0; 
+                } else {
+                    nameValue = item.name || item.team_name || 'N/A';
+                    killsValue = item.kills || 0;
+                    booyahValue = item.booyahs || 0;
+                    totalValue = item.total || 0;
+                }
+                
+                return { 
+                    rank: item.rank || index + 1, 
+                    name: nameValue, 
+                    value2: isMVP ? avgKillsValue : killsValue, // Kills / Avg Kills
+                    value1: booyahValue, // Booyahs/Matches
+                    total: totalValue // Total Points
+                };
+            });
+        }
+
+
+        function processJSON() {
+            const jsonText = document.getElementById('json-input').value.trim();
+            
+            const previewContainer = document.getElementById('art-preview-container');
+            if (previewContainer.querySelector('p')) {
+                previewContainer.querySelector('p').style.display = 'none';
+            }
+
+            if (!jsonText) {
+                console.error("Por favor, cole o código JSON dos dados da tabela.");
+                return;
+            }
+
+            try {
+                let parsedData = JSON.parse(jsonText);
+                
+                const isObjectWithArrays = parsedData && typeof parsedData === 'object' && 
+                                           Array.isArray(parsedData.finalResults) && 
+                                           Array.isArray(parsedData.finalMVP);
+
+                const isDirectArray = Array.isArray(parsedData); 
+                
+                if (isObjectWithArrays) {
+                    currentData = parsedData; 
+                    console.log("Dados JSON processados com sucesso! Ajuste os sliders e gere o PNG.");
+                    
+                } else if (isDirectArray) {
+                     currentData = { finalResults: parsedData, finalMVP: parsedData };
+                     console.log("Dados JSON (Array) processados com sucesso! Ajuste os sliders e gere o PNG.");
+
+                } else {
+                     throw new Error("Formato JSON não reconhecido. Esperado: Objeto com finalResults e finalMVP (ambos arrays), ou um Array de objetos.");
+                }
+                
+                redrawCanvas();
+
+            } catch (error) {
+                console.error("ERRO ao processar JSON. Verifique se o código é um JSON válido: ", error.message);
+            }
+        }
+
+
+        function redrawCanvas() {
+            if (!artImage || !canvas) {
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.drawImage(artImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            
+            // Lendo os valores dos sliders (USANDO OS NOVOS IDs SEM SUFIXO)
+            const yStart = parseFloat(document.getElementById('y-start').value);
+            const lineHeight = parseFloat(document.getElementById('line-height').value);
+            const xName = parseFloat(document.getElementById('x-name').value);
+            const xPontos = parseFloat(document.getElementById('x-pontos').value);
+            const xBooyah = parseFloat(document.getElementById('x-booyah').value);
+            const xKills = parseFloat(document.getElementById('x-kills').value);
+            
+            let dataToUse = SIMULATION_DATA; 
+            
+            if (currentData) {
+                const dataType = document.getElementById('data-type').value;
+                const sourceData = dataType === 'final' ? currentData.finalResults : currentData.finalMVP;
+                
+                if (sourceData && Array.isArray(sourceData) && sourceData.length > 0) {
+                    dataToUse = mapRealDataToGeneric(sourceData, dataType === 'mvp'); 
+                }
+            }
+            const data = dataToUse; 
+            const maxRows = 100; // Aumentado o limite para 100
+
+            const columns = [
+                 { key: 'name', x: xName, align: 'left', fontSize: 36 }, 
+                 { key: 'value2', x: xKills, align: 'center', fontSize: 38 }, // Kills / Avg Kills
+                 { key: 'value1', x: xBooyah, align: 'center', fontSize: 38 }, // Booyahs/Matches
+                 { key: 'total', x: xPontos, align: 'center', fontSize: 38 }, // Total Points
+            ];
+
+            const baseFillColor = document.getElementById('font-color-selector').value;
+            const rank1Color = document.getElementById('rank1-color-selector').value;
+
+            return document.fonts.load('12px Bebas Neue').then(() => {
+                data.slice(0, maxRows).forEach((item, index) => {
+                    const y = yStart + index * lineHeight; 
+                    
+                    columns.forEach(col => {
+                        
+                        let fillColor = baseFillColor; 
+                        let fontWeight = 'normal'; 
+                        let fontSize = col.fontSize;
+
+                        if (item.rank === 1) {
+                             fillColor = rank1Color; 
+                             fontWeight = 'normal'; 
+                        } 
+                        
+                        ctx.fillStyle = fillColor;
+                        ctx.font = `${fontWeight} ${fontSize}px "Bebas Neue"`;
+                        ctx.textAlign = col.align;
+
+                        const text = item[col.key] !== undefined && item[col.key] !== null ? String(item[col.key]) : (col.key === 'name' ? 'N/A' : '0');
+
+                        ctx.fillText(text, col.x, y); 
+                    });
+                });
+                
+                ctx.fillStyle = baseFillColor; 
+                ctx.font = 'normal 20px "Bebas Neue"';
+                ctx.textAlign = 'right';
+                ctx.fillText("Calibrado via CPR/SPEC", CANVAS_WIDTH - 50, CANVAS_HEIGHT - 30);
+
+                generateOutputCode(yStart, lineHeight, xName, xPontos, xBooyah, xKills);
+                return true;
+            }).catch(err => {
+                 console.error("Erro ao carregar fonte 'Bebas Neue' para o canvas.", err);
+                 generateOutputCode(yStart, lineHeight, xName, xPontos, xBooyah, xKills);
+                 return false;
+            });
+
+            
+        }
+
+        function openArtModal() {
+             if (!artImage || !canvas) {
+                console.error("Por favor, carregue a imagem de fundo na seção 1 antes de pré-visualizar.");
+                return;
+            }
+            
+            const redrawPromise = redrawCanvas(); 
+            
+            redrawPromise.then(success => {
+                if (success) {
+                    const imageURL = canvas.toDataURL('image/png');
+                    document.getElementById('modal-image-preview').src = imageURL;
+                    document.getElementById('art-modal').classList.remove('hidden');
+                } else {
+                    console.error("Erro ao desenhar o texto na arte. Tente novamente.");
+                }
+            });
+        }
+        
+        function closeArtModal() {
+            document.getElementById('art-modal').classList.add('hidden');
+            document.getElementById('modal-image-preview').src = '';
+        }
+
+
+        function generateOutputCode(yStart, lineHeight, xName, xPontos, xBooyah, xKills) {
+            const codeOutput = document.getElementById('output-code');
+
+            const code = `
+// --- CALIBRAÇÃO SALVA PARA SUA ARTE (COPIE E COLE NA FUNÇÃO drawTableOnCanvas DO SITE PRINCIPAL) ---
+// RESOLUÇÃO: ${CANVAS_WIDTH}x${CANVAS_HEIGHT}
+
+const startY = ${yStart.toFixed(0)}; // Posição Vertical da 1ª linha de dados
+const lineHeight = ${lineHeight.toFixed(1)}; // Espaçamento entre as linhas
+// A LINHA ABAIXO FOI ALTERADA: O limite de linhas agora é baseado no JSON copiado. 
+// Certifique-se de que sua arte comporte todas as linhas!
+
+// Colunas: Posição X (CALIBRADO para ${CANVAS_WIDTH}px de largura)
+const columns = [
+     // Coluna 1: NOME (EQUIPE / JOGADOR)
+     { key: 'name', x: ${xName.toFixed(0)}, align: 'left', fontSize: 36 }, 
+     // Coluna 2: ABATES / KILLS (Lembre-se: 'kills' = avgKills no modo MVP)
+     { key: 'kills', x: ${xKills.toFixed(0)}, align: 'center', fontSize: 38 }, 
+     // Coluna 3: BOOYAH / QUEDAS 
+     { key: 'booyahs', x: ${xBooyah.toFixed(0)}, align: 'center', fontSize: 38 }, 
+     // Coluna 4: PONTOS / TOTAL 
+     { key: 'total', x: ${xPontos.toFixed(0)}, align: 'center', fontSize: 38 }, 
+];
+// --- FIM DA CALIBRAÇÃO SALVA ---
+            `;
+
+            codeOutput.textContent = code.trim();
+        }
+
+        function generatePNG() {
+            const yStartElement = document.getElementById('y-start');
+            if (!yStartElement || !artImage || !canvas) {
+                console.error("ERRO: Calibração incompleta. Carregue a arte, ajuste os sliders.");
+                return;
+            }
+
+            if (!currentData) {
+                 console.error("ERRO: Dados JSON não processados. Cole e processe os dados primeiro.");
+                 return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const dataType = document.getElementById('data-type').value;
+
+            const yStart = parseFloat(document.getElementById('y-start').value);
+            const lineHeight = parseFloat(document.getElementById('line-height').value);
+            const xName = parseFloat(document.getElementById('x-name').value);
+            const xPontos = parseFloat(document.getElementById('x-pontos').value);
+            const xBooyah = parseFloat(document.getElementById('x-booyah').value);
+            const xKills = parseFloat(document.getElementById('x-kills').value);
+            
+            const baseFillColor = document.getElementById('font-color-selector').value;
+            const rank1Color = document.getElementById('rank1-color-selector').value;
+
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.drawImage(artImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            const columns = [
+                 { key: 'name', x: xName, align: 'left', fontSize: 36 }, 
+                 { key: 'kills', x: xKills, align: 'center', fontSize: 38 }, 
+                 { key: 'booyahs', x: xBooyah, align: 'center', fontSize: 38 }, 
+                 { key: 'total', x: xPontos, align: 'center', fontSize: 38 }, 
+            ];
+
+            let sourceData = [];
+            let isMVP = false;
+
+            if (dataType === 'final' && currentData.finalResults) {
+                sourceData = currentData.finalResults;
+            } else if (dataType === 'mvp' && currentData.finalMVP) {
+                sourceData = currentData.finalMVP;
+                isMVP = true;
+            } else if (Array.isArray(currentData.finalResults)) {
+                 sourceData = currentData.finalResults; 
+            } else {
+                 console.error("Dados de origem não encontrados para gerar PNG.");
+                 return;
+            }
+
+            const maxRows = sourceData.length; 
+
+            const dataToDraw = sourceData.map((item, index) => {
+                let nameValue, totalValue, booyahValue, killsValue, avgKillsValue;
+
+                if (isMVP) {
+                    nameValue = item.name || item.player_name || 'N/A';
+                    
+                    let rawAvgKills = item.avgkills || item.avg_kills || item.averageKills || item.avgKills;
+                    const numericAvgKills = parseFloat(rawAvgKills) || 0; 
+                    avgKillsValue = numericAvgKills.toFixed(2);
+                                    
+                    booyahValue = item.matchesPlayed || 0; 
+                    totalValue = item.kills || 0; 
+                } else {
+                    nameValue = item.name || item.team_name || 'N/A';
+                    killsValue = item.kills || 0;
+                    booyahValue = item.booyahs || 0;
+                    totalValue = item.total || 0;
+                }
+                
+                return { 
+                    rank: item.rank || index + 1, 
+                    name: nameValue, 
+                    kills: isMVP ? avgKillsValue : killsValue, 
+                    booyahs: booyahValue, 
+                    total: totalValue 
+                };
+            });
+
+             document.fonts.load('12px Bebas Neue').then(() => {
+                dataToDraw.slice(0, maxRows).forEach((item, index) => {
+                    const y = yStart + index * lineHeight; 
+                    
+                    columns.forEach(col => {
+                        
+                        let fillColor = baseFillColor; 
+                        let fontWeight = 'normal'; 
+                        let fontSize = col.fontSize;
+
+                        if (item.rank === 1) {
+                             fillColor = rank1Color; 
+                             fontWeight = 'normal';
+                        } 
+                        
+                        ctx.fillStyle = fillColor;
+                        ctx.font = `${fontWeight} ${fontSize}px "Bebas Neue"`;
+                        ctx.textAlign = col.align;
+
+                        const text = item[col.key] !== undefined && item[col.key] !== null ? String(item[col.key]) : (col.key === 'name' ? 'N/A' : '0');
+
+                        ctx.fillText(text, col.x, y); 
+                    });
+                });
+            
+                ctx.fillStyle = baseFillColor; 
+                ctx.font = 'normal 20px "Bebas Neue"';
+                ctx.textAlign = 'right';
+                ctx.fillText("Calibrado via CPR/SPEC", CANVAS_WIDTH - 50, CANVAS_HEIGHT - 30);
+
+
+                const imageURL = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = imageURL;
+                link.download = `arte_final_${dataType}_${CANVAS_WIDTH}x${CANVAS_HEIGHT}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log(`PNG gerado com sucesso: ${link.download}`);
+
+            }).catch(err => {
+                 console.error("Erro ao carregar fonte 'Bebas Neue' para o canvas ao gerar PNG.", err);
+            });
+        }
     </script>
 </body>
 </html>
