@@ -309,9 +309,13 @@
                             <h2 class="text-2xl font-semibold text-white mb-2 sm:mb-0">🏅 MVP Individual</h2>
                             <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
                                 <select id="mvpLimitSelector" onchange="switchMvpLimit(this.value)" class="p-2 bg-gray-700 rounded-lg text-white text-sm">
+                                    <option value="3">Top 3</option>
                                     <option value="5">Top 5</option>
                                     <option value="10">Top 10</option>
+                                    <option value="12">Top 12</option>
                                     <option value="25">Top 25</option>
+                                    <option value="30">Top 30</option>
+                                    <option value="50">Top 50</option>
                                     <option value="100">Top 100</option>
                                     <option value="999">Todos</option>
                                 </select>
@@ -2325,4 +2329,5 @@ const columns = [
     </script>
 </body>
 </html>
+
 
